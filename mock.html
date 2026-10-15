@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Fraunces:ital,opsz,wght@1,72,500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Alfa+Slab+One&family=Bowlby+One&family=Courier+Prime&family=Fraunces:ital,opsz,wght@1,72,500&family=Rubik:wght@800&family=Ultra&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -112,9 +112,8 @@
         z-index: 2;
       }
       .sleeve h1 {
-        margin: 0;
-        font: italic 500 calc(var(--S) * 0.13) / 0.92 var(--serif);
-        letter-spacing: -0.02em;
+        margin: 0.4em 0 0;
+        font-size: calc(var(--S) * 0.1);
       }
       .sleeve small {
         font: 400 calc(var(--S) * 0.03) / 1.4 var(--mono);
@@ -247,11 +246,45 @@
       }
 
       /* ---- words + chrome ---- */
+      /* sticker letters: chunky black with a thick white die-cut outline */
       .word {
         position: absolute;
-        font: italic 500 clamp(28px, 6vmin, 64px) / 1 var(--serif);
+        font: 400 clamp(26px, 5.4vmin, 58px) / 1.05 'Bowlby One', 'Arial Black', sans-serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #141113;
+        -webkit-text-stroke: 0.22em #fff;
+        paint-order: stroke fill;
+        filter: drop-shadow(0 0.35vmin 0.5vmin rgba(0, 0, 0, 0.35));
+        white-space: nowrap;
         z-index: 5;
         pointer-events: none;
+      }
+
+      /* ransom-note letters: each on its own torn scrap of paper */
+      .rn {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.05em 0.03em;
+        filter: drop-shadow(0 0.25vmin 0.35vmin rgba(60, 20, 20, 0.25));
+      }
+      .rn .w { display: flex; gap: 0.03em; margin-right: 0.18em; }
+      .rn i {
+        display: inline-grid;
+        place-items: center;
+        min-width: 0.78em;
+        padding: 0.12em 0.1em 0.06em;
+        font-style: normal;
+        line-height: 0.9;
+        color: var(--fg);
+        background:
+          radial-gradient(rgba(255, 255, 255, 0.35) 0.8px, transparent 1.2px) 0 0 / 5px 5px,
+          radial-gradient(rgba(0, 0, 0, 0.12) 0.8px, transparent 1.2px) 2px 3px / 7px 7px,
+          var(--bg);
+        font-family: var(--f);
+        rotate: var(--r);
+        translate: 0 var(--y);
+        clip-path: var(--clip);
       }
       .tag {
         position: fixed;
@@ -303,7 +336,7 @@
     <div class="obj sleeve" id="sleeve">
       <div>
         <small>side a · season one</small>
-        <h1>the<br />groupchat</h1>
+        <h1 class="rn" data-text="the groupchat"></h1>
       </div>
       <small>written by us · recorded mostly at 3am</small>
       <div class="pic"><img src="/cast/kavya.jpg" alt="Kavya" /></div>
@@ -421,6 +454,37 @@
       soundBtn.addEventListener('click', unlock);
       addEventListener('pointerdown', unlock, { once: true });
       addEventListener('keydown', unlock, { once: true });
+
+      // ---------- ransom-note letters ----------
+      (() => {
+        let seed = 7;
+        const r = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+        const papers = [
+          ['#e8664f', '#241f22'], ['#f3d27a', '#6e1d2a'], ['#8cc7a1', '#f6ead8'], ['#9db8e8', '#241f22'],
+          ['#f2b3c4', '#6e1d2a'], ['#f6ead8', '#b3262f'], ['#241f22', '#f3d27a'], ['#6e1d2a', '#f6ead8'],
+        ];
+        const fonts = ["'Alfa Slab One'", "'Abril Fatface'", "'Bowlby One'", "'Ultra'", "'Rubik'"];
+        const torn = () => {
+          const j = () => (r() * 7).toFixed(1);
+          return `polygon(${j()}% ${j()}%, 30% ${j() / 2}%, ${100 - j()}% ${j()}%, ${100 - j() / 2}% 50%, ${100 - j()}% ${100 - j()}%, 60% ${100 - j() / 2}%, ${j()}% ${100 - j()}%, ${j() / 2}% 45%)`;
+        };
+        let last = -1;
+        document.querySelectorAll('.rn').forEach((h) => {
+          h.innerHTML = h.dataset.text
+            .split(' ')
+            .map((word) => `<span class="w">${[...word]
+              .map((ch) => {
+                let k;
+                do k = Math.floor(r() * papers.length); while (k === last);
+                last = k;
+                const [bg, fg] = papers[k];
+                return `<i style="--bg:${bg};--fg:${fg};--f:${fonts[Math.floor(r() * fonts.length)]};--r:${(r() * 10 - 5).toFixed(1)}deg;--y:${(r() * 0.12 - 0.06).toFixed(2)}em;--clip:${torn()}">${r() < 0.5 ? ch.toUpperCase() : ch}</i>`;
+              })
+              .join('')}</span>`)
+            .join('');
+          h.setAttribute('aria-label', h.dataset.text);
+        });
+      })();
 
       // ---------- build the deck ----------
       const CAST = [
