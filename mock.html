@@ -12,9 +12,17 @@
     />
     <style>
       :root {
-        --paper: #f4ece0;
+        --cherry: #6e1d2a;
+        --black: #1d191b;
+        --cream: #f6ead8;
+        --butter: #f3d27a;
+        --mustard: #f2c94c;
+        --tomato: #e8664f;
+        --sage: #8cc7a1;
+        --sky: #9db8e8;
+        --paper: var(--cream);
         --ink: #241f22;
-        --soft: #8a7d76;
+        --soft: rgba(246, 234, 216, 0.6);
         --serif: 'Fraunces', Georgia, serif;
         --mono: 'Courier Prime', monospace;
         --S: min(54vmin, 440px); /* record / sleeve size */
@@ -25,17 +33,20 @@
         height: 100%;
         overflow: hidden;
         overscroll-behavior: none;
-        background: var(--paper);
-        color: var(--ink);
+        background: var(--cherry);
+        color: var(--cream);
         font-family: var(--mono);
       }
+      /* woven fabric texture, like the View-Master reference */
       body::before {
         content: '';
         position: fixed;
         inset: 0;
         pointer-events: none;
-        background: radial-gradient(rgba(120, 90, 60, 0.06) 1px, transparent 1.4px) 0 0 / 6px 6px;
-        z-index: 50;
+        background:
+          repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.13) 0 2px, transparent 2px 4px),
+          repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 2px, transparent 2px 5px);
+        z-index: 0;
       }
       .obj { position: absolute; will-change: transform; }
 
@@ -50,7 +61,7 @@
           radial-gradient(circle, transparent 0 31%, rgba(255, 255, 255, 0.05) 31.5%, transparent 32%),
           repeating-radial-gradient(circle, #1b1719 0 2px, #262124 2px 3px),
           #1b1719;
-        box-shadow: 0 1.5vmin 3vmin rgba(40, 25, 20, 0.25);
+        box-shadow: 0 1.5vmin 4vmin rgba(0, 0, 0, 0.45);
       }
       .record::after { /* a soft sheen so the spin reads */
         content: '';
@@ -64,7 +75,7 @@
         inset: 32%;
         border-radius: 50%;
         overflow: hidden;
-        background: #f3c9b8;
+        background: var(--butter);
         display: grid;
         place-items: center;
         box-shadow: inset 0 0 0 0.6vmin #f6e7d8;
@@ -72,23 +83,24 @@
       .label span {
         font: italic 500 calc(var(--S) * 0.045) / 1.1 var(--serif);
         text-align: center;
-        color: #6a3a2e;
+        color: var(--cherry);
       }
       .label i {
         position: absolute;
         width: 6%;
         height: 6%;
         border-radius: 50%;
-        background: var(--paper);
+        background: var(--black);
       }
       .sleeve {
         width: var(--S);
         height: var(--S);
         left: calc(38% - var(--S) / 2);
         top: calc(50% - var(--S) / 2);
-        background: #efe2cf;
+        background: var(--cream);
+        color: var(--cherry);
         border-radius: 0.6vmin;
-        box-shadow: 0 1.6vmin 3.6vmin rgba(60, 35, 20, 0.22), inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 1.6vmin 4vmin rgba(0, 0, 0, 0.4);
         padding: calc(var(--S) * 0.07);
         display: flex;
         flex-direction: column;
@@ -104,7 +116,7 @@
         font: 400 calc(var(--S) * 0.03) / 1.4 var(--mono);
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: var(--soft);
+        color: rgba(110, 29, 42, 0.65);
       }
       .sleeve .pic {
         position: absolute;
@@ -128,50 +140,60 @@
         pointer-events: none;
       }
 
-      /* ---- photobooth ---- */
-      .slot {
+      /* ---- trading cards ---- */
+      .pcard {
         left: 50%;
-        top: 0;
-        width: min(30vmin, 240px);
-        height: 4vmin;
-        translate: -50% 0;
-        background: #c8b49c;
-        border-radius: 0 0 1.4vmin 1.4vmin;
-        box-shadow: inset 0 -0.8vmin 0 #a8927a;
-        z-index: 4;
-      }
-      .strip {
-        left: 50%;
-        top: 0;
-        width: min(17vmin, 150px);
-        margin-left: calc(min(17vmin, 150px) / -2);
-        padding: 1.2vmin 1.2vmin 3vmin;
-        background: #fffaf2;
-        box-shadow: 0 1.2vmin 3vmin rgba(60, 35, 20, 0.2);
+        top: 50%;
+        width: min(28vmin, 240px);
+        aspect-ratio: 5 / 7.4;
+        margin: calc(min(28vmin, 240px) * -0.74) 0 0 calc(min(28vmin, 240px) / -2);
+        padding: 4.5%;
+        border-radius: 5%;
+        background: var(--c);
+        box-shadow: 0 1.6vmin 4vmin rgba(0, 0, 0, 0.5);
         display: flex;
         flex-direction: column;
-        gap: 1vmin;
+        gap: 3%;
         z-index: 3;
       }
-      .frame {
-        aspect-ratio: 1 / 1.08;
+      .pcard .tagline {
+        align-self: flex-start;
+        padding: 3% 6% 2.4%;
+        border-radius: 99px;
+        background: var(--cream);
+        color: var(--ink);
+        font: 700 calc(min(28vmin, 240px) * 0.052) / 1 var(--mono);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        rotate: -2deg;
+      }
+      .pcard .ph {
+        flex: 1;
+        min-height: 0;
+        border-radius: 4%;
         overflow: hidden;
-        background: #eadbc8;
+        background: rgba(255, 255, 255, 0.35);
         display: grid;
         place-items: center;
       }
-      .frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
-      .frame span { font: italic 500 7vmin/1 var(--serif); color: rgba(36, 31, 34, 0.45); }
-      .strip small {
-        position: absolute;
-        bottom: 0.8vmin;
-        left: 0;
-        right: 0;
-        text-align: center;
-        font: 400 1.3vmin/1 var(--mono);
-        letter-spacing: 0.15em;
-        color: var(--soft);
+      .pcard .ph img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; display: block; }
+      .pcard .ph span { font: italic 500 calc(min(28vmin, 240px) * 0.3) / 1 var(--serif); color: rgba(36, 31, 34, 0.5); }
+      .pcard .name {
+        font: italic 500 calc(min(28vmin, 240px) * 0.11) / 1 var(--serif);
+        color: var(--ink);
       }
+      .pcard dl {
+        margin: 0;
+        padding: 3% 5%;
+        border-radius: 4%;
+        background: rgba(255, 252, 245, 0.55);
+        color: var(--ink);
+        font: 400 calc(min(28vmin, 240px) * 0.043) / 1.45 var(--mono);
+      }
+      .pcard dl div { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(36, 31, 34, 0.2); }
+      .pcard dl div:last-child { border-bottom: 0; }
+      .pcard dt { text-transform: uppercase; letter-spacing: 0.05em; }
+      .pcard dd { margin: 0; font-weight: 700; }
 
       /* ---- view-master ---- */
       .vm {
@@ -182,7 +204,7 @@
         margin-left: calc(min(96vmin, 860px) / -2);
         border-radius: 50%;
         background: radial-gradient(circle, #f6f1e7 0 58%, #ebe3d5 100%);
-        box-shadow: 0 2vmin 5vmin rgba(60, 35, 20, 0.25);
+        box-shadow: 0 2vmin 6vmin rgba(0, 0, 0, 0.45);
         z-index: 2;
       }
       .vm .s {
@@ -247,9 +269,9 @@
         font: 400 12px/1 var(--mono);
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: var(--ink);
-        background: #fffaf2;
-        border: 1px solid #d9cbb8;
+        color: var(--cream);
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(246, 234, 216, 0.35);
         border-radius: 99px;
         padding: 8px 12px 7px;
         cursor: pointer;
@@ -265,9 +287,9 @@
     <!-- 1. vinyl -->
     <div class="obj record" id="record"><div class="label"><span>the<br />groupchat</span><i></i></div></div>
     <svg class="obj tonearm" id="arm" viewBox="0 0 100 100" aria-hidden="true">
-      <circle cx="85" cy="12" r="7" fill="#cbbfae" />
+      <circle cx="85" cy="12" r="7" fill="#e9dcc6" />
       <circle cx="85" cy="12" r="3" fill="#8f8478" />
-      <path d="M85 12 L40 78 L30 84" stroke="#b9ad9c" stroke-width="2.6" fill="none" stroke-linecap="round" />
+      <path d="M85 12 L40 78 L30 84" stroke="#e9dcc6" stroke-width="2.6" fill="none" stroke-linecap="round" />
       <rect x="22" y="80" width="12" height="7" rx="1.5" fill="#6f6359" transform="rotate(-30 28 84)" />
     </svg>
     <div class="obj sleeve" id="sleeve">
@@ -280,16 +302,9 @@
     </div>
     <div class="word" id="w1" style="left: 50%; bottom: 9%; translate: -50% 0">press play</div>
 
-    <!-- 2. photobooth -->
-    <div class="obj slot" id="slot"></div>
-    <div class="obj strip" id="strip">
-      <div class="frame"><img src="/cast/kavya.jpg" alt="Kavya" /></div>
-      <div class="frame"><span>F</span></div>
-      <div class="frame"><span>T</span></div>
-      <div class="frame"><span>S</span></div>
-      <small>THE CAST · 4 POSES</small>
-    </div>
-    <div class="word" id="w2" style="left: 8%; top: 40%">starring<br />all of us</div>
+    <!-- 2. trading cards: the cast -->
+    <div id="deck"></div>
+    <div class="word" id="w2" style="left: 50%; top: 9%; translate: -50% 0; text-align: center">starring all of us</div>
 
     <!-- 3. view-master -->
     <div class="obj vm" id="vm"></div>
@@ -360,10 +375,10 @@
           };
           if (on) pop();
         },
-        // one photobooth frame: motor whir + shutter tick
-        booth() {
-          this.tone(110, 0.18, 0.06, 'sawtooth');
-          this.burst('bandpass', 2600, 0.03, 0.18, 0.16);
+        // a card flicked onto the table
+        flick() {
+          this.burst('bandpass', 3200, 0.05, 0.22, 0, 1800);
+          this.burst('lowpass', 500, 0.06, 0.18, 0.04);
         },
         // view-master advance: the two-part click
         click() {
@@ -399,6 +414,22 @@
       addEventListener('pointerdown', unlock, { once: true });
       addEventListener('keydown', unlock, { once: true });
 
+      // ---------- build the deck ----------
+      const CAST = [
+        { name: 'Kavya', title: 'The 3am Builder', c: 'var(--mustard)', photo: '/cast/kavya.jpg', stats: [['plans made', '12'], ['plans kept', '9'], ['bedtime', '3:04am']] },
+        { name: 'Friend Two', title: 'Voice Note Queen', c: 'var(--tomato)', stats: [['voice notes', '412'], ['avg length', '6 min'], ['ever typed', 'once']] },
+        { name: 'Friend Three', title: 'Just One Drink', c: 'var(--sage)', stats: [['drinks planned', '1'], ['drinks had', '4'], ['regrets', '0']] },
+        { name: 'Friend Four', title: 'The Spreadsheet', c: 'var(--sky)', stats: [['spreadsheets', '23'], ['trips planned', '6'], ['trips taken', '2']] },
+      ];
+      const deck = document.getElementById('deck');
+      deck.innerHTML = CAST.map((f) => `<article class="obj pcard" style="--c:${f.c}">
+          <span class="tagline">${f.title}</span>
+          <div class="ph">${f.photo ? `<img src="${f.photo}" alt="${f.name}">` : `<span>${f.name[0]}</span>`}</div>
+          <span class="name">${f.name}</span>
+          <dl>${f.stats.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+        </article>`).join('');
+      const cards = [...deck.children];
+
       // ---------- build the view-master ----------
       const vm = document.getElementById('vm');
       const pics = ['<img src="/cast/kavya.jpg" alt="">', '<span>F</span>', '<span>T</span>', '<span>S</span>', '<span>you</span>', '<img src="/cast/kavya.jpg" alt="">', '<span>F</span>'];
@@ -409,10 +440,15 @@
 
       // ---------- scroll drives a playhead; objects follow it ----------
       const $ = (id) => document.getElementById(id);
-      const el = { record: $('record'), sleeve: $('sleeve'), arm: $('arm'), strip: $('strip'), slot: $('slot'), vm, w1: $('w1'), w2: $('w2'), w3: $('w3'), beat: $('beat') };
+      const el = { record: $('record'), sleeve: $('sleeve'), arm: $('arm'), vm, w1: $('w1'), w2: $('w2'), w3: $('w3'), beat: $('beat') };
       const MAX = 3;
       let target = 0, p = 0, idle = null, spin = 0, last = performance.now();
       const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+      const mix = (a, b, t) => {
+        const h = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+        const [x, y] = [h(a), h(b)];
+        return `rgb(${x.map((v, i) => Math.round(v + (y[i] - v) * t)).join(',')})`;
+      };
       const ease = (t) => 1 - Math.pow(1 - t, 3);
 
       function nudge(d) {
@@ -465,22 +501,30 @@
         el.sleeve.style.transform = `translate(${-t1 * W * 0.05}px, ${ease(t1) * H * 1.1}px) rotate(${-t1 * 10}deg)`;
         const armIn = clamp((t0 - 0.75) / 0.25, 0, 1) * (1 - clamp(t1 * 4, 0, 1));
         el.arm.style.transform = `translateX(${out}px) rotate(${-38 + armIn * 38}deg)`;
-        el.arm.style.opacity = clamp(t0 * 3 - 1.5, 0, 1) * (1 - t1);
+        el.arm.style.opacity = clamp(t0 * 3 - 1.5, 0, 1) * (1 - clamp(t1 * 3, 0, 1));
         el.w1.style.opacity = clamp((t0 - 0.6) * 3, 0, 1) * (1 - t1 * 3);
         el.w1.style.transform = `translateY(${(1 - t0) * 20}px)`;
 
         crossed('slide', t0, 0.2, (d) => d > 0 && snd.slide());
         crossed('needle', armIn, 0.98, (d) => (d > 0 ? snd.needle() : snd.crackle(false)));
 
-        // 2 · a photobooth strip feeds down from the slot, one frame at a time
-        const stripH = el.strip.offsetHeight;
-        const feed = ease(t1);
-        const stripY = -stripH + feed * (stripH + el.slot.offsetHeight * 0.6);
-        const flyX = ease(t2) * -W * 0.8;
-        el.strip.style.transform = `translate(${flyX}px, ${stripY + t2 * H * 0.15}px) rotate(${t2 * -24 + Math.sin(t1 * Math.PI) * 2}deg)`;
-        el.slot.style.transform = `translateY(${(1 - clamp(t0 * 2 - 1, 0, 1)) * -100 + t2 * -100}%)`;
-        el.w2.style.opacity = clamp((t1 - 0.5) * 3, 0, 1) * (1 - t2 * 3);
-        for (let k = 1; k <= 4; k++) crossed('booth' + k, t1, k / 4.2, (d) => d > 0 && snd.booth());
+        // 2 · the cast is dealt like trading cards, one flick at a time, then swept away
+        const cw = cards[0].offsetWidth;
+        const spread = Math.min(cw * 0.78, (W * 0.94 - cw) / (cards.length - 1));
+        cards.forEach((card, k) => {
+          const deal = ease(clamp((t1 - 0.1 - k * 0.17) / 0.3, 0, 1));
+          const off = k - (cards.length - 1) / 2;
+          const fx = off * spread, fy = Math.abs(off) * cw * 0.1 + cw * 0.12, fr = off * 7;
+          const sx = -W * 0.1, sy = H * 0.9, sr = -25 + k * 6; // the deck, below the table edge
+          const sweep = ease(clamp((t2 - k * 0.05) / 0.5, 0, 1));
+          const x = sx + (fx - sx) * deal + sweep * (off * W * 0.15);
+          const y = sy + (fy - sy) * deal + sweep * H;
+          const r = sr + (fr - sr) * deal + sweep * off * 20;
+          card.style.transform = `translate(${x}px, ${y}px) rotate(${r}deg)`;
+          card.style.zIndex = 3 + k;
+          crossed('card' + k, deal, 0.6, (d) => d > 0 && snd.flick());
+        });
+        el.w2.style.opacity = clamp((t1 - 0.65) * 3, 0, 1) * (1 - t2 * 3);
 
         // 3 · the view-master rises and turns with your scroll, clicking at every picture
         const rise = ease(clamp(t2 / 0.45, 0, 1));
@@ -491,6 +535,10 @@
         for (let k = 1; k <= 3; k++) crossed('vm' + k, turn, k * (360 / 7) - 1, () => snd.click());
 
         el.beat.textContent = p < 0.5 ? 'side a' : p < 1.5 ? 'side a · playing' : p < 2.5 ? 'the cast' : 'and you';
+
+        // the room changes colour with the playhead: cherry fabric → black card table → cherry
+        const dark = clamp(p - 1, 0, 1) * (1 - clamp(p - 2, 0, 1));
+        document.body.style.backgroundColor = mix('#6e1d2a', '#1d191b', dark);
         requestAnimationFrame(frame);
       }
       requestAnimationFrame(frame);
