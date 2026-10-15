@@ -846,6 +846,25 @@
       .mini .np small { font: 400 10px/1 var(--mono); letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.75; }
       .mini .np b { font: 400 17px/1 'Bowlby One', sans-serif; letter-spacing: 0.02em; color: #fbf6ec; }
       .mini.paused .np small::after { content: ' · paused'; }
+      .modebtn {
+        position: fixed;
+        z-index: 60;
+        top: 14px;
+        left: 50%;
+        translate: -50% 0;
+        font: 400 11px/1 var(--mono);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #f3e7d2;
+        background: rgba(20, 12, 8, 0.6);
+        border: 1px solid rgba(243, 231, 210, 0.3);
+        padding: 7px 14px 6px;
+        border-radius: 99px;
+        cursor: pointer;
+        transition: scale 0.15s, background 0.2s;
+      }
+      .modebtn:hover { scale: 1.05; background: rgba(20, 12, 8, 0.78); }
+      .modebtn:active { scale: 0.96; }
       #sound {
         position: fixed;
         z-index: 60;
@@ -877,7 +896,8 @@
       <span class="np"><small>now playing</small><b>island in the sun</b></span>
     </button>
     <span class="tag bl" id="beat">side a</span>
-    <span class="tag br">scroll ↓</span>
+    <span class="tag br" id="hintTag">scroll ↓</span>
+    <button class="modebtn" id="mode" type="button" aria-label="Play automatically">auto&nbsp;▶</button>
 
     <!-- 1. the suitcase record player -->
     <div class="obj player" id="player">
@@ -1238,7 +1258,38 @@ history.scrollRestoration = 'manual';
       };
       const ease = (t) => 1 - Math.pow(1 - t, 3);
 
+      // ---------- autoplay vs scroll ----------
+      let auto = false, autoTimer = null, autoStep = -1;
+      const modeBtn = document.getElementById('mode');
+      const hintTag = document.getElementById('hintTag');
+      // how long to linger on each scene before advancing on its own
+      function dwell(step) {
+        if (step === 0) return 2600;                 // the record (plays, then moves on)
+        if (step === MAX - 1) return 9000;           // this week's episode: time to read it type out
+        if (step === MAX - 2) return 4200;           // previously on
+        if (step >= 2 && step <= 1 + CASTN) return 2600; // each friend's intro
+        return 3400;
+      }
+      function scheduleAuto() {
+        clearTimeout(autoTimer);
+        if (!auto) return;
+        const step = Math.round(p);
+        if (step >= MAX) { setAuto(false); return; } // reached the end
+        autoTimer = setTimeout(() => { if (auto) target = Math.min(MAX, step + 1); }, dwell(step));
+      }
+      function setAuto(on) {
+        auto = on;
+        autoStep = -1;
+        clearTimeout(autoTimer);
+        modeBtn.textContent = on ? 'auto ❙❙' : 'auto ▶';
+        modeBtn.setAttribute('aria-label', on ? 'Pause autoplay' : 'Play automatically');
+        hintTag.style.opacity = on ? '0.3' : '';
+        if (on) { play(); scheduleAuto(); } // the click is the gesture that lets the song start
+      }
+      modeBtn.addEventListener('click', () => setAuto(!auto));
+
       function nudge(d) {
+        if (auto) setAuto(false); // any manual scroll drops back to scroll mode
         target = clamp(target + d, 0, MAX);
         clearTimeout(idle);
         // settle on the nearest beat when you stop
@@ -1254,8 +1305,9 @@ history.scrollRestoration = 'manual';
         ty = y;
       }, { passive: false });
       addEventListener('keydown', (e) => {
-        if (['ArrowDown', 'ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); target = clamp(Math.round(target) + 1, 0, MAX); }
-        if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); target = clamp(Math.round(target) - 1, 0, MAX); }
+        const down = ['ArrowDown', 'ArrowRight', ' ', 'PageDown'].includes(e.key);
+        const up = ['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key);
+        if (down || up) { if (auto) setAuto(false); e.preventDefault(); target = clamp(Math.round(target) + (down ? 1 : -1), 0, MAX); }
       });
 
       // fire a sound once each time a movement crosses a mark
@@ -1272,6 +1324,7 @@ history.scrollRestoration = 'manual';
         last = now;
         p += (target - p) * Math.min(1, dt * 9);
         if (Math.abs(target - p) < 0.0005) p = target;
+        if (auto && p === target) { const st = Math.round(p); if (st !== autoStep) { autoStep = st; scheduleAuto(); } }
         // only do the per-frame layout when something is actually changing
         const spinning = p < 1.35 && songOn && !paused;
         const typingNow = typing.started && !fEp.classList.contains('done');
