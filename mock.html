@@ -88,187 +88,67 @@
       }
       .obj { position: absolute; will-change: transform; }
 
-      /* ---- suitcase record player ---- */
+      /* ---- the record player: a real flash photo, with the record, sleeve and lid photos live on top ----
+         all positions are % of the square photo */
       .player {
-        --P: min(86vw, 58vh, 600px);
+        --P: min(100vw, 100vh);
         left: 50%;
-        top: 46%;
+        top: 50%;
         width: var(--P);
-        margin-left: calc(var(--P) / -2);
-        margin-top: calc(var(--P) * -0.61);
+        aspect-ratio: 1;
+        margin: calc(var(--P) / -2) 0 0 calc(var(--P) / -2);
         z-index: 2;
+        /* fade the photo's edges into the table so it's all one surface */
+        -webkit-mask: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent), linear-gradient(transparent, #000 7%, #000 93%, transparent);
+        -webkit-mask-composite: source-in;
+        mask: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent) intersect, linear-gradient(transparent, #000 7%, #000 93%, transparent);
       }
-      .lid, .base {
-        position: relative;
-        width: 100%;
-        background: #efe3cd;
-        box-shadow: 0 1.6vmin 4vmin rgba(10, 20, 60, 0.35), inset 0 0 0 calc(var(--P) * 0.012) rgba(150, 110, 70, 0.18);
+      .player > img.photo { display: block; width: 100%; height: 100%; }
+      /* our friends in the lid's Polaroids */
+      .lidpic {
+        position: absolute;
+        overflow: hidden;
+        translate: -50% -50%;
+        filter: saturate(0.85) contrast(1.05) brightness(0.95) sepia(0.12);
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
       }
-      .lid::after, .base::after { /* stitched edge */
+      .lidpic img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+      .lidpic::after { /* a little of the photo's own flash and grain */
         content: '';
         position: absolute;
-        inset: calc(var(--P) * 0.018);
-        border: 1.5px dashed rgba(140, 100, 60, 0.35);
-        border-radius: calc(var(--P) * 0.02);
-        pointer-events: none;
+        inset: 0;
+        background: linear-gradient(120deg, rgba(255, 255, 255, 0.18), transparent 45%);
       }
-      .lid {
-        height: calc(var(--P) * 0.6);
-        border-radius: calc(var(--P) * 0.035) calc(var(--P) * 0.035) calc(var(--P) * 0.008) calc(var(--P) * 0.008);
-        padding: calc(var(--P) * 0.04);
-      }
-      .hinge {
-        height: calc(var(--P) * 0.018);
-        margin: 0 4%;
-        background: #8c6a4a;
-        border-radius: 99px;
-      }
-      .base {
-        height: calc(var(--P) * 0.6);
-        border-radius: calc(var(--P) * 0.008) calc(var(--P) * 0.008) calc(var(--P) * 0.035) calc(var(--P) * 0.035);
-        padding: calc(var(--P) * 0.04);
-      }
-      .latch {
+      /* the record sits on the photo's platter; the wrapper squashes it to the camera's angle */
+      .recwrap {
         position: absolute;
-        bottom: calc(var(--P) * -0.012);
-        width: calc(var(--P) * 0.07);
-        height: calc(var(--P) * 0.03);
-        border-radius: calc(var(--P) * 0.006);
-        background: linear-gradient(#e2c27a, #b8913e);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-      }
-      .latch.l { left: 18%; }
-      .latch.r { right: 18%; }
-
-      /* the lid lining is a scrapbook page */
-      .lidin {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        border-radius: calc(var(--P) * 0.012);
-        overflow: hidden;
-        background:
-          radial-gradient(rgba(120, 90, 60, 0.08) 1px, transparent 1.4px) 0 0 / 5px 5px,
-          #f7efe2;
-      }
-      .lidin > * { position: absolute; }
-      .lidin .rn { left: 6%; top: 8%; width: 52%; font-size: calc(var(--P) * 0.05); }
-      .snap {
-        background: #fff;
-        padding: 3% 3% 10%;
-        box-shadow: 0 0.6vmin 1.4vmin rgba(60, 40, 30, 0.22);
-      }
-      .snap img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 30%; }
-      .snap b {
-        position: absolute;
-        left: 0; right: 0; bottom: 2%;
-        text-align: center;
-        font: 600 calc(var(--P) * 0.032) / 1 'Caveat', cursive;
-        color: #3a2a2a;
-      }
-      .snap.a { right: 6%; top: 7%; width: 24%; rotate: 6deg; }
-      .snap.b { right: 34%; top: 36%; width: 19%; rotate: -6deg; }
-      .tape {
-        position: absolute;
-        top: -5%;
-        left: 50%;
-        width: 50%;
-        height: 9%;
-        translate: -50% 0;
-        background: rgba(236, 222, 190, 0.85);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-      }
-      .snap.a .tape { rotate: -8deg; }
-      .snap.b .tape { rotate: 6deg; }
-      .ticket {
-        left: 5%;
-        bottom: 3%;
-        width: 31%;
-        padding: 3% 4%;
-        background: #f3d27a;
-        rotate: -4deg;
-        font: 400 calc(var(--P) * 0.02) / 1.35 var(--mono);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: #6e1d2a;
-        box-shadow: 0 0.4vmin 1vmin rgba(60, 40, 30, 0.18);
-        -webkit-mask: radial-gradient(circle calc(var(--P) * 0.012) at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat,
-          radial-gradient(circle calc(var(--P) * 0.012) at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
-        mask: radial-gradient(circle calc(var(--P) * 0.012) at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat,
-          radial-gradient(circle calc(var(--P) * 0.012) at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
-      }
-      .ticket strong { display: block; font: 400 calc(var(--P) * 0.034) / 1 'Bowlby One', sans-serif; letter-spacing: 0.02em; }
-      .note {
-        left: 7%;
-        top: 33%;
-        width: 27%;
-        padding: 3% 4% 4%;
-        rotate: 3deg;
-        background:
-          repeating-linear-gradient(transparent 0 calc(var(--P) * 0.026), rgba(120, 150, 200, 0.35) calc(var(--P) * 0.026) calc(var(--P) * 0.028)),
-          #fffdf7;
-        font: 600 calc(var(--P) * 0.03) / 1.15 'Caveat', cursive;
-        color: #2f3f8a;
-        box-shadow: 0 0.4vmin 1vmin rgba(60, 40, 30, 0.15);
-      }
-      .stk { font-size: calc(var(--P) * 0.06); filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2)); }
-      .stk.heart { right: 4%; top: 58%; color: #e8664f; rotate: 12deg; }
-      .stk.star { left: 34%; bottom: 18%; color: #e9b949; rotate: -10deg; }
-      .bubble {
-        left: 38%;
-        top: 36%;
-        z-index: 2;
-        white-space: nowrap;
-        padding: 1.2% 2.4%;
-        border-radius: 99px;
-        background: #9db8e8;
-        font: 400 calc(var(--P) * 0.026) / 1 'Bowlby One', sans-serif;
-        color: #fff;
-        rotate: -8deg;
-        box-shadow: 0 0 0 calc(var(--P) * 0.006) #fff, 0 0.4vmin 0.8vmin rgba(0, 0, 0, 0.15);
-      }
-
-      /* the deck: platter, record, tonearm */
-      .deck {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        border-radius: calc(var(--P) * 0.015);
-        background: #2a2627;
-        box-shadow: inset 0 0 0 calc(var(--P) * 0.006) #3a3537;
-      }
-      .platter {
-        position: absolute;
-        left: calc(var(--P) * 0.13);
-        top: calc(var(--P) * 0.03);
-        width: calc(var(--P) * 0.46);
-        height: calc(var(--P) * 0.46);
-        border-radius: 50%;
-        background: repeating-radial-gradient(circle, #4a4446 0 2px, #403a3c 2px 4px);
+        left: 44.25%;
+        top: 51.4%;
+        width: 31.5%;
+        aspect-ratio: 1;
+        translate: -50% -50%;
+        transform: scaleY(0.9);
       }
       .record {
-        position: absolute;
-        left: calc(var(--P) * 0.135);
-        top: calc(var(--P) * 0.035);
-        width: calc(var(--P) * 0.45);
-        height: calc(var(--P) * 0.45);
+        width: 100%;
+        height: 100%;
         border-radius: 50%;
         background:
           radial-gradient(circle, transparent 0 31%, rgba(255, 255, 255, 0.05) 31.5%, transparent 32%),
-          repeating-radial-gradient(circle, #1b1719 0 2px, #262124 2px 3px),
-          #1b1719;
-        box-shadow: 0 0.6vmin 1.4vmin rgba(0, 0, 0, 0.5);
+          repeating-radial-gradient(circle, #151214 0 1.5px, #221d20 1.5px 2.6px),
+          #151214;
+        box-shadow: 0 0.4vmin 1vmin rgba(0, 0, 0, 0.55);
       }
       .record::after {
         content: '';
         position: absolute;
         inset: 0;
         border-radius: 50%;
-        background: conic-gradient(from 20deg, transparent 0 10%, rgba(255, 255, 255, 0.12) 14%, transparent 20% 60%, rgba(255, 255, 255, 0.08) 64%, transparent 70%);
+        background: conic-gradient(from 20deg, transparent 0 10%, rgba(255, 240, 220, 0.16) 14%, transparent 20% 60%, rgba(255, 240, 220, 0.1) 64%, transparent 70%);
       }
       .label {
         position: absolute;
-        inset: 32%;
+        inset: 33%;
         border-radius: 50%;
         overflow: hidden;
         background: var(--brat);
@@ -276,71 +156,52 @@
         place-items: center;
       }
       .label span {
-        font: 400 calc(var(--P) * 0.024) / 1 Arial, 'Helvetica Neue', sans-serif;
+        font: 400 calc(var(--P) * 0.016) / 1 Arial, 'Helvetica Neue', sans-serif;
         letter-spacing: -0.02em;
         color: #000;
         transform: scaleX(0.86);
-        filter: blur(0.4px);
+        filter: blur(0.3px);
       }
       .label i {
         position: absolute;
         width: 7%;
         height: 7%;
         border-radius: 50%;
-        background: #2a2627;
+        background: #3a3537;
       }
-      .tonearm {
-        position: absolute;
-        left: calc(var(--P) * 0.349);
-        top: calc(var(--P) * -0.017);
-        width: calc(var(--P) * 0.55);
-        height: calc(var(--P) * 0.55);
-        transform-origin: 82% 14%;
-        pointer-events: none;
-        z-index: 2;
-      }
-      .knob {
-        position: absolute;
-        width: calc(var(--P) * 0.05);
-        height: calc(var(--P) * 0.05);
-        border-radius: 50%;
-        background: radial-gradient(circle at 40% 35%, #f3ead8, #b9ad9a);
-      }
-      .speed {
-        position: absolute;
-        right: calc(var(--P) * 0.03);
-        bottom: calc(var(--P) * 0.028);
-        font: 400 calc(var(--P) * 0.018) / 1 var(--mono);
-        letter-spacing: 0.12em;
-        color: #b9ad9a;
-      }
-
       /* the sleeve starts on top of the record, then slides off */
       .sleeve {
         position: absolute;
-        left: calc(var(--P) * 0.12);
-        top: calc(var(--P) * 0.02);
-        width: calc(var(--P) * 0.48);
-        height: calc(var(--P) * 0.48);
-        background: var(--cream);
-        color: var(--cherry);
-        border-radius: 0.5vmin;
-        box-shadow: 0 1.4vmin 3vmin rgba(0, 0, 0, 0.4);
-        padding: calc(var(--P) * 0.03);
+        left: 44.25%;
+        top: 51.4%;
+        width: 35%;
+        height: 32%;
+        margin: -16% 0 0 -17.5%;
+        background:
+          radial-gradient(rgba(120, 100, 80, 0.06) 0.7px, transparent 1px) 0 0 / 3px 3px,
+          linear-gradient(160deg, #f8f1e4, #ebe0cc);
+        color: #6e1d2a;
+        border-radius: 0.3vmin;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.35), 0 1.2vmin 2.6vmin rgba(0, 0, 0, 0.45);
+        padding: 3%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         z-index: 3;
+        cursor: pointer;
+        rotate: -3deg;
       }
+      .sleeve:focus-visible { outline: 3px solid #8ace00; outline-offset: 4px; }
       .sleeve small {
-        font: 400 calc(var(--P) * 0.018) / 1.4 var(--mono);
+        font: 400 calc(var(--P) * 0.013) / 1.4 var(--mono);
         letter-spacing: 0.12em;
         text-transform: uppercase;
         color: rgba(110, 29, 42, 0.7);
       }
-      .sleeve { cursor: pointer; transition: box-shadow 0.2s ease; }
-      .sleeve:hover { box-shadow: 0 2vmin 4vmin rgba(0, 0, 0, 0.5); }
-      .sleeve:focus-visible { outline: 3px solid #8ace00; outline-offset: 4px; }
+      .sleeve big {
+        font: 400 calc(var(--P) * 0.05) / 0.95 'Bowlby One', sans-serif;
+        color: #d8462f;
+      }
       .sleeve .tri {
         display: inline-block;
         width: 0;
@@ -353,27 +214,23 @@
         animation: nudgeTri 1.6s ease-in-out infinite;
       }
       @keyframes nudgeTri { 50% { translate: 0.12em 0; } }
-      .sleeve big {
-        font: 400 calc(var(--P) * 0.07) / 0.95 'Bowlby One', sans-serif;
-        color: #e8664f;
-      }
       .sleeve .rpm {
         position: absolute;
-        right: 8%;
-        bottom: 10%;
-        width: 26%;
+        right: 7%;
+        bottom: 9%;
+        width: 24%;
         aspect-ratio: 1;
         border-radius: 50%;
         background: #fffaf2;
-        box-shadow: 0 0.4vmin 0.8vmin rgba(0, 0, 0, 0.15);
+        box-shadow: 0 0.3vmin 0.6vmin rgba(0, 0, 0, 0.15);
         display: grid;
         place-items: center;
         text-align: center;
         rotate: 12deg;
-        font: 400 calc(var(--P) * 0.022) / 1.1 'Bowlby One', sans-serif;
-        color: var(--cherry);
+        font: 400 calc(var(--P) * 0.016) / 1.1 'Bowlby One', sans-serif;
+        color: #6e1d2a;
       }
-      .sleeve .rpm small { display: block; font-size: calc(var(--P) * 0.014); }
+      .sleeve .rpm small { display: block; font-size: calc(var(--P) * 0.01); }
 
       /* ---- playing cards with collage glued on: real cards, inside jokes ---- */
       .pcard {
@@ -701,39 +558,14 @@
 
     <!-- 1. the suitcase record player -->
     <div class="obj player" id="player">
-      <div class="lid">
-        <div class="lidin">
-          <h1 class="rn" data-text="the groupchat"></h1>
-          <span class="bubble">crank it</span>
-          <figure class="snap a"><i class="tape"></i><img src="/cast/kavya.jpg" alt="arkavs" /><b>arkavs</b></figure>
-          <figure class="snap b"><i class="tape"></i><img src="/cast/friend2.jpg" alt="hesatwink" /><b>hesatwink</b></figure>
-          <p class="note">recorded mostly at 3am ♡</p>
-          <div class="ticket"><strong>admit all</strong>side a · season one<br />no. 000001</div>
-          <span class="stk heart">♥</span>
-          <span class="stk star">★</span>
-        </div>
-      </div>
-      <div class="hinge"></div>
-      <div class="base">
-        <div class="deck">
-          <div class="platter"></div>
-          <div class="record" id="record"><div class="label"><span>the groupchat</span><i></i></div></div>
-          <svg class="tonearm" id="arm" viewBox="0 0 100 100" aria-hidden="true">
-            <circle cx="82" cy="14" r="8" fill="#d9cfbf" />
-            <circle cx="82" cy="14" r="3.5" fill="#7d7266" />
-            <path d="M82 14 L30 70 L20 80" stroke="#e9dcc6" stroke-width="2.8" fill="none" stroke-linecap="round" />
-            <rect x="13" y="76" width="13" height="8" rx="1.6" fill="#6f6359" transform="rotate(-45 19 80)" />
-          </svg>
-          <i class="knob" style="right: 9%; bottom: 22%"></i>
-          <i class="knob" style="right: 20%; bottom: 14%"></i>
-          <span class="speed">33 · 45</span>
-          <div class="sleeve" id="sleeve" role="button" tabindex="0" aria-label="Play me: turn on the sound and start the record">
-            <small>side a · season one</small>
-            <big><span class="tri"></span>play<br />me</big>
-            <div class="rpm"><span>33⅓<small>RPM</small></span></div>
-          </div>
-        </div>
-        <i class="latch l"></i><i class="latch r"></i>
+      <img class="photo" src="/scenes/player.jpg" alt="An open cream suitcase record player on a dark wooden bar table, Polaroids and tickets taped inside the lid" />
+      <div class="lidpic" style="left: 34.4%; top: 15%; width: 11%; height: 6.3%; rotate: -7deg"><img src="/cast/kavya.jpg" alt="arkavs" /></div>
+      <div class="lidpic" style="left: 65.3%; top: 14.4%; width: 9.8%; height: 7%; rotate: 11deg"><img src="/cast/friend2.jpg" alt="hesatwink" /></div>
+      <div class="recwrap"><div class="record" id="record"><div class="label"><span>the groupchat</span><i></i></div></div></div>
+      <div class="sleeve" id="sleeve" role="button" tabindex="0" aria-label="Play me: turn on the sound and start the record">
+        <small>side a · season one</small>
+        <big><span class="tri"></span>play<br />me</big>
+        <div class="rpm"><span>33⅓<small>RPM</small></span></div>
       </div>
     </div>
 
@@ -976,7 +808,7 @@ history.scrollRestoration = 'manual';
       scrollTo(0, 0);
       addEventListener('scroll', () => { if (scrollY || scrollX) scrollTo(0, 0); });
       const kraft = $('kraft'), weave = $('weave');
-      const el = { player: $('player'), record: $('record'), sleeve: $('sleeve'), arm: $('arm'), vm, w2: $('w2'), w3: $('w3'), beat: $('beat') };
+      const el = { player: $('player'), record: $('record'), sleeve: $('sleeve'), vm, w2: $('w2'), w3: $('w3'), beat: $('beat') };
       const MAX = 3;
       let target = 0, p = 0, idle = null, spin = 0, last = performance.now();
       const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -1029,13 +861,12 @@ history.scrollRestoration = 'manual';
         // 1 · the sleeve slides off the record, the needle drops, the record spins on the player;
         //     then the whole player (record and all) slides away
         const off = ease(t0);
-        el.sleeve.style.transform = `translate(${-off * P * 0.62}px, ${off * P * 0.22}px) rotate(${-off * 14}deg)`;
+        el.sleeve.style.transform = `translate(${-off * P * 0.55}px, ${off * P * 0.3}px) rotate(${-off * 16}deg)`;
         const playing = t0 > 0.98;
         if (playing) spin += dt * 200; // 33 rpm-ish while the needle is down
         el.record.style.transform = `rotate(${t0 * 40 + spin}deg)`;
-        el.player.style.transform = `translateY(${ease(t1) * H * 1.15}px) rotate(${t1 * 6}deg)`;
+        el.player.style.transform = `translateY(${ease(t1) * H * 1.15}px)`;
         const armIn = clamp((t0 - 0.7) / 0.3, 0, 1) * (1 - clamp(t1 * 4, 0, 1));
-        el.arm.style.transform = `rotate(${-34 + armIn * 34}deg)`;
 
         crossed('slide', t0, 0.2, (d) => d > 0 && snd.slide());
         crossed('needle', armIn, 0.98, (d) => (d > 0 ? snd.needle() : snd.crackle(false)));
