@@ -34,24 +34,42 @@
         height: 100%;
         overflow: hidden;
         overscroll-behavior: none;
-        background: #2b46a6;
+        background: #3d2315;
         color: var(--cream);
         font-family: var(--mono);
       }
       /* crumpled kraft paper, only behind the vinyl */
-      /* bright blue, only behind the vinyl */
+      /* the whole night happens on one worn wooden bar table */
       #kraft {
         position: fixed;
         inset: 0;
         z-index: 0;
         pointer-events: none;
-        background-color: #3f5aa8;
+        background-color: #3d2315;
         background-image:
-          radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1.4px),
-          radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(20, 30, 70, 0.25) 100%);
-        background-size: 5px 5px, auto;
+          repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0 2px, transparent 2px 26vw),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='900'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.09 0.0035' numOctaves='4' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.36  0 0 0 0 0.21  0 0 0 0 0.12  0 0 0 1.4 -0.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' fill='%234a2a18'/%3E%3Crect width='100%25' height='100%25' filter='url%28%23g%29'/%3E%3C/svg%3E");
+        background-size: auto, 900px 900px;
       }
-      /* woven fabric texture, like the View-Master reference */
+      /* direct on-camera flash: hot warm centre, falling off into darkness */
+      #flash {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        pointer-events: none;
+        background:
+          radial-gradient(55% 45% at 50% 46%, rgba(255, 226, 180, 0.2) 0%, transparent 60%),
+          radial-gradient(85% 75% at 50% 46%, transparent 30%, rgba(8, 4, 2, 0.6) 68%, rgba(4, 2, 1, 0.95) 100%);
+      }
+      #grain {
+        position: fixed;
+        inset: 0;
+        z-index: 41;
+        pointer-events: none;
+        opacity: 0.16;
+        mix-blend-mode: overlay;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23n%29'/%3E%3C/svg%3E");
+      }
       #weave {
         position: fixed;
         inset: 0;
@@ -438,6 +456,18 @@
         line-height: 1;
         filter: drop-shadow(0 0 1.2px #fff) drop-shadow(0 0 1.2px #fff) drop-shadow(0 0 1.2px #fff) drop-shadow(0 0.3vmin 0.4vmin rgba(0, 0, 0, 0.3));
       }
+      .pcard .bigword {
+        position: absolute;
+        z-index: 2;
+        translate: -50% -50%;
+        padding: 4% 6%;
+        background: #fff;
+        box-shadow: 0 0.3vmin 0.6vmin rgba(0, 0, 0, 0.25);
+        font: 700 calc(var(--w) * 0.11) / 1 'Jost', sans-serif;
+        text-transform: uppercase;
+        color: #141113;
+        rotate: -6deg;
+      }
       .pcard .ban {
         position: absolute;
         z-index: 3;
@@ -494,11 +524,7 @@
         top: 100%;
         margin-left: calc(var(--T) / -2);
         border-radius: 50%;
-        background:
-          radial-gradient(circle at 50% 50%, transparent 0 69%, rgba(0, 0, 0, 0.25) 70%, transparent 71%),
-          repeating-radial-gradient(circle at 47% 53%, #9a6a45 0 0.9%, #8c5d3b 0.9% 1.6%, #a07150 1.6% 2.2%),
-          #8c5d3b;
-        box-shadow: inset 0 0 0 calc(var(--T) * 0.018) #6e4429, inset 0 0 0 calc(var(--T) * 0.024) #a87a55, 0 2vmin 6vmin rgba(0, 0, 0, 0.45);
+        background: none;
         z-index: 2;
       }
       .vm .ring { /* old glass stains on the wood */
@@ -600,7 +626,7 @@
         paint-order: stroke fill;
         filter: drop-shadow(0 0.35vmin 0.5vmin rgba(0, 0, 0, 0.35));
         white-space: nowrap;
-        z-index: 5;
+        z-index: 42; /* above the flash falloff so it stays crisp */
         pointer-events: none;
       }
 
@@ -661,6 +687,8 @@
   <body>
     <div id="kraft"></div>
     <div id="weave"></div>
+    <div id="flash"></div>
+    <div id="grain"></div>
     <span class="tag tl">the groupchat · objects demo</span>
     <button id="sound" type="button" hidden>sound on</button>
     <span class="tag bl" id="beat">side a</span>
@@ -873,15 +901,15 @@
       // the cast, plus extra inside-joke cards. Swap captions for the real ones.
       const ME = '/cast/kavya.jpg', HIM = '/cast/friend2.jpg';
       const DECK = [
-        { rank: '9', suit: '♥', label: ['red', 'seen 4:12am', 'left:8%; top:20%; rotate:-3deg'], stick: ['👀', 'left:22%; top:44%; font-size:calc(var(--w) * 0.34)'] },
+        { rank: '9', suit: '♥', label: ['red', 'seen 4:12am', 'left:8%; top:20%; rotate:-3deg'] },
         { rank: 'A', suit: '♥', name: 'arkavs', photo: ME, cut: 'left:16%; top:22%; width:68%; height:52%; rotate:-4deg', label: ['black', 'up at 3am again', 'left:10%; top:72%; rotate:2deg'] },
-        { rank: '7', suit: '♣', label: ['paper', 'no plans allowed', 'left:12%; top:14%; rotate:-2deg'], stick: ['📅', 'left:30%; top:36%; font-size:calc(var(--w) * 0.34)'], ban: true },
+        { rank: '7', suit: '♣', label: ['paper', 'no plans allowed', 'left:12%; top:14%; rotate:-2deg'], word: ['plans', 'left:50%; top:52%'], ban: true },
         { rank: '10', suit: '♠', name: 'hesatwink', photo: HIM, cut: 'left:14%; top:24%; width:70%; height:50%; rotate:5deg', label: ['red', 'no thoughts just sunglasses', 'left:4%; top:74%; rotate:-3deg; font-size:calc(var(--w) * 0.05)'] },
         { rank: '4', suit: '♦', faces: [ME, HIM, ME, HIM, HIM, ME, HIM, ME, ME, HIM, ME, HIM, HIM, ME, HIM, ME], label: ['black', "everyone's typing", 'left:12%; top:84%; rotate:1deg'] },
-        { rank: '7', suit: '♦', name: 'Friend Three', tint: '#f3d6c8', cut: 'left:18%; top:24%; width:64%; height:46%; rotate:-6deg', label: ['paper', 'just one drink', 'left:16%; top:12%; rotate:3deg'], stick: ['🍸', 'left:58%; top:58%; font-size:calc(var(--w) * 0.22)'] },
-        { rank: 'K', suit: '♣', label: ['black', 'the groupchat at 2am', 'left:4%; top:68%; rotate:-2deg; font-size:calc(var(--w) * 0.052)'], stick: ['🍜', 'left:18%; top:26%; font-size:calc(var(--w) * 0.45)'] },
-        { rank: '3', suit: '♣', name: 'Friend Four', tint: '#cfe0f0', cut: 'left:16%; top:28%; width:68%; height:46%; rotate:4deg', label: ['red', 'has a spreadsheet for this', 'left:2%; top:16%; rotate:-2deg; font-size:calc(var(--w) * 0.048)'], stick: ['📊', 'left:56%; top:62%; font-size:calc(var(--w) * 0.2)'] },
-        { rank: '2', suit: '♠', label: ['paper', 'ugh.', 'left:34%; top:18%; rotate:-4deg; font-size:calc(var(--w) * 0.09)'], stick: ['🥞', 'left:14%; top:36%; font-size:calc(var(--w) * 0.5)'] },
+        { rank: '7', suit: '♦', name: 'Friend Three', tint: '#f3d6c8', cut: 'left:18%; top:24%; width:64%; height:46%; rotate:-6deg', label: ['paper', 'just one drink', 'left:16%; top:12%; rotate:3deg'] },
+        { rank: 'K', suit: '♣', label: ['black', 'the groupchat at 2am', 'left:4%; top:68%; rotate:-2deg; font-size:calc(var(--w) * 0.052)'] },
+        { rank: '3', suit: '♣', name: 'Friend Four', tint: '#cfe0f0', cut: 'left:16%; top:28%; width:68%; height:46%; rotate:4deg', label: ['red', 'has a spreadsheet for this', 'left:2%; top:16%; rotate:-2deg; font-size:calc(var(--w) * 0.048)'] },
+        { rank: '2', suit: '♠', label: ['paper', 'ugh.', 'left:34%; top:18%; rotate:-4deg; font-size:calc(var(--w) * 0.09)'] },
       ];
       // classic pip layouts, as (x%, y%) — bottom-half pips get turned upside down
       const C = [30, 50, 70], R = [20, 35, 50, 65, 80];
@@ -908,6 +936,7 @@
           : `<div class="cut initial" style="${c.cut};--tint:${c.tint}"><span>${c.name[0]}</span></div>`;
         if (c.faces) glued += `<div class="faces">${c.faces.map((f, n) => `<i style="--r:${((n * 37) % 11) - 5}deg"><img src="${f}" alt=""></i>`).join('')}</div>`;
         if (c.stick) glued += `<span class="stick" style="${c.stick[1]}">${c.stick[0]}</span>`;
+        if (c.word) glued += `<span class="bigword" style="${c.word[1]}">${c.word[0]}</span>`;
         if (c.ban) glued += '<i class="ban"></i>';
         if (c.label) glued += `<span class="strip ${c.label[0]}" style="${c.label[2]}">${c.label[1]}</span>`;
         return `<article class="obj pcard" style="--suit:${red ? '#d8262f' : '#141113'}">
@@ -938,12 +967,13 @@
         SEATS.map((x, i) => {
           const inner = x.menu
             ? menuHTML
-            : `<div class="coaster"><div class="pic" style="--tint:${x.tint || '#e9dcc8'}">${x.photo ? `<img src="${x.photo}" alt="${x.name}">` : `<span>${x.name === 'you' ? 'you' : x.name[0]}</span>`}</div></div><span class="drink">${x.drink}</span><span class="who">${x.name}</span>`;
+            : `<div class="coaster"><div class="pic" style="--tint:${x.tint || '#e9dcc8'}">${x.photo ? `<img src="${x.photo}" alt="${x.name}">` : `<span>${x.name === 'you' ? 'you' : x.name[0]}</span>`}</div></div><span class="who">${x.name}</span>`;
           return `<div class="s" style="transform: rotate(${STEP * i}deg) translateY(-205%)">${inner}</div>`;
         }).join('') +
         `<svg class="bottle" id="bottle" viewBox="0 0 200 50" aria-hidden="true">
-          <path d="M8 25c0-11 8-17 22-17h70c10 0 16 6 30 9h38c6 0 10 3 10 8s-4 8-10 8h-38c-14 3-20 9-30 9H30C16 42 8 36 8 25z" fill="#2f6b3e"/>
-          <rect x="164" y="17" width="26" height="16" rx="4" fill="#d9b25a"/>
+          <defs><linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3d58a"/><stop offset=".45" stop-color="#c79a3e"/><stop offset="1" stop-color="#7d5a1c"/></linearGradient></defs>
+          <path d="M8 25c0-11 8-17 22-17h70c10 0 16 6 30 9h38c6 0 10 3 10 8s-4 8-10 8h-38c-14 3-20 9-30 9H30C16 42 8 36 8 25z" fill="url(#gold)"/>
+          <rect x="164" y="17" width="26" height="16" rx="4" fill="#1d191b"/>
           <rect x="40" y="13" width="44" height="24" rx="3" fill="#f4ead6"/>
           <text x="62" y="29" text-anchor="middle" font-family="Bowlby One, sans-serif" font-size="10" fill="#d8262f">TG</text>
           <path d="M20 17c10-5 40-6 70-5" stroke="#fff" stroke-opacity=".35" stroke-width="3" fill="none" stroke-linecap="round"/>
@@ -1059,11 +1089,9 @@ history.scrollRestoration = 'manual';
 
         // the room changes colour with the playhead: cherry fabric → black card table → cherry
         const toTable = clamp(p - 1, 0, 1), toCherry = clamp(p - 2, 0, 1);
-        document.body.style.backgroundColor = mix('#7a1f2b', '#2b46a6', toCherry);
-        kraft.style.opacity = 1 - toTable;
-        weave.style.opacity = toCherry;
+        weave.style.opacity = 0;
         // labels read dark on the paper, light on the table and fabric
-        document.body.style.setProperty('--chrome', '#f6ead8');
+        document.body.style.setProperty('--chrome', '#f0d9a8');
         requestAnimationFrame(frame);
       }
       requestAnimationFrame(frame);
