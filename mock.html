@@ -62,7 +62,7 @@
         pointer-events: none;
         rotate: -4deg;
         filter: sepia(0.08) saturate(1.1) contrast(1.02) blur(0.3px);
-        background-color: #f1e2c4;
+        background-color: #eee7d2;
         background-image:
           /* tea and wine stains */
           radial-gradient(9vmin 7vmin at 22% 70%, rgba(120, 70, 30, 0.16), transparent 70%),
@@ -74,8 +74,8 @@
           /* worn cotton fibres */
           url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9 0.35' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.33  0 0 0 0 0.22  0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E"),
           /* the checks, faded to brick, darker where they cross */
-          repeating-linear-gradient(0deg, rgba(186, 32, 40, 0.6) 0 34px, transparent 34px 68px),
-          repeating-linear-gradient(90deg, rgba(186, 32, 40, 0.6) 0 34px, transparent 34px 68px);
+          repeating-linear-gradient(0deg, rgba(58, 96, 170, 0.58) 0 34px, transparent 34px 68px),
+          repeating-linear-gradient(90deg, rgba(58, 96, 170, 0.58) 0 34px, transparent 34px 68px);
         background-size: auto, auto, auto, auto, auto, 300px 300px, auto, auto;
       }
       #cloth::after { /* soft folds in the fabric */
@@ -85,6 +85,24 @@
         background:
           linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.1) 28%, transparent 36%, transparent 62%, rgba(60, 30, 20, 0.1) 70%, transparent 78%),
           linear-gradient(8deg, transparent 40%, rgba(60, 30, 20, 0.07) 46%, transparent 52%);
+      }
+      /* a painted zebra-print cloth under the cards (the clutch-bag vibe) */
+      #zebra {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0;
+        background-color: #e9dcc2;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='1000' viewBox='0 0 500 1000'%3E%3Cg fill='%2320181a'%3E%3Cpath d='M0%2C-49 L25%2C-47 L50%2C-53 L75%2C-52 L100%2C-49 L125%2C-51 L150%2C-47 L175%2C-45 L200%2C-45 L225%2C-44 L250%2C-41 L275%2C-37 L300%2C-46 L325%2C-48 L350%2C-49 L375%2C-54 L400%2C-60 L425%2C-64 L450%2C-72 L475%2C-66 L500%2C-75 L500%2C-61 L475%2C-49 L450%2C-51 L425%2C-39 L400%2C-33 L375%2C-24 L350%2C-17 L325%2C-13 L300%2C-10 L275%2C-1 L250%2C-4 L225%2C-8 L200%2C-9 L175%2C-11 L150%2C-15 L125%2C-21 L100%2C-22 L75%2C-28 L50%2C-32 L25%2C-30 L0%2C-35 Z'/%3E%3Cpath d='M0%2C22 L25%2C27 L50%2C19 L75%2C19 L100%2C15 L125%2C9 L150%2C4 L175%2C2 L200%2C-1 L225%2C-4 L250%2C-10 L275%2C-8 L300%2C-6 L325%2C-6 L350%2C-3 L375%2C-1 L400%2C4 L425%2C5 L450%2C1 L475%2C4 L500%2C1 L500%2C11 L475%2C16 L450%2C17 L425%2C23 L400%2C24 L375%2C21 L350%2C20 L325%2C19 L300%2C19 L275%2C18 L250%2C16 L225%2C22 L200%2C25 L175%2C27 L150%2C28 L125%2C31 L100%2C35 L75%2C37 L50%2C34 L25%2C40 L0%2C32 Z'/%3E%3Cpath d='M0%2C67 L25%2C73 L50%2C76 L75%2C80 L100%2C78 L125%2C82 L150%2C77 L175%2C82 L200%2C80 L225%2C74 L250%2C70 L275%2C65 L300%2C60 L325%2C57 L350%2C54 L375%2C55 L400%2C52 L425%2C54 L450%2C60 L475%2C63 L500%2C64 L500%2C87 L475%2C91 L450%2C94 L425%2C94 L400%2C97 L375%2C104 L350%2C107 L325%2C113 L300%2C118 L275%2C125 L250%2C130 L225%2C134 L200%2C138 L175%2C138 L150%2C130 L125%2C131 L100%2C123 L75%2C120 L50%2C110 L25%2C102 L0%2C90 Z'/%3E%3Cpath d='M0%2C159 L25%2C163 L50%2C168 L75%2C174 L100%2C169 L125%2C175 L150%2C172 L175%2C171 L200%2C170 L225%2C168 L250%2C168 L275%2C167 L300%2C165 L325%2C162 L350%2C172 L375%2C172 L400%2C176 L425%2C181 L450%2C188 L475%2C194 L500%2C194 L500%2C215 L475%2C221 L450%2C219 L425%2C218 L400%2C217 L375%2C217 L350%2C220 L325%2C213 L300%2C219 L275%2C222 L250%2C223 L225%2C223 L200%2C224 L175%2C223 L150%2C221 L125%2C220 L100%2C211 L75%2C210 L50%2C199 L25%2C189 L0%2C180 Z'/%3E%3Cpath d='M0%2C240 L25%2C233 L50%2C232 L75%2C230 L100%2C229 L125%2C226 L150%2C224 L175%2C228 L200%2C232 L225%2C232 L250%2C236 L275%2C240 L300%2C247 L325%2C251 L350%2C254 L375%2C258 L400%2C260 L425%2C254 L450%2C259 L475%2C255 L500%2C251 L500%2C266 L475%2C274 L450%2C281 L425%2C280 L400%2C288 L375%2C289 L350%2C288 L325%2C287 L300%2C284 L275%2C279 L250%2C275 L225%2C270 L200%2C270 L175%2C264 L150%2C258 L125%2C257 L100%2C257 L75%2C256 L50%2C254 L25%2C252 L0%2C255 Z'/%3E%3Cpath d='M0%2C304 L25%2C308 L50%2C301 L75%2C298 L100%2C296 L125%2C293 L150%2C289 L175%2C289 L200%2C289 L225%2C287 L250%2C288 L275%2C288 L300%2C292 L325%2C294 L350%2C298 L375%2C298 L400%2C300 L425%2C301 L450%2C301 L475%2C297 L500%2C299 L500%2C314 L475%2C317 L450%2C324 L425%2C328 L400%2C330 L375%2C331 L350%2C334 L325%2C332 L300%2C331 L275%2C328 L250%2C329 L225%2C327 L200%2C328 L175%2C327 L150%2C325 L125%2C326 L100%2C326 L75%2C325 L50%2C324 L25%2C327 L0%2C320 Z'/%3E%3Cpath d='M0%2C379 L25%2C379 L50%2C380 L75%2C377 L100%2C376 L125%2C372 L150%2C369 L175%2C361 L200%2C362 L225%2C364 L250%2C361 L275%2C366 L300%2C365 L325%2C368 L350%2C373 L375%2C377 L400%2C378 L425%2C380 L450%2C379 L475%2C384 L500%2C380 L500%2C397 L475%2C406 L450%2C405 L425%2C410 L400%2C411 L375%2C414 L350%2C413 L325%2C409 L300%2C409 L275%2C411 L250%2C405 L225%2C409 L200%2C405 L175%2C403 L150%2C409 L125%2C408 L100%2C410 L75%2C407 L50%2C406 L25%2C401 L0%2C396 Z'/%3E%3Cpath d='M0%2C431 L25%2C432 L50%2C436 L75%2C440 L100%2C444 L125%2C448 L150%2C446 L175%2C450 L200%2C448 L225%2C443 L250%2C441 L275%2C440 L300%2C436 L325%2C431 L350%2C424 L375%2C424 L400%2C417 L425%2C415 L450%2C416 L475%2C423 L500%2C425 L500%2C439 L475%2C440 L450%2C437 L425%2C440 L400%2C444 L375%2C454 L350%2C457 L325%2C465 L300%2C472 L275%2C476 L250%2C478 L225%2C480 L200%2C484 L175%2C484 L150%2C479 L125%2C478 L100%2C472 L75%2C465 L50%2C457 L25%2C450 L0%2C446 Z'/%3E%3Cpath d='M0%2C507 L25%2C511 L50%2C510 L75%2C505 L100%2C503 L125%2C499 L150%2C493 L175%2C488 L200%2C482 L225%2C478 L250%2C475 L275%2C477 L300%2C480 L325%2C476 L350%2C481 L375%2C483 L400%2C488 L425%2C488 L450%2C490 L475%2C496 L500%2C493 L500%2C504 L475%2C510 L450%2C507 L425%2C508 L400%2C510 L375%2C508 L350%2C507 L325%2C504 L300%2C508 L275%2C506 L250%2C505 L225%2C507 L200%2C510 L175%2C515 L150%2C519 L125%2C523 L100%2C525 L75%2C524 L50%2C527 L25%2C525 L0%2C518 Z'/%3E%3Cpath d='M0%2C556 L25%2C551 L50%2C543 L75%2C540 L100%2C534 L125%2C530 L150%2C528 L175%2C524 L200%2C527 L225%2C527 L250%2C521 L275%2C526 L300%2C530 L325%2C534 L350%2C534 L375%2C539 L400%2C540 L425%2C532 L450%2C531 L475%2C528 L500%2C524 L500%2C534 L475%2C540 L450%2C545 L425%2C549 L400%2C559 L375%2C560 L350%2C557 L325%2C558 L300%2C554 L275%2C552 L250%2C547 L225%2C553 L200%2C551 L175%2C548 L150%2C551 L125%2C551 L100%2C553 L75%2C557 L50%2C558 L25%2C564 L0%2C566 Z'/%3E%3Cpath d='M0%2C588 L25%2C580 L50%2C587 L75%2C588 L100%2C591 L125%2C595 L150%2C598 L175%2C604 L200%2C603 L225%2C604 L250%2C604 L275%2C597 L300%2C598 L325%2C594 L350%2C591 L375%2C585 L400%2C586 L425%2C581 L450%2C578 L475%2C580 L500%2C583 L500%2C596 L475%2C596 L450%2C597 L425%2C603 L400%2C610 L375%2C612 L350%2C620 L325%2C625 L300%2C630 L275%2C630 L250%2C637 L225%2C637 L200%2C635 L175%2C635 L150%2C627 L125%2C622 L100%2C615 L75%2C610 L50%2C606 L25%2C596 L0%2C601 Z'/%3E%3Cpath d='M0%2C645 L25%2C643 L50%2C648 L75%2C652 L100%2C656 L125%2C661 L150%2C665 L175%2C670 L200%2C674 L225%2C670 L250%2C671 L275%2C668 L300%2C665 L325%2C662 L350%2C659 L375%2C657 L400%2C656 L425%2C651 L450%2C655 L475%2C657 L500%2C661 L500%2C681 L475%2C681 L450%2C684 L425%2C684 L400%2C693 L375%2C697 L350%2C703 L325%2C708 L300%2C713 L275%2C717 L250%2C720 L225%2C719 L200%2C722 L175%2C717 L150%2C709 L125%2C702 L100%2C693 L75%2C685 L50%2C677 L25%2C667 L0%2C664 Z'/%3E%3Cpath d='M0%2C703 L25%2C712 L50%2C716 L75%2C720 L100%2C723 L125%2C728 L150%2C729 L175%2C737 L200%2C739 L225%2C739 L250%2C733 L275%2C733 L300%2C730 L325%2C729 L350%2C723 L375%2C721 L400%2C728 L425%2C723 L450%2C731 L475%2C735 L500%2C739 L500%2C758 L475%2C759 L450%2C760 L425%2C757 L400%2C766 L375%2C762 L350%2C767 L325%2C776 L300%2C778 L275%2C783 L250%2C783 L225%2C789 L200%2C788 L175%2C784 L150%2C774 L125%2C769 L100%2C761 L75%2C753 L50%2C745 L25%2C736 L0%2C722 Z'/%3E%3Cpath d='M0%2C804 L25%2C801 L50%2C798 L75%2C795 L100%2C791 L125%2C790 L150%2C784 L175%2C782 L200%2C786 L225%2C783 L250%2C782 L275%2C786 L300%2C790 L325%2C794 L350%2C798 L375%2C803 L400%2C797 L425%2C799 L450%2C796 L475%2C800 L500%2C793 L500%2C804 L475%2C813 L450%2C811 L425%2C817 L400%2C817 L375%2C825 L350%2C822 L325%2C819 L300%2C817 L275%2C813 L250%2C809 L225%2C810 L200%2C812 L175%2C808 L150%2C808 L125%2C812 L100%2C812 L75%2C813 L50%2C813 L25%2C814 L0%2C815 Z'/%3E%3Cpath d='M0%2C841 L25%2C843 L50%2C845 L75%2C855 L100%2C852 L125%2C853 L150%2C848 L175%2C847 L200%2C845 L225%2C843 L250%2C844 L275%2C836 L300%2C839 L325%2C838 L350%2C848 L375%2C846 L400%2C854 L425%2C859 L450%2C863 L475%2C866 L500%2C871 L500%2C888 L475%2C887 L450%2C887 L425%2C887 L400%2C886 L375%2C881 L350%2C885 L325%2C878 L300%2C880 L275%2C878 L250%2C886 L225%2C885 L200%2C886 L175%2C886 L150%2C885 L125%2C888 L100%2C884 L75%2C883 L50%2C869 L25%2C863 L0%2C857 Z'/%3E%3Cpath d='M0%2C906 L25%2C909 L50%2C911 L75%2C912 L100%2C912 L125%2C913 L150%2C913 L175%2C911 L200%2C910 L225%2C904 L250%2C899 L275%2C895 L300%2C891 L325%2C891 L350%2C887 L375%2C888 L400%2C882 L425%2C885 L450%2C889 L475%2C891 L500%2C895 L500%2C908 L475%2C907 L450%2C908 L425%2C907 L400%2C907 L375%2C915 L350%2C916 L325%2C922 L300%2C923 L275%2C929 L250%2C933 L225%2C937 L200%2C943 L175%2C942 L150%2C943 L125%2C940 L100%2C937 L75%2C934 L50%2C930 L25%2C925 L0%2C919 Z'/%3E%3Cpath d='M0%2C966 L25%2C965 L50%2C959 L75%2C956 L100%2C951 L125%2C945 L150%2C947 L175%2C941 L200%2C943 L225%2C946 L250%2C950 L275%2C953 L300%2C956 L325%2C958 L350%2C960 L375%2C967 L400%2C963 L425%2C961 L450%2C959 L475%2C960 L500%2C955 L500%2C980 L475%2C991 L450%2C996 L425%2C1004 L400%2C1011 L375%2C1020 L350%2C1017 L325%2C1019 L300%2C1019 L275%2C1018 L250%2C1015 L225%2C1010 L200%2C1006 L175%2C1002 L150%2C1005 L125%2C998 L100%2C999 L75%2C999 L50%2C997 L25%2C997 L0%2C991 Z'/%3E%3C/g%3E%3C/svg%3E");
+        background-size: 42vmin auto;
+        filter: sepia(0.15) saturate(0.92) contrast(1.02);
+      }
+      #zebra::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(70% 60% at 50% 46%, rgba(255, 240, 215, 0.25), transparent 70%);
       }
       /* direct on-camera flash: hot warm centre, falling off into darkness */
       #flash {
@@ -804,6 +822,7 @@
     <div id="kraft"></div>
     <div id="weave"></div>
     <div id="cloth"></div>
+    <div id="zebra"></div>
     <div id="flash"></div>
     <div id="grain"></div>
     <span class="tag tl">the groupchat · objects demo</span>
@@ -1138,6 +1157,7 @@
       }).join('');
       const cards = [...deck.children];
       const CASTLIST = DECK.filter((c) => c.name), CASTN = CASTLIST.length;
+      const introOrder = DECK.map((c, k) => (c.name ? k : -1)).filter((k) => k >= 0);
       const introEl = document.getElementById('intro');
 
       // ---------- last round: a tag on everyone's drink ----------
@@ -1161,7 +1181,7 @@
 history.scrollRestoration = 'manual';
       scrollTo(0, 0);
       addEventListener('scroll', () => { if (scrollY || scrollX) scrollTo(0, 0); });
-      const kraft = $('kraft'), weave = $('weave'), cloth = $('cloth');
+      const kraft = $('kraft'), weave = $('weave'), cloth = $('cloth'), zebra = $('zebra');
       const fTitle = $('fTitle'), fPrev = $('fPrev'), fEp = $('fEp'), burnEl = $('burn');
       const stills = [...fPrev.querySelectorAll('.still')];
       const sprockets = [...document.querySelectorAll('.sprockets')];
@@ -1258,45 +1278,53 @@ history.scrollRestoration = 'manual';
         const cw = cards[0].offsetWidth, ch = cw * 1.4;
         const JIT = [[-6, 4, -7], [3, -5, 4], [-4, 6, -3], [5, 3, 6], [-2, -4, -2], [4, 5, 8], [-5, -3, -5], [2, 6, 3], [6, -2, 7]];
         let order = 0;
+        const bigness = {};
         cards.forEach((card, k) => {
           const col = (k % 3) - 1, row = Math.floor(k / 3) - 1;
           const fx = col * cw * 1.14 + JIT[k][0] * cw * 0.01;
           const fy = row * ch * 1.04 + JIT[k][1] * cw * 0.01 + H * 0.04;
           const fr = JIT[k][2];
-          const sx = -W * 0.1, sy = H * 0.9, sr = -25 + k * 4; // the deck, below the table edge
           const sweep = ease(clamp((t2 - k * 0.03) / 0.5, 0, 1));
-          let x, y, r, sc = 1, deal;
+          let x, y, r, sc = 1, slide, turn;
           if (DECK[k].name) {
-            // individual intro: up from the deck to big in the middle, then down onto its spot on the table
+            // individual intro: each friend holds centred, then leaves BEFORE the next arrives
             const j = order++;
-            const arrive = ease(clamp(pi - j, 0, 1));
-            const settle = ease(clamp(pi - j - 1, 0, 1));
+            const a = pi - j;                                  // this card's own clock
+            const arrive = ease(clamp((a - 0.5) / 0.5, 0, 1)); // slides up + flips in the 2nd half → big at a=1
+            const settle = ease(clamp((a - 1) / 0.5, 0, 1));   // then settles onto the table in the next half
+            slide = arrive;
+            turn = arrive;
             const big = Math.min((H * 0.6) / ch, (W * 0.7) / cw);
-            const cx = 0, cy = -H * 0.06, cr = j % 2 ? 3 : -3;
-            x = sx + (cx - sx) * arrive + (fx - cx) * settle;
-            y = sy + (cy - sy) * arrive + (fy - cy) * settle;
-            r = sr + (cr - sr) * arrive + (fr - cr) * settle;
-            sc = 1 + (big - 1) * arrive - (big - 1) * settle;
-            deal = arrive;
-            card.style.zIndex = 20 + j;
+            const cx = 0, cy = -H * 0.06, cr = j % 2 ? 2 : -2;
+            const sy0 = H * 0.78 + ch * big; // just below the bottom edge
+            x = cx + (fx - cx) * settle;
+            y = sy0 + (cy - sy0) * arrive + (fy - cy) * settle;
+            r = (j % 2 ? 6 : -6) * (1 - arrive) + cr * arrive + (fr - cr) * settle;
+            sc = big + (1 - big) * settle;
+            bigness[k] = arrive * (1 - settle);
+            card.style.zIndex = settle > 0.5 ? 3 + k : 30 + j;
           } else {
-            deal = ease(clamp((t1 - 0.05 - k * 0.06) / 0.28, 0, 1));
-            x = sx + (fx - sx) * deal;
-            y = sy + (fy - sy) * deal;
-            r = sr + (fr - sr) * deal;
+            // the rest of the deck: slides into place face-down, then turns over
+            const a = clamp((t1 - k * 0.05) / 0.45, 0, 1);
+            slide = ease(clamp(a / 0.6, 0, 1));
+            turn = ease(clamp((a - 0.6) / 0.4, 0, 1));
+            const sy0 = H * 0.75 + ch;
+            x = fx * slide;
+            y = sy0 + (fy - sy0) * slide;
+            r = fr * slide;
+            sc = 1 + Math.sin(Math.PI * turn) * 0.04;
             card.style.zIndex = 3 + k;
           }
           x += sweep * (col * W * 0.2);
           y += sweep * H;
           r += sweep * col * 20;
-          // dealt face-down, flipped face-up as it comes in
-          const flip = (1 - clamp((deal - 0.45) / 0.55, 0, 1)) * 180;
-          card.style.transform = `perspective(1400px) translate(${x}px, ${y}px) rotate(${r}deg) scale(${sc}) rotateY(${flip}deg)`;
-          crossed('card' + k, deal, 0.6, (d) => d > 0 && snd.flick());
+          const flip = (1 - turn) * 180;
+          card.style.transform = `perspective(1800px) translate(${x}px, ${y}px) rotate(${r}deg) scale(${sc}) rotateY(${flip}deg)`;
+          crossed('card' + k, slide, 0.97, (d) => d > 0 && snd.flick());
         });
-        // the credit for whoever's in the middle right now
-        const cur = clamp(Math.round(pi) - 1, 0, N - 1);
-        const curOn = ease(clamp(pi - cur, 0, 1)) * (1 - ease(clamp(pi - cur - 1, 0, 1)));
+        // the credit follows whichever card is biggest on the table right now
+        let cur = 0, curOn = 0;
+        introOrder.forEach((k, ci) => { if (bigness[k] > curOn) { curOn = bigness[k]; cur = ci; } });
         const who = CASTLIST[cur];
         if (introEl.dataset.who !== who.name) {
           introEl.dataset.who = who.name;
@@ -1304,7 +1332,7 @@ history.scrollRestoration = 'manual';
           introEl.querySelector('b').textContent = who.name;
           introEl.querySelector('em').textContent = who.tag || '';
         }
-        introEl.style.opacity = curOn > 0.85 ? (curOn - 0.85) / 0.15 : 0;
+        introEl.style.opacity = clamp((curOn - 0.5) / 0.4, 0, 1).toFixed(3);
         el.w2.style.opacity = clamp((t1 - 0.5) * 3, 0, 1) * (1 - t2 * 3);
 
         // 3 · last round: the cheers photo slides up and pulls back; a tag lands on each drink with a clink
@@ -1369,6 +1397,7 @@ history.scrollRestoration = 'manual';
         const toTable = clamp(p - 1, 0, 1), toCherry = clamp(p - 2, 0, 1);
         weave.style.opacity = 0;
         cloth.style.opacity = 1 - clamp(toTable * 1.6, 0, 1);
+        zebra.style.opacity = (clamp((p - 1.2) * 2.2, 0, 1) * (1 - clamp(p - (2.4 + N), 0, 1))).toFixed(3);
         // labels read dark on the paper, light on the table and fabric
         document.body.style.setProperty('--chrome', '#f0d9a8');
         requestAnimationFrame(frame);
