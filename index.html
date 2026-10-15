@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Groupchat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Josefin+Sans:wght@200;300;400&family=Playfair+Display:ital,wght@0,400;1,400;1,600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main id="stage" data-era="pre">
+      <div id="frames"></div>
+
+      <!-- film overlays -->
+      <canvas id="fx-static" width="160" height="100" aria-hidden="true"></canvas>
+      <div id="fx-burn" aria-hidden="true"></div>
+      <div id="fx-flash" aria-hidden="true"></div>
+      <div id="fx-gate" aria-hidden="true"><i></i><i></i></div>
+      <div id="grain" aria-hidden="true"></div>
+      <div id="scratches" aria-hidden="true"></div>
+      <div class="letterbox top" aria-hidden="true"></div>
+      <div class="letterbox bottom" aria-hidden="true"></div>
+
+      <!-- viewfinder -->
+      <div id="hud" aria-hidden="true">
+        <span class="rec"><b></b>REC</span>
+        <span class="tc">00:00:00:00</span>
+        <span class="sc">SC 01</span>
+      </div>
+      <button id="mute" type="button" hidden>sound on</button>
+      <div id="hint" aria-hidden="true">scroll to cut</div>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
