@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Caveat:wght@600&family=Alfa+Slab+One&family=Bowlby+One&family=Courier+Prime&family=Jost:wght@400;500;600&family=Fraunces:ital,opsz,wght@1,72,500&family=Rubik:wght@800&family=Ultra&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Abril+Fatface&family=Playfair+Display:ital@1&family=Caveat:wght@600&family=Alfa+Slab+One&family=Bowlby+One&family=Courier+Prime&family=Jost:wght@400;500;600&family=Fraunces:ital,opsz,wght@1,72,500&family=Rubik:wght@800&family=Ultra&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -53,28 +53,38 @@
         background-size: auto, 1100px 1100px;
         background-position: center;
       }
-      /* a drawn cherry gingham tablecloth, only under the record player */
+      /* an old, well-loved gingham tablecloth, only under the record player:
+         yellowed cotton, faded brick checks, sun-bleached patches, a few tea stains */
       #cloth {
         position: fixed;
         inset: -4vmax;
         z-index: 1;
         pointer-events: none;
         rotate: -4deg;
-        background-color: #f6efe3;
+        filter: sepia(0.18) saturate(0.85) contrast(0.95) blur(0.35px);
+        background-color: #eadbbd;
         background-image:
-          /* woven thread texture */
-          repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.035) 0 1px, transparent 1px 3px),
-          repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.03) 0 1px, transparent 1px 3px),
-          /* the checks: translucent red bands both ways, darker where they cross */
-          repeating-linear-gradient(0deg, rgba(196, 34, 44, 0.55) 0 34px, transparent 34px 68px),
-          repeating-linear-gradient(90deg, rgba(196, 34, 44, 0.55) 0 34px, transparent 34px 68px);
+          /* tea and wine stains */
+          radial-gradient(9vmin 7vmin at 22% 70%, rgba(120, 70, 30, 0.16), transparent 70%),
+          radial-gradient(6vmin 6vmin at 78% 24%, rgba(110, 40, 40, 0.13), transparent 70%),
+          radial-gradient(5vmin 4vmin at 64% 82%, rgba(120, 80, 40, 0.12), transparent 70%),
+          /* uneven sun-fading */
+          radial-gradient(60vmax 40vmax at 30% 20%, rgba(255, 248, 232, 0.35), transparent 70%),
+          radial-gradient(50vmax 35vmax at 80% 75%, rgba(90, 50, 30, 0.12), transparent 70%),
+          /* worn cotton fibres */
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9 0.35' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.33  0 0 0 0 0.22  0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E"),
+          /* the checks, faded to brick, darker where they cross */
+          repeating-linear-gradient(0deg, rgba(165, 52, 46, 0.4) 0 34px, transparent 34px 68px),
+          repeating-linear-gradient(90deg, rgba(165, 52, 46, 0.4) 0 34px, transparent 34px 68px);
+        background-size: auto, auto, auto, auto, auto, 300px 300px, auto, auto;
       }
       #cloth::after { /* soft folds in the fabric */
         content: '';
         position: absolute;
         inset: 0;
         background:
-          linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.12) 28%, transparent 36%, transparent 62%, rgba(0, 0, 0, 0.08) 70%, transparent 78%);
+          linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.1) 28%, transparent 36%, transparent 62%, rgba(60, 30, 20, 0.1) 70%, transparent 78%),
+          linear-gradient(8deg, transparent 40%, rgba(60, 30, 20, 0.07) 46%, transparent 52%);
       }
       /* direct on-camera flash: hot warm centre, falling off into darkness */
       #flash {
@@ -83,8 +93,7 @@
         z-index: 40;
         pointer-events: none;
         background:
-          radial-gradient(55% 45% at 50% 46%, rgba(255, 226, 180, 0.2) 0%, transparent 60%),
-          radial-gradient(85% 75% at 50% 46%, transparent 30%, rgba(8, 4, 2, 0.6) 68%, rgba(4, 2, 1, 0.95) 100%);
+          radial-gradient(55% 45% at 50% 46%, rgba(255, 226, 180, 0.2) 0%, transparent 60%);
       }
       #grain {
         position: fixed;
@@ -538,6 +547,113 @@
       .intro b { display: block; margin: 0.15em 0 0.2em; font: 400 clamp(40px, 8vmin, 92px) / 1 'Bowlby One', sans-serif; letter-spacing: 0.03em; }
       .intro em { display: block; font: 600 clamp(20px, 3vmin, 32px) / 1 'Caveat', cursive; font-style: normal; color: #f0d9a8; }
 
+      /* the film reel running down both margins while you scroll */
+      .sprockets {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        z-index: 45;
+        width: clamp(20px, 3.2vw, 44px);
+        pointer-events: none;
+        background:
+          repeating-linear-gradient(to bottom, transparent 0 10px, #efe6d6 10px 26px, transparent 26px 40px) center / 46% 100% no-repeat,
+          #0e0b0c;
+      }
+      .sprockets.l { left: 0; }
+      .sprockets.r { right: 0; }
+
+      /* film burn: the cheers photo catches in the projector and burns through to the show */
+      #burn {
+        position: fixed;
+        inset: -20%;
+        z-index: 35;
+        pointer-events: none;
+        opacity: 0;
+        background: radial-gradient(circle at 46% 52%, #fff8e0 0%, #ffd27a 12%, #ff7a2f 26%, rgba(160, 30, 10, 0.6) 40%, transparent 58%);
+        mix-blend-mode: screen;
+      }
+
+      /* frames that advance like film after the cheers: title, previously on, this week's episode */
+      .frame {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        overflow: hidden;
+        pointer-events: none; /* never block taps on the record player underneath */
+        transform: translateY(110vh);
+      }
+      .f-title {
+        background-color: #d96c55;
+        background-image: radial-gradient(rgba(60, 10, 5, 0.16) 1px, transparent 1.5px);
+        background-size: 5px 5px;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: 5vw;
+        padding: 6vh 8vw;
+      }
+      .f-title .booth {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2vh;
+        height: 80vh;
+        padding: 1.4vh 1.4vh 5vh;
+        background: #f4ece0;
+        rotate: -4deg;
+        box-shadow: 0 1.6vh 4vh rgba(60, 10, 5, 0.4);
+      }
+      .f-title .booth i { flex: 1; width: 24vh; background: #e6dde8 center 30% / cover; }
+      .f-title .type { color: #f6e8d8; }
+      .f-title small { display: block; font: 300 clamp(12px, 1.4vw, 16px) / 1 'Jost', sans-serif; letter-spacing: 0.55em; text-transform: uppercase; }
+      .f-title h1 { margin: 0.4em 0 0.35em; font-weight: 400; }
+      .f-title h1 em { display: block; font: italic 400 clamp(36px, 6vw, 92px) / 1 'Playfair Display', serif; margin-bottom: -0.15em; }
+      .f-title h1 span { display: block; font: 400 clamp(64px, 12vw, 200px) / 0.86 'Anton', sans-serif; text-transform: uppercase; text-shadow: 0.5vmin 0.45vmin 0 #6f8fd0; }
+      .f-title p { margin: 0; font: 300 clamp(12px, 1.4vw, 17px) / 1.4 'Jost', sans-serif; letter-spacing: 0.32em; text-transform: uppercase; }
+      .paperbg {
+        background-color: #efe4d8;
+        background-image: radial-gradient(rgba(120, 80, 60, 0.07) 1px, transparent 1.4px), radial-gradient(rgba(255, 255, 255, 0.35) 1px, transparent 1.4px);
+        background-size: 7px 7px, 11px 11px;
+      }
+      .f-prev { display: grid; align-content: center; justify-items: center; gap: 5vh; padding: 4vh 6vw; color: #241f22; }
+      .f-prev h2 { margin: 0; font: 300 clamp(14px, 1.6vw, 18px) / 1.4 'Jost', sans-serif; letter-spacing: 0.35em; text-transform: uppercase; color: #d0604a; text-align: center; }
+      .f-prev h2 em { font: italic 400 1.4em / 1 'Playfair Display', serif; letter-spacing: 0; text-transform: none; color: #241f22; }
+      .stills { display: flex; gap: 2.4vw; justify-content: center; flex-wrap: wrap; }
+      .still {
+        margin: 0;
+        width: clamp(200px, 26vw, 320px);
+        padding: 10px 10px 14px;
+        background: #f8f1e7;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+        opacity: 0;
+        transform: translateY(16px) rotate(var(--r));
+        transition: opacity 0.3s, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+      .still.shown { opacity: 1; transform: translateY(0) rotate(var(--r)); }
+      .still .shot { aspect-ratio: 4 / 3; display: grid; place-items: center; padding: 14px; background: var(--c); }
+      .still .bubble { max-width: 90%; padding: 10px 14px; border-radius: 18px 18px 18px 4px; background: #fff; color: #1b1220; font: 400 clamp(14px, 1.4vw, 17px) / 1.25 -apple-system, system-ui, sans-serif; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2); }
+      .still figcaption { margin-top: 10px; font: italic 400 15px / 1.3 'Playfair Display', serif; }
+      .still figcaption b { font: 400 11px / 1 var(--mono); letter-spacing: 0.15em; margin-right: 6px; color: #d0604a; font-style: normal; }
+      .f-ep { display: grid; place-items: center; padding: 6vh 8vw; color: #24161b; }
+      .f-ep article { width: min(760px, 100%); }
+      .f-ep .meta { margin: 0 0 18px; font: 400 12px / 1.4 var(--mono); letter-spacing: 0.2em; text-transform: uppercase; color: #d0604a; }
+      .f-ep .typer { min-height: 3.6em; margin: 0 0 5vh; font: 400 clamp(22px, 3.4vw, 38px) / 1.35 var(--mono); }
+      .f-ep .caret { display: inline-block; width: 0.55em; height: 1.05em; margin-left: 2px; vertical-align: -0.15em; background: #24161b; animation: blink 1s steps(1) infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+      .f-ep .answers { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+      .f-ep .ans { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px; background: #fff; border: 1px solid #eadbc4; border-radius: 16px; opacity: 0; transform: translateY(10px); transition: opacity 0.5s, transform 0.5s; }
+      .f-ep.done .ans { opacity: 1; transform: none; }
+      .f-ep .ans b { font: 500 16px / 1 'Jost', sans-serif; letter-spacing: 0.06em; }
+      .f-ep .dots { display: inline-flex; gap: 4px; padding: 8px 10px; border-radius: 12px; background: #efe5d6; }
+      .f-ep .dots i { width: 6px; height: 6px; border-radius: 50%; background: #9a8a80; animation: dot 1.3s ease-in-out infinite; }
+      .f-ep .dots i:nth-child(2) { animation-delay: 0.18s; }
+      .f-ep .dots i:nth-child(3) { animation-delay: 0.36s; }
+      @keyframes dot { 30% { transform: translateY(-4px); } }
+      @media (max-aspect-ratio: 4/5) {
+        .f-title { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+        .f-title .booth { flex-direction: row; height: auto; width: 84vw; }
+        .f-title .booth i { width: auto; height: 16vh; }
+      }
+
       /* ransom-note letters: each on its own torn scrap of paper */
       .rn {
         display: flex;
@@ -721,6 +837,38 @@
     <div class="obj cheers" id="vm"><img src="/scenes/cheers.jpg" alt="Everyone's hands raising cocktails together in a toast" /></div>
     <div class="word" id="w3" style="left: 50%; top: 14%; translate: -50% 0; text-align: center">and you, obviously</div>
 
+    <!-- 4. the reel keeps going: title, previously on, this week's episode -->
+    <section class="frame f-title" id="fTitle" aria-label="The Groupchat, season one">
+      <div class="booth"><i style="background-image:url(/cast/kavya.jpg)"></i><i style="background-image:url(/cast/friend2.jpg)"></i><i></i><i></i></div>
+      <div class="type">
+        <small>season one</small>
+        <h1><em>The</em><span>Groupchat</span></h1>
+        <p>a show about us, written by us</p>
+      </div>
+    </section>
+    <section class="frame f-prev paperbg" id="fPrev" aria-label="Previously on The Groupchat">
+      <h2>previously on <em>The Groupchat</em>…</h2>
+      <div class="stills">
+        <figure class="still" style="--r:-3deg;--c:#6f8fd0"><div class="shot"><span class="bubble">“we got a fourth roommate”</span></div><figcaption><b>S1 E1</b>We Are Not Getting a Fourth Roommate</figcaption></figure>
+        <figure class="still" style="--r:2deg;--c:#e2725b"><div class="shot"><span class="bubble">“nobody speak of it”</span></div><figcaption><b>S1 E2</b>The Lasagna Incident</figcaption></figure>
+        <figure class="still" style="--r:-1deg;--c:#eda15f"><div class="shot"><span class="bubble">“wait… he’s my DENTIST?”</span></div><figcaption><b>S1 E3</b>Hinge, Interrupted</figcaption></figure>
+      </div>
+    </section>
+    <section class="frame f-ep paperbg" id="fEp" aria-label="This week's episode">
+      <article>
+        <p class="meta">S1 E4 · “The Roommate Clause”</p>
+        <p class="typer"><span id="typed"></span><span class="caret"></span></p>
+        <div class="answers">
+          <div class="ans"><b>arkavs</b><span class="dots"><i></i><i></i><i></i></span></div>
+          <div class="ans"><b>hesatwink</b><span class="dots"><i></i><i></i><i></i></span></div>
+          <div class="ans"><b>friend three</b><span class="dots"><i></i><i></i><i></i></span></div>
+          <div class="ans"><b>friend four</b><span class="dots"><i></i><i></i><i></i></span></div>
+        </div>
+      </article>
+    </section>
+    <div id="burn" aria-hidden="true"></div>
+    <i class="sprockets l" aria-hidden="true"></i><i class="sprockets r" aria-hidden="true"></i>
+
     <script>
       // ---------- sound: small, one per movement ----------
       const snd = {
@@ -803,6 +951,13 @@
           this.burst('bandpass', 1300, 0.03, 0.22, 0.07);
         },
         swish() { this.burst('bandpass', 500, 0.4, 0.1, 0, 1800); },
+        key() { this.burst('bandpass', 2200 + Math.random() * 900, 0.025, 0.2 + Math.random() * 0.1); },
+        ding() { this.tone(2093, 1.2, 0.07); this.tone(3136, 0.8, 0.03); },
+        burn() {
+          this.burst('lowpass', 900, 1.1, 0.35, 0, 4000);
+          for (let i = 0; i < 14; i++) this.burst('bandpass', 1500 + Math.random() * 4000, 0.012, 0.25, 0.2 + Math.random() * 0.8);
+        },
+        clack() { this.burst('bandpass', 620, 0.045, 0.3); this.burst('bandpass', 380, 0.06, 0.25, 0.1); },
       };
       // the real song (/music/theme.mp3). Browsers only allow audio to start inside a tap,
       // so "play me" starts it silently right away (prime), and the needle drop fades it up.
@@ -1007,8 +1162,36 @@ history.scrollRestoration = 'manual';
       scrollTo(0, 0);
       addEventListener('scroll', () => { if (scrollY || scrollX) scrollTo(0, 0); });
       const kraft = $('kraft'), weave = $('weave'), cloth = $('cloth');
+      const fTitle = $('fTitle'), fPrev = $('fPrev'), fEp = $('fEp'), burnEl = $('burn');
+      const stills = [...fPrev.querySelectorAll('.still')];
+      const sprockets = [...document.querySelectorAll('.sprockets')];
+      let lastP = 0, reelVis = 0, reelPos = 0;
+      // the typewriter on this week's episode
+      const TYPED = 'I couldn’t help but wonder… is it a red flag if he still lives with his college roommate?';
+      const typing = { started: false, timer: null };
+      function startTyping() {
+        typing.started = true;
+        const out = $('typed');
+        out.textContent = '';
+        fEp.classList.remove('done');
+        let i = 0;
+        const step = () => {
+          if (i >= TYPED.length) { snd.ding(); fEp.classList.add('done'); return; }
+          const ch = TYPED[i++];
+          out.textContent += ch;
+          if (ch !== ' ') snd.key();
+          typing.timer = setTimeout(step, ch === '…' ? 650 : ch === ' ' ? 70 : 38 + Math.random() * 60);
+        };
+        typing.timer = setTimeout(step, 500);
+      }
+      function resetTyping() {
+        clearTimeout(typing.timer);
+        typing.started = false;
+        $('typed').textContent = '';
+        fEp.classList.remove('done');
+      }
       const el = { player: $('player'), record: $('record'), sleeve: $('sleeve'), vm, w2: $('w2'), w3: $('w3'), beat: $('beat') };
-      const MAX = 3 + DECK.filter((c) => c.name).length; // record, one intro per friend, the spread, the cheers
+      const MAX = 6 + DECK.filter((c) => c.name).length; // record, one intro per friend, the spread, the cheers, title, previously, episode
       let target = 0, p = 0, idle = null, spin = 0, last = performance.now();
       const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
       const mix = (a, b, t) => {
@@ -1136,6 +1319,43 @@ history.scrollRestoration = 'manual';
         el.w3.style.opacity = clamp((t2 - 0.35) * 3, 0, 1);
         crossed('vmrise', t2, 0.15, (d) => d > 0 && snd.swish());
 
+        // 4 · the reel advances frame by frame: cheers → title → previously on → this week's episode
+        const reelP = clamp(p - (3 + N), 0, 3);
+        const gapH = H * 1.04;
+        // cheers → title is a film burn: the photo overexposes, a hot glow blooms, the title burns through
+        const b = clamp(reelP, 0, 1);
+        const glow = Math.sin(Math.PI * clamp((b - 0.1) / 0.8, 0, 1));
+        el.vm.style.filter = b > 0 ? `sepia(${b}) saturate(${1 + b * 3}) brightness(${1 + b * 1.8}) contrast(${1 + b * 0.5})` : '';
+        el.vm.style.opacity = 1 - clamp((b - 0.55) / 0.3, 0, 1);
+        el.w3.style.opacity = Math.min(el.w3.style.opacity || 1, 1 - clamp(b * 3, 0, 1));
+        burnEl.style.opacity = glow.toFixed(3);
+        burnEl.style.transform = `scale(${0.4 + b * 2})`;
+        fTitle.style.opacity = clamp((b - 0.45) / 0.35, 0, 1);
+        fTitle.style.transform = `translateY(${-clamp(reelP - 1, 0, 2) * gapH}px)`;
+        // after that the reel advances, frame by frame
+        fPrev.style.transform = `translateY(${(2 - reelP) * gapH}px)`;
+        fEp.style.transform = `translateY(${(3 - reelP) * gapH}px)`;
+        crossed('burn', reelP, 0.12, (d) => d > 0 && snd.burn());
+        for (let i = 2; i <= 3; i++) crossed('reel' + i, reelP, i - 0.5, () => snd.clack());
+        // previously-on stills drop in one by one as that frame arrives
+        stills.forEach((st, i) => {
+          const on = reelP > 1.7 + i * 0.08;
+          if (on !== st.classList.contains('shown')) { st.classList.toggle('shown', on); if (on) snd.flick(); }
+        });
+        // the typewriter starts once this week's episode is in place
+        if (reelP > 2.95 && !typing.started) startTyping();
+        if (reelP < 2.5 && typing.started) resetTyping();
+
+        // the film reel down the margins runs with your scroll and fades when you stop
+        const vel = Math.abs(p - lastP) / Math.max(dt, 0.001);
+        lastP = p;
+        reelVis += (clamp(vel * 1.4, 0, 1) - reelVis) * Math.min(1, dt * 6);
+        // the film always creeps forward; scrolling winds it faster, and backwards when you scroll up
+        const dir = Math.sign(target - p) || 1;
+        reelPos = (reelPos + dt * (50 + reelVis * 650) * dir + 4000) % 40;
+        const pos = `${reelPos.toFixed(1)}px`;
+        sprockets.forEach((sp) => { sp.style.backgroundPosition = `center ${pos}, 0 0`; });
+
         // vinyl crackle only while you're at the record player and the song is playing
         const crackleOn = songOn && !paused && p > 0.97 && p < 1.3;
         if (snd.ctx && crackleOn !== !!snd.crackling) snd.crackle(crackleOn);
@@ -1143,7 +1363,7 @@ history.scrollRestoration = 'manual';
         if (showMini && mini.hidden) mini.hidden = false;
         mini.classList.toggle('show', showMini);
         mini.tabIndex = showMini ? 0 : -1;
-        el.beat.textContent = p < 0.5 ? 'side a' : p < 1.5 ? 'side a · playing' : p < 1.5 + N ? 'starring' : p < 2.5 + N ? 'the cast' : 'last round';
+        el.beat.textContent = p < 0.5 ? 'side a' : p < 1.5 ? 'side a · playing' : p < 1.5 + N ? 'starring' : p < 2.5 + N ? 'the cast' : p < 3.5 + N ? 'last round' : p < 4.5 + N ? 'title' : p < 5.5 + N ? 'previously' : 'this week';
 
         // the room changes colour with the playhead: cherry fabric → black card table → cherry
         const toTable = clamp(p - 1, 0, 1), toCherry = clamp(p - 2, 0, 1);
