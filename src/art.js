@@ -225,7 +225,7 @@ export function taxiArt() {
     <rect y="580" width="1600" height="320" fill="url(#cab)"/>
     <rect y="660" width="1600" height="40" fill="url(#check)"/>
     <rect x="620" y="610" width="120" height="16" rx="8" fill="#a77b0f"/>
-    <text x="1000" y="800" class="cabtext">NYC TAXI</text>
+    <text x="800" y="800" text-anchor="middle" class="cabtext">NYC TAXI</text>
     <text x="300" y="800" class="cabtext small">5W12</text>
   </svg>`;
 }

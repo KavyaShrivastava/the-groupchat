@@ -224,17 +224,89 @@ export class Sound {
     this.tone({ freq: 3136, dur: 0.9, gain: 0.03 });
   }
 
-  // a small lounge-jazz sting for the title card (original, not the show's theme)
+  // a plucked, slightly detuned "guitar" note: two saws through a closing lowpass
+  pluck(freq, at, dur = 0.5, gain = 0.06) {
+    if (!this.ctx) return;
+    const ctx = this.ctx;
+    const t = ctx.currentTime + at;
+    const f = ctx.createBiquadFilter();
+    f.type = 'lowpass';
+    f.Q.value = 2;
+    f.frequency.setValueAtTime(3800, t);
+    f.frequency.exponentialRampToValueAtTime(700, t + dur);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(gain, t + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    f.connect(g).connect(this.master);
+    for (const detune of [-7, 7]) {
+      const o = ctx.createOscillator();
+      o.type = 'sawtooth';
+      o.frequency.value = freq;
+      o.detune.value = detune;
+      o.connect(f);
+      o.start(t);
+      o.stop(t + dur + 0.05);
+    }
+  }
+
+  kick(at) {
+    if (!this.ctx) return;
+    const ctx = this.ctx;
+    const t = ctx.currentTime + at;
+    const o = ctx.createOscillator();
+    o.frequency.setValueAtTime(140, t);
+    o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.55, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+    o.connect(g).connect(this.master);
+    o.start(t);
+    o.stop(t + 0.32);
+  }
+
+  // the title sting: an original bouncy UK-indie-pop riff in the spirit of
+  // FX's Adults (not its theme). Jangly strums, busy bass, drum machine.
   sting() {
-    const bass = [87.31, 130.81];
-    bass.forEach((f, i) => this.tone({ freq: f, type: 'sine', dur: 1.6, gain: 0.22, at: i * 0.32, attack: 0.01 }));
-    const chord = [174.61, 220, 329.63, 392, 523.25, 659.25]; // Fmaj9 rising
-    chord.forEach((f, i) =>
-      this.tone({ freq: f, type: 'triangle', dur: 2.6 - i * 0.15, gain: 0.07, at: 0.05 + i * 0.07, attack: 0.02, lp: 2400 })
-    );
-    this.tone({ freq: 1174.66, type: 'sine', dur: 1.8, gain: 0.05, at: 0.75 });
-    this.tone({ freq: 1567.98, type: 'sine', dur: 1.5, gain: 0.04, at: 0.9 });
-    // brushes
-    for (let i = 0; i < 4; i++) this.burst({ type: 'highpass', freq: 5000, dur: 0.18, gain: 0.05, attack: 0.06, at: i * 0.32 });
+    const bpm = 132;
+    const b = 60 / bpm; // one beat
+    // D – A – Bm – G, one chord per two beats, then a ringing D
+    const chords = [
+      [146.83, 220, 293.66, 369.99, 440],
+      [110, 164.81, 220, 277.18, 329.63],
+      [123.47, 185, 246.94, 293.66, 369.99],
+      [98, 146.83, 196, 246.94, 293.66],
+    ];
+    const roots = [73.42, 55, 61.74, 49];
+    chords.forEach((notes, c) => {
+      const t0 = c * 2 * b;
+      // down, down-up, up-down strum pattern
+      [0, 0.75, 1, 1.5].forEach((off, k) => {
+        const up = k % 2 === 1;
+        const order = up ? [...notes].reverse() : notes;
+        order.forEach((f, i) => this.pluck(f, t0 + off * b + i * 0.012, 0.45, k === 0 ? 0.045 : 0.03));
+      });
+      // eighth-note bass, octave jump on the "and" of 2
+      for (let e = 0; e < 4; e++) {
+        const f = e === 3 ? roots[c] * 2 : roots[c];
+        this.tone({ freq: f, type: 'triangle', dur: b * 0.45, gain: 0.22, at: t0 + e * b * 0.5, attack: 0.005, lp: 600 });
+      }
+    });
+    const end = 8 * b;
+    chords[0].concat([587.33]).forEach((f, i) => this.pluck(f, end + i * 0.018, 1.8, 0.04));
+    this.tone({ freq: 73.42, type: 'triangle', dur: 1.6, gain: 0.25, at: end, lp: 600 });
+    // drums: four on the floor-ish kick, snare on 2 and 4, eighth hats
+    for (let beat = 0; beat < 8; beat++) {
+      const t = beat * b;
+      if (beat % 2 === 0) this.kick(t);
+      else {
+        this.burst({ type: 'bandpass', freq: 1800, q: 0.7, dur: 0.16, gain: 0.32, attack: 0.002, at: t });
+        this.tone({ freq: 190, type: 'triangle', dur: 0.08, gain: 0.1, at: t });
+      }
+      this.burst({ type: 'highpass', freq: 7000, dur: 0.04, gain: 0.08, attack: 0.001, at: t });
+      this.burst({ type: 'highpass', freq: 7000, dur: 0.03, gain: 0.05, attack: 0.001, at: t + b / 2 });
+    }
+    this.kick(end);
+    this.burst({ type: 'highpass', freq: 5000, dur: 1.2, gain: 0.1, attack: 0.01, at: end }); // crash
   }
 }
