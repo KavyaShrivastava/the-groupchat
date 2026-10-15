@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Groupchat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Courier+Prime&family=Josefin+Sans:wght@200;300;400&family=Playfair+Display:ital,wght@0,400;1,400;1,600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <!-- riso inks: photos are turned to grey, punched up, then mapped onto two or three inks -->
+      <filter id="riso-blue" color-interpolation-filters="sRGB">
+        <feColorMatrix type="saturate" values="0" />
+        <feComponentTransfer><feFuncR type="linear" slope="1.35" intercept="-0.16" /><feFuncG type="linear" slope="1.35" intercept="-0.16" /><feFuncB type="linear" slope="1.35" intercept="-0.16" /></feComponentTransfer>
+        <feComponentTransfer><feFuncR type="table" tableValues="0.1 0.2 0.95" /><feFuncG type="table" tableValues="0.15 0.3 0.91" /><feFuncB type="table" tableValues="0.5 0.72 0.86" /></feComponentTransfer>
+      </filter>
+      <filter id="riso-red" color-interpolation-filters="sRGB">
+        <feColorMatrix type="saturate" values="0" />
+        <feComponentTransfer><feFuncR type="linear" slope="1.3" intercept="-0.12" /><feFuncG type="linear" slope="1.3" intercept="-0.12" /><feFuncB type="linear" slope="1.3" intercept="-0.12" /></feComponentTransfer>
+        <feComponentTransfer><feFuncR type="table" tableValues="0.3 0.84 0.96" /><feFuncG type="table" tableValues="0.07 0.27 0.89" /><feFuncB type="table" tableValues="0.06 0.18 0.83" /></feComponentTransfer>
+      </filter>
+      <filter id="riso-cross" color-interpolation-filters="sRGB">
+        <feColorMatrix type="saturate" values="0" />
+        <feComponentTransfer><feFuncR type="table" tableValues="0.06 0.91 1" /><feFuncG type="table" tableValues="0.19 0.45 0.94" /><feFuncB type="table" tableValues="0.29 0.23 0.86" /></feComponentTransfer>
+      </filter>
+      <filter id="riso-bw" color-interpolation-filters="sRGB">
+        <feColorMatrix type="saturate" values="0" />
+        <feComponentTransfer><feFuncR type="table" tableValues="0.08 0.1 0.6 0.96" /><feFuncG type="table" tableValues="0.07 0.09 0.57 0.93" /><feFuncB type="table" tableValues="0.08 0.09 0.54 0.88" /></feComponentTransfer>
+      </filter>
+    </svg>
+    <main id="stage" data-era="pre">
+      <div id="frames"></div>
+
+      <!-- film overlays -->
+      <canvas id="fx-static" width="160" height="100" aria-hidden="true"></canvas>
+      <div id="fx-burn" aria-hidden="true"></div>
+      <div id="fx-flash" aria-hidden="true"></div>
+      <div id="fx-gate" aria-hidden="true"><i></i><i></i></div>
+      <div id="grain" aria-hidden="true"></div>
+      <div id="scratches" aria-hidden="true"></div>
+      <div class="letterbox top" aria-hidden="true"></div>
+      <div class="letterbox bottom" aria-hidden="true"></div>
+
+      <!-- viewfinder -->
+      <div id="hud" aria-hidden="true">
+        <span class="rec"><b></b>REC</span>
+        <span class="tc">00:00:00:00</span>
+        <span class="sc">SC 01</span>
+      </div>
+      <button id="mute" type="button" hidden>sound on</button>
+      <div id="hint" aria-hidden="true">scroll to cut</div>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
