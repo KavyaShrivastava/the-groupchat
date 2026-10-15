@@ -392,9 +392,50 @@
         border-radius: calc(var(--w) * 0.06);
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
-        box-shadow: 0 0.3vmin 0.6vmin rgba(0, 0, 0, 0.25), 0 1.4vmin 3vmin rgba(0, 0, 0, 0.4);
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4), 0 0.6vmin 1.2vmin rgba(0, 0, 0, 0.35), 0 1.8vmin 3.6vmin rgba(0, 0, 0, 0.35);
       }
-      .pcard .front { background: #fbf9f4; overflow: hidden; color: var(--suit); }
+      .pcard .front {
+        overflow: hidden;
+        color: var(--suit);
+        /* real card stock: faint paper tooth, a touch warm under the flash */
+        background:
+          radial-gradient(rgba(120, 100, 80, 0.05) 0.7px, transparent 1px) 0 0 / 3px 3px,
+          linear-gradient(160deg, #fffdf8, #f2ece1);
+      }
+      .pcard .front::after { /* flash glare across the glossy face */
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        pointer-events: none;
+        background: linear-gradient(118deg, transparent 32%, rgba(255, 255, 255, 0.38) 44%, rgba(255, 255, 255, 0.08) 52%, transparent 62%);
+        mix-blend-mode: screen;
+      }
+      .pcard .print {
+        position: absolute;
+        inset: 14% 13%;
+        z-index: 2;
+        overflow: hidden;
+        background: var(--tint, #e9dcc8);
+        box-shadow: 0 0 0 calc(var(--w) * 0.006) var(--suit);
+        display: grid;
+        place-items: center;
+      }
+      .pcard .print img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; }
+      .pcard .print span { font: italic 500 calc(var(--w) * 0.3) / 1 Georgia, serif; color: rgba(36, 31, 34, 0.4); }
+      .pcard .print b {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 4% 0 3%;
+        text-align: center;
+        background: #fbf9f4;
+        font: 700 calc(var(--w) * 0.05) / 1 Georgia, serif;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--suit);
+      }
       .pcard .corner {
         position: absolute;
         display: flex;
@@ -865,15 +906,15 @@
       // the cast, plus extra inside-joke cards. Swap captions for the real ones.
       const ME = '/cast/kavya.jpg', HIM = '/cast/friend2.jpg';
       const DECK = [
-        { rank: '9', suit: '♥', label: ['red', 'seen 4:12am', 'left:8%; top:20%; rotate:-3deg'] },
-        { rank: 'A', suit: '♥', name: 'arkavs', photo: ME, cut: 'left:16%; top:22%; width:68%; height:52%; rotate:-4deg', label: ['black', 'up at 3am again', 'left:10%; top:72%; rotate:2deg'] },
-        { rank: '7', suit: '♣', label: ['paper', 'no plans allowed', 'left:12%; top:14%; rotate:-2deg'], word: ['plans', 'left:50%; top:52%'], ban: true },
-        { rank: '10', suit: '♠', name: 'hesatwink', photo: HIM, cut: 'left:14%; top:24%; width:70%; height:50%; rotate:5deg', label: ['red', 'no thoughts just sunglasses', 'left:4%; top:74%; rotate:-3deg; font-size:calc(var(--w) * 0.05)'] },
-        { rank: '4', suit: '♦', faces: [ME, HIM, ME, HIM, HIM, ME, HIM, ME, ME, HIM, ME, HIM, HIM, ME, HIM, ME], label: ['black', "everyone's typing", 'left:12%; top:84%; rotate:1deg'] },
-        { rank: '7', suit: '♦', name: 'Friend Three', tint: '#f3d6c8', cut: 'left:18%; top:24%; width:64%; height:46%; rotate:-6deg', label: ['paper', 'just one drink', 'left:16%; top:12%; rotate:3deg'] },
-        { rank: 'K', suit: '♣', label: ['black', 'the groupchat at 2am', 'left:4%; top:68%; rotate:-2deg; font-size:calc(var(--w) * 0.052)'] },
-        { rank: '3', suit: '♣', name: 'Friend Four', tint: '#cfe0f0', cut: 'left:16%; top:28%; width:68%; height:46%; rotate:4deg', label: ['red', 'has a spreadsheet for this', 'left:2%; top:16%; rotate:-2deg; font-size:calc(var(--w) * 0.048)'] },
-        { rank: '2', suit: '♠', label: ['paper', 'ugh.', 'left:34%; top:18%; rotate:-4deg; font-size:calc(var(--w) * 0.09)'] },
+        { rank: '9', suit: '♥' },
+        { rank: 'A', suit: '♥', name: 'arkavs', photo: ME },
+        { rank: '7', suit: '♣' },
+        { rank: '10', suit: '♠', name: 'hesatwink', photo: HIM },
+        { rank: '4', suit: '♦' },
+        { rank: '7', suit: '♦', name: 'friend three', tint: '#e9d9c4' },
+        { rank: 'K', suit: '♣' },
+        { rank: '3', suit: '♣', name: 'friend four', tint: '#dfe3e6' },
+        { rank: '2', suit: '♠' },
       ];
       // classic pip layouts, as (x%, y%) — bottom-half pips get turned upside down
       const C = [30, 50, 70], R = [20, 35, 50, 65, 80];
@@ -891,10 +932,11 @@
       deck.innerHTML = DECK.map((c, k) => {
         const red = c.suit === '♥' || c.suit === '♦';
         const corner = `<b>${c.rank}</b><small>${c.suit}</small>`;
-        const pips = (PIPS[c.rank] || [])
+        const pips = (c.name ? [] : PIPS[c.rank] || [])
           .map(([x, y]) => `<span class="pip${c.rank === 'A' ? ' ace' : ''}${y > 55 ? ' down' : ''}" style="left:${x}%;top:${y}%">${c.suit}</span>`)
           .join('');
         let glued = '';
+        if (c.name) glued += `<div class="print"${c.tint ? ` style="--tint:${c.tint}"` : ''}>${c.photo ? `<img src="${c.photo}" alt="${c.name}">` : `<span>${c.name[0]}</span>`}<b>${c.name}</b></div>`;
         if (c.cut) glued += c.photo
           ? `<div class="cut" style="${c.cut}"><img src="${c.photo}" alt="${c.name}"></div>`
           : `<div class="cut initial" style="${c.cut};--tint:${c.tint}"><span>${c.name[0]}</span></div>`;
