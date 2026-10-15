@@ -722,11 +722,15 @@
       .tag {
         position: fixed;
         z-index: 60;
-        font: 400 12px/1 var(--mono);
-        letter-spacing: 0.18em;
+        font: 400 11px/1 var(--mono);
+        letter-spacing: 0.16em;
         text-transform: uppercase;
-        color: var(--chrome, #f6ead8);
-        opacity: 0.8;
+        color: #f3e7d2;
+        background: rgba(20, 12, 8, 0.6);
+        padding: 6px 10px 5px;
+        border-radius: 99px;
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
       }
       .tag.tl { top: 18px; left: 18px; }
       .tag.br { bottom: 18px; right: 18px; }
@@ -847,7 +851,7 @@
     <div id="zebra"></div>
     <div id="flash"></div>
     <div id="grain"></div>
-    <span class="tag tl">the groupchat · objects demo</span>
+    <span class="tag tl">the groupchat</span>
     <button id="sound" type="button" hidden>sound on</button>
     <button id="mini" class="mini" type="button" hidden aria-label="Pause the song">
       <span class="disc"><i></i><em class="pp"></em></span>
@@ -1211,7 +1215,15 @@ history.scrollRestoration = 'manual';
       const fTitle = $('fTitle'), fPrev = $('fPrev'), fEp = $('fEp'), burnEl = $('burn');
       const stills = [...fPrev.querySelectorAll('.still')];
       const sprockets = [...document.querySelectorAll('.sprockets')];
-      let lastP = 0, reelVis = 0, reelPos = 0;
+      let renderedP = -1;
+      const DIM = {};
+      function measure() {
+        DIM.W = innerWidth; DIM.H = innerHeight;
+        DIM.P = el.player.offsetWidth;
+        DIM.cw = cards[0].offsetWidth; DIM.ch = DIM.cw * 1.4;
+        renderedP = -1; // force one redraw after a resize
+      }
+      addEventListener('resize', measure);
       // the typewriter on this week's episode
       const TYPED = 'I couldn’t help but wonder… is it a red flag if he still lives with his college roommate?';
       const typing = { started: false, timer: null };
@@ -1281,9 +1293,13 @@ history.scrollRestoration = 'manual';
         last = now;
         p += (target - p) * Math.min(1, dt * 9);
         if (Math.abs(target - p) < 0.0005) p = target;
+        // only do the per-frame layout when something is actually changing
+        const spinning = p < 1.35 && songOn && !paused;
+        const typingNow = typing.started && !fEp.classList.contains('done');
+        if (p === renderedP && !spinning && !typingNow) { requestAnimationFrame(frame); return; }
+        renderedP = p;
 
-        const P = el.player.offsetWidth;
-        const W = innerWidth, H = innerHeight;
+        const { P, W, H, cw, ch } = DIM;
         const N = CASTN; // friends introduced one by one after the record player
         const t0 = clamp(p, 0, 1), pi = clamp(p - 1, 0, N + 1), t1 = clamp(p - 1 - N, 0, 1), t2 = clamp(p - 2 - N, 0, 1);
 
@@ -1301,7 +1317,6 @@ history.scrollRestoration = 'manual';
         crossed('needle', clamp((t0 - 0.7) / 0.3, 0, 1), 0.98, (d) => (d > 0 ? snd.needle() : (snd.crackle(false), music.stop(), setPaused(true))));
 
         // 2 · a hand of cards is dealt into a messy 3x3, one flick at a time, then swept away
-        const cw = cards[0].offsetWidth, ch = cw * 1.4;
         const JIT = [[-6, 4, -7], [3, -5, 4], [-4, 6, -3], [5, 3, 6], [-2, -4, -2], [4, 5, 8], [-5, -3, -5], [2, 6, 3], [6, -2, 7]];
         let order = 0;
         const bigness = {};
@@ -1400,16 +1415,6 @@ history.scrollRestoration = 'manual';
         if (reelP > 2.95 && !typing.started) startTyping();
         if (reelP < 2.5 && typing.started) resetTyping();
 
-        // the film reel down the margins runs with your scroll and fades when you stop
-        const vel = Math.abs(p - lastP) / Math.max(dt, 0.001);
-        lastP = p;
-        reelVis += (clamp(vel * 1.4, 0, 1) - reelVis) * Math.min(1, dt * 6);
-        // the film always creeps forward; scrolling winds it faster, and backwards when you scroll up
-        const dir = Math.sign(target - p) || 1;
-        reelPos = (reelPos + dt * (50 + reelVis * 650) * dir + 4000) % 40;
-        const pos = `${reelPos.toFixed(1)}px`;
-        sprockets.forEach((sp) => { sp.style.backgroundPosition = `center ${pos}, 0 0`; });
-
         // vinyl crackle only while you're at the record player and the song is playing
         const crackleOn = songOn && !paused && p > 0.97 && p < 1.3;
         if (snd.ctx && crackleOn !== !!snd.crackling) snd.crackle(crackleOn);
@@ -1426,8 +1431,10 @@ history.scrollRestoration = 'manual';
         zebra.style.opacity = (clamp((p - 1.2) * 2.2, 0, 1) * (1 - clamp(p - (2.4 + N), 0, 1))).toFixed(3);
         // labels read dark on the paper, light on the table and fabric
         document.body.style.setProperty('--chrome', '#f0d9a8');
-        requestAnimationFrame(frame);
+        measure();
+      requestAnimationFrame(frame);
       }
+      measure();
       requestAnimationFrame(frame);
     </script>
   </body>
