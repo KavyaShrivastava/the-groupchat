@@ -20,6 +20,7 @@
         --tomato: #e8664f;
         --sage: #8cc7a1;
         --sky: #9db8e8;
+        --brat: #8ace00;
         --paper: var(--cream);
         --ink: #241f22;
         --soft: rgba(246, 234, 216, 0.6);
@@ -75,15 +76,18 @@
         inset: 32%;
         border-radius: 50%;
         overflow: hidden;
-        background: var(--butter);
+        background: var(--brat);
         display: grid;
         place-items: center;
-        box-shadow: inset 0 0 0 0.6vmin #f6e7d8;
+        box-shadow: inset 0 0 0 0.6vmin rgba(0, 0, 0, 0.08);
       }
       .label span {
-        font: italic 500 calc(var(--S) * 0.045) / 1.1 var(--serif);
+        font: 400 calc(var(--S) * 0.05) / 1 Arial, 'Helvetica Neue', sans-serif;
+        letter-spacing: -0.02em;
         text-align: center;
-        color: var(--cherry);
+        color: #000;
+        transform: scaleX(0.86);
+        filter: blur(0.5px);
       }
       .label i {
         position: absolute;
@@ -130,6 +134,18 @@
         box-shadow: 0 0.8vmin 1.6vmin rgba(0, 0, 0, 0.15);
       }
       .sleeve .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .sleeve .pic::before {
+        content: '';
+        position: absolute;
+        top: -6%;
+        left: 50%;
+        width: 46%;
+        height: 9%;
+        translate: -50% 0;
+        rotate: -5deg;
+        background: rgba(138, 206, 0, 0.85);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
       .tonearm {
         width: calc(var(--S) * 0.62);
         height: calc(var(--S) * 0.62);
@@ -277,7 +293,7 @@
     <span class="tag br">scroll ↓</span>
 
     <!-- 1. vinyl -->
-    <div class="obj record" id="record"><div class="label"><span>the<br />groupchat</span><i></i></div></div>
+    <div class="obj record" id="record"><div class="label"><span>the groupchat</span><i></i></div></div>
     <svg class="obj tonearm" id="arm" viewBox="0 0 100 100" aria-hidden="true">
       <circle cx="85" cy="12" r="7" fill="#e9dcc6" />
       <circle cx="85" cy="12" r="3" fill="#8f8478" />
