@@ -39,21 +39,48 @@
         font-family: var(--mono);
       }
       /* crumpled kraft paper, only behind the vinyl */
-      /* the groupchat's own print: hand-drawn chat doodles over a grainy painterly wash */
+      /* stacked folder tabs, like a designer's desk folders, only behind the vinyl */
       #kraft {
         position: fixed;
         inset: 0;
         z-index: 0;
         pointer-events: none;
-        background-color: #f4dccd;
-        background-image:
-          radial-gradient(rgba(90, 40, 30, 0.08) 1px, transparent 1.4px),
-          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360' viewBox='0 0 360 360'%3E %3Cg fill='none' stroke='%237a2433' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E %3Cg transform='translate%2834 40%29 rotate%28-8%29'%3E%3Cpath d='M2 6c0-6 4-8 22-8s24 2 24 8v12c0 6-4 8-24 8-4 0-8 0-11-1l-9 7 2-9c-3-1-4-3-4-5z'/%3E%3Ccircle cx='15' cy='12' r='1.6' fill='%237a2433'/%3E%3Ccircle cx='24' cy='12' r='1.6' fill='%237a2433'/%3E%3Ccircle cx='33' cy='12' r='1.6' fill='%237a2433'/%3E%3C/g%3E %3Cg transform='translate%28210 30%29 rotate%2812%29'%3E%3Ccircle cx='18' cy='18' r='17'/%3E%3Ccircle cx='18' cy='18' r='6'/%3E%3Ccircle cx='18' cy='18' r='1.2' fill='%237a2433'/%3E%3Cpath d='M7 9c3-3 6-4 9-4'/%3E%3C/g%3E %3Cg transform='translate%28120 120%29 rotate%28-14%29'%3E%3Cpath d='M16 28C4 20-1 12 2 6s11-6 14 1c3-7 11-8 14-1s-2 14-14 22z'/%3E%3C/g%3E %3Cg transform='translate%28290 140%29 rotate%289%29'%3E%3Cpath d='M14 0l4 10 11 1-8 7 3 11-10-6-10 6 3-11-8-7 11-1z'/%3E%3C/g%3E %3Cg transform='translate%2840 220%29 rotate%286%29'%3E%3Cpath d='M2 4c0-4 3-6 20-6s21 2 21 6v10c0 4-3 6-21 6-3 0-6 0-8-1l-6 6 1-7c-5-1-7-2-7-4z'/%3E%3Cpath d='M12 8q3 4 0 7M19 7v9M26 9q4 1 2 7'/%3E%3C/g%3E %3Cg transform='translate%28190 250%29 rotate%28-6%29'%3E%3Cpath d='M2 14c4-10 8-10 10 0s6 10 10 0 8-10 10 0'/%3E%3C/g%3E %3Cg transform='translate%28300 280%29 rotate%28-18%29'%3E%3Ccircle cx='10' cy='10' r='9'/%3E%3Cpath d='M6 8h0M14 8h0' stroke-width='3'/%3E%3Cpath d='M5 13q5 4 10 0'/%3E%3C/g%3E %3Cg transform='translate%28110 300%29 rotate%284%29'%3E%3Cpath d='M2 2l2 26M2 28c6 0 10 0 12-2M20 6c-6 0-6 20 0 20s6-20 0-20zM32 2l2 26M32 28c6 0 10 0 12-2'/%3E%3C/g%3E %3Cg transform='translate%28250 205%29 rotate%2820%29' stroke-width='2'%3E%3Cpath d='M0 6l12-6M3 12l12-6M6 18l12-6'/%3E%3C/g%3E %3C/g%3E%3C/svg%3E"),
-          radial-gradient(60% 55% at 18% 22%, rgba(245, 214, 134, 0.95), transparent 70%),
-          radial-gradient(55% 60% at 85% 30%, rgba(242, 176, 190, 0.9), transparent 70%),
-          radial-gradient(70% 60% at 60% 95%, rgba(214, 196, 236, 0.75), transparent 70%),
-          radial-gradient(50% 50% at 10% 90%, rgba(250, 236, 214, 0.9), transparent 70%);
-        background-size: 5px 5px, 360px 360px, auto, auto, auto, auto;
+        overflow: hidden;
+        background: #ece4d8;
+      }
+      #kraft::after { /* paper grain over everything */
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(rgba(70, 50, 40, 0.09) 1px, transparent 1.4px) 0 0 / 5px 5px;
+      }
+      .folder {
+        position: absolute;
+        left: -4vw;
+        right: -4vw;
+        height: 70vh;
+        border-radius: 1.6vmin 1.6vmin 0 0;
+        background: var(--f);
+        box-shadow: 0 -0.6vh 2.4vh rgba(60, 40, 30, 0.14);
+      }
+      .folder::before { /* the tab */
+        content: '';
+        position: absolute;
+        top: -4.6vh;
+        left: var(--tab);
+        width: min(34vw, 300px);
+        height: 5vh;
+        border-radius: 1.4vmin 1.4vmin 0 0;
+        background: var(--f);
+      }
+      .folder span {
+        position: absolute;
+        top: -3.1vh;
+        left: calc(var(--tab) + 2.2vmin);
+        font: 400 clamp(11px, 1.6vh, 15px) / 1 var(--mono);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: rgba(40, 30, 28, 0.62);
       }
       /* woven fabric texture, like the View-Master reference */
       #weave {
@@ -340,7 +367,12 @@
     </style>
   </head>
   <body>
-    <div id="kraft"></div>
+    <div id="kraft">
+      <div class="folder" style="--f:#d9c7b4; --tab:58vw; top:8vh"><span>side b</span></div>
+      <div class="folder" style="--f:#e3b9bd; --tab:8vw; top:30vh"><span>season one</span></div>
+      <div class="folder" style="--f:#aebfd2; --tab:40vw; top:52vh"><span>the cast</span></div>
+      <div class="folder" style="--f:#efe6d6; --tab:66vw; top:74vh"><span>canon · do not open</span></div>
+    </div>
     <div id="weave"></div>
     <span class="tag tl">the groupchat · objects demo</span>
     <button id="sound" type="button">tap for sound</button>
