@@ -95,6 +95,7 @@ async function goTo(next, dir) {
   cur = next;
   enter(cur, dir);
   busy = false;
+  cutDoneAt = performance.now();
 }
 
 function go(dir) {
@@ -113,6 +114,7 @@ function begin(withSound) {
   const mute = $('#mute');
   mute.hidden = false;
   mute.textContent = withSound ? 'sound on' : 'sound off';
+  hint.textContent = matchMedia('(pointer: coarse)').matches ? 'swipe to cut' : 'scroll to cut';
   goTo(1, 1);
 }
 scenes[0].el.querySelector('.start').addEventListener('click', () => begin(true));
@@ -126,32 +128,59 @@ $('#mute').addEventListener('click', (e) => {
 });
 
 // ---- input: one gesture = one cut ----
-// Trackpads keep firing wheel events (momentum) long after a flick, so once
-// a gesture has caused a cut, the rest of it is ignored until the wheel goes
-// quiet for a moment.
+// Trackpads keep firing wheel events (momentum) after a flick. Once a gesture
+// has caused a cut, its decaying tail is ignored, but a fresh push (the wheel
+// going quiet, the deltas growing again, or a steady scroll that keeps going
+// after the cut has landed) counts as a new gesture.
 let lastWheel = 0;
+let lastAbs = 0;
 let acc = 0;
 let consumed = false;
+let cutDoneAt = 0;
+let consumedSince = 0;
 addEventListener(
   'wheel',
   (e) => {
     e.preventDefault();
     const now = performance.now();
-    if (now - lastWheel > 220) {
+    const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    const abs = Math.abs(delta);
+    if (!started) {
+      if (abs > 4) nudgeStart();
+      return;
+    }
+    const quiet = now - lastWheel > 160;
+    const rising = abs > lastAbs * 1.4 + 3 && now - cutDoneAt > 120;
+    const held = consumed && !busy && now - cutDoneAt > 650 && now - consumedSince > 900 && abs > 8;
+    if (quiet || rising || held) {
       consumed = false;
-      acc = 0;
+      if (quiet) acc = 0;
     }
     lastWheel = now;
-    if (consumed || busy || !started) return;
-    acc += Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-    if (Math.abs(acc) > 36) {
+    lastAbs = abs;
+    if (consumed || busy) return;
+    acc += delta;
+    if (Math.abs(acc) > 30) {
       consumed = true;
+      consumedSince = now;
       go(Math.sign(acc));
       acc = 0;
     }
   },
   { passive: false }
 );
+
+// scrolling on the ticket: point at the button instead of doing nothing
+const startBtn = scenes[0].el.querySelector('.start');
+let nudgeTimer = null;
+function nudgeStart() {
+  if (startBtn.classList.contains('nudge')) return;
+  startBtn.classList.add('nudge');
+  hint.textContent = 'click to start the reel';
+  hint.classList.add('on');
+  clearTimeout(nudgeTimer);
+  nudgeTimer = setTimeout(() => startBtn.classList.remove('nudge'), 900);
+}
 
 let touchY = null;
 addEventListener('touchstart', (e) => (touchY = e.touches[0].clientY), { passive: true });
@@ -160,14 +189,18 @@ addEventListener('touchend', (e) => {
   if (touchY === null) return;
   const dy = touchY - e.changedTouches[0].clientY;
   touchY = null;
-  if (Math.abs(dy) > 40) go(dy > 0 ? 1 : -1);
+  if (Math.abs(dy) > 40) {
+    if (!started) nudgeStart();
+    else go(dy > 0 ? 1 : -1);
+  }
 });
 
 addEventListener('keydown', (e) => {
   if (e.target.closest('button') && (e.key === 'Enter' || e.key === ' ')) return;
-  if (['ArrowDown', 'ArrowRight', 'PageDown', ' '].includes(e.key)) {
+  if (['ArrowDown', 'ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) {
     e.preventDefault();
-    go(1);
+    if (!started) begin(true);
+    else go(1);
   } else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) {
     e.preventDefault();
     go(-1);
