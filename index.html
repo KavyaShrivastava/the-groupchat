@@ -49,7 +49,7 @@
         background-color: #3a1d10;
         background-image:
           linear-gradient(rgba(25, 10, 4, 0.28), rgba(25, 10, 4, 0.28)),
-          url('/textures/dark_wood.jpg');
+          url('textures/dark_wood.jpg');
         background-size: auto, 1100px 1100px;
         background-position: center;
       }
@@ -640,7 +640,7 @@
         background-image:
           radial-gradient(65% 55% at 50% 44%, rgba(255, 214, 150, 0.14), transparent 70%),
           linear-gradient(rgba(10, 5, 2, 0.35), rgba(10, 5, 2, 0.35)),
-          url('/textures/dark_wood.jpg');
+          url('textures/dark_wood.jpg');
         background-size: auto, auto, 1100px 1100px;
         background-position: center;
         display: grid;
@@ -951,9 +951,9 @@
 
     <!-- 1. the suitcase record player -->
     <div class="obj player" id="player">
-      <div class="cutout"><img class="photo" src="/scenes/player-cut.png" alt="An open cream suitcase record player, Polaroids and tickets taped inside the lid" /></div>
-      <div class="lidpic" style="left: 34.4%; top: 15%; width: 11%; height: 6.3%; rotate: -7deg"><img src="/cast/kavya.jpg" alt="arkavs" /></div>
-      <div class="lidpic" style="left: 65.3%; top: 14.4%; width: 9.8%; height: 7%; rotate: 11deg"><img src="/cast/friend2.jpg" alt="hesatwink" /></div>
+      <div class="cutout"><img class="photo" src="scenes/player-cut.png" alt="An open cream suitcase record player, Polaroids and tickets taped inside the lid" /></div>
+      <div class="lidpic" style="left: 34.4%; top: 15%; width: 11%; height: 6.3%; rotate: -7deg"><img src="cast/kavya.jpg" alt="arkavs" /></div>
+      <div class="lidpic" style="left: 65.3%; top: 14.4%; width: 9.8%; height: 7%; rotate: 11deg"><img src="cast/friend2.jpg" alt="hesatwink" /></div>
       <div class="recwrap"><div class="record" id="record" role="button" tabindex="0" aria-label="Play the record"><div class="label"><span>the groupchat</span><i></i></div><span class="taphint" id="tapHint"><b></b>tap to play</span></div></div>
     </div>
 
@@ -963,7 +963,7 @@
     <div class="casthead" id="w2"><em>starring</em><b>all of us</b><small>we already know your type</small></div>
 
     <!-- 3. view-master -->
-    <div class="obj cheers" id="vm"><img src="/scenes/cheers.jpg" alt="Everyone's hands raising cocktails together in a toast" /></div>
+    <div class="obj cheers" id="vm"><img src="scenes/cheers.jpg" alt="Everyone's hands raising cocktails together in a toast" /></div>
     <div class="word" id="w3" style="left: 50%; top: 14%; translate: -50% 0; text-align: center">and you, obviously</div>
 
     <!-- 4. the reel keeps going: title, previously on, this week's episode -->
@@ -1080,7 +1080,7 @@
         },
         clack() { this.burst('bandpass', 620, 0.045, 0.3); this.burst('bandpass', 380, 0.06, 0.25, 0.1); },
       };
-      // the real song (/music/theme.mp3). Browsers only allow audio to start inside a tap,
+      // the real song (music/theme.mp3). Browsers only allow audio to start inside a tap,
       // so "play me" starts it silently right away (prime), and the needle drop fades it up.
       // It runs through Web Audio so fades and mute work everywhere, including iPhone.
       const music = {
@@ -1089,7 +1089,7 @@
         prime() {
           if (!snd.ctx) return;
           if (!this.el) {
-            this.el = new Audio('/music/theme.mp3');
+            this.el = new Audio('music/theme.mp3');
             this.el.loop = true;
             this.gain = snd.ctx.createGain();
             this.gain.gain.value = 0;
@@ -1190,7 +1190,7 @@
 
       // ---------- build the deck ----------
       // the cast, plus extra inside-joke cards. Swap captions for the real ones.
-      const ME = '/cast/kavya.jpg', HIM = '/cast/friend2.jpg';
+      const ME = 'cast/kavya.jpg', HIM = 'cast/friend2.jpg';
       const DECK = [
         { rank: 'A', suit: '♥', name: 'arkavs', tag: 'up at 3am again', photo: ME },
         { rank: '10', suit: '♠', name: 'hesatwink', tag: 'no thoughts just sunglasses', photo: HIM },

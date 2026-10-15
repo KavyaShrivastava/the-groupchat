@@ -1,0 +1,1533 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Groupchat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Abril+Fatface&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,500&family=Caveat:wght@600&family=Alfa+Slab+One&family=Bowlby+One&family=Courier+Prime&family=Jost:wght@400;500;600&family=Fraunces:ital,opsz,wght@1,72,500&family=Rubik:wght@800&family=Ultra&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --cherry: #6e1d2a;
+        --black: #1d191b;
+        --cream: #f6ead8;
+        --butter: #f3d27a;
+        --mustard: #f2c94c;
+        --tomato: #e8664f;
+        --sage: #8cc7a1;
+        --sky: #9db8e8;
+        --brat: #8ace00;
+        --paper: var(--cream);
+        --ink: #241f22;
+        --soft: rgba(246, 234, 216, 0.6);
+        --serif: 'Fraunces', Georgia, serif;
+        --mono: 'Courier Prime', monospace;
+        --S: min(54vmin, 440px); /* record / sleeve size */
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        overscroll-behavior: none;
+        background: #3d2315;
+        color: var(--cream);
+        font-family: var(--mono);
+      }
+      /* crumpled kraft paper, only behind the vinyl */
+      /* the whole night happens on one dark wooden bar table: a real photographed texture
+         (Poly Haven "Dark Wood", CC0), dimmed a little for late at night */
+      #kraft {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-color: #3a1d10;
+        background-image:
+          linear-gradient(rgba(25, 10, 4, 0.28), rgba(25, 10, 4, 0.28)),
+          url('textures/dark_wood.jpg');
+        background-size: auto, 1100px 1100px;
+        background-position: center;
+      }
+      /* an old, well-loved gingham tablecloth, only under the record player:
+         yellowed cotton, faded brick checks, sun-bleached patches, a few tea stains */
+      #cloth {
+        position: fixed;
+        inset: -4vmax;
+        z-index: 1;
+        pointer-events: none;
+        rotate: -4deg;
+        filter: sepia(0.08) saturate(1.1) contrast(1.02);
+        background-color: #eee7d2;
+        background-image:
+          /* tea and wine stains */
+          radial-gradient(9vmin 7vmin at 22% 70%, rgba(120, 70, 30, 0.16), transparent 70%),
+          radial-gradient(6vmin 6vmin at 78% 24%, rgba(110, 40, 40, 0.13), transparent 70%),
+          radial-gradient(5vmin 4vmin at 64% 82%, rgba(120, 80, 40, 0.12), transparent 70%),
+          /* uneven sun-fading */
+          radial-gradient(60vmax 40vmax at 30% 20%, rgba(255, 248, 232, 0.35), transparent 70%),
+          radial-gradient(50vmax 35vmax at 80% 75%, rgba(90, 50, 30, 0.12), transparent 70%),
+          /* worn cotton fibres */
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9 0.35' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.33  0 0 0 0 0.22  0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E"),
+          /* the checks, faded to brick, darker where they cross */
+          repeating-linear-gradient(0deg, rgba(58, 96, 170, 0.58) 0 34px, transparent 34px 68px),
+          repeating-linear-gradient(90deg, rgba(58, 96, 170, 0.58) 0 34px, transparent 34px 68px);
+        background-size: auto, auto, auto, auto, auto, 300px 300px, auto, auto;
+      }
+      #cloth::after { /* soft folds in the fabric */
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.1) 28%, transparent 36%, transparent 62%, rgba(60, 30, 20, 0.1) 70%, transparent 78%),
+          linear-gradient(8deg, transparent 40%, rgba(60, 30, 20, 0.07) 46%, transparent 52%);
+      }
+      /* a painted zebra-print cloth under the cards (the clutch-bag vibe) */
+      #zebra {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0;
+        background-color: #4a0e18;
+        background-image: radial-gradient(75% 65% at 50% 42%, #5e1522 0%, #3a0a13 70%, #270509 100%);
+      }
+      #zebra::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(70% 60% at 50% 46%, rgba(255, 240, 215, 0.25), transparent 70%);
+      }
+      /* direct on-camera flash: hot warm centre, falling off into darkness */
+      #flash {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        pointer-events: none;
+        background:
+          radial-gradient(55% 45% at 50% 46%, rgba(255, 226, 180, 0.2) 0%, transparent 60%);
+      }
+      #grain {
+        position: fixed;
+        inset: 0;
+        z-index: 41;
+        pointer-events: none;
+        opacity: 0.16;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23n%29'/%3E%3C/svg%3E");
+      }
+      #weave {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0;
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.13) 0 2px, transparent 2px 4px),
+          repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 2px, transparent 2px 5px);
+      }
+      .obj { position: absolute; will-change: transform; }
+
+      /* ---- the record player: a real flash photo, with the record, sleeve and lid photos live on top ----
+         all positions are % of the square photo */
+      .player {
+        will-change: transform;
+        --P: min(100vw, 100vh);
+        left: 50%;
+        top: 50%;
+        width: var(--P);
+        aspect-ratio: 1;
+        margin: calc(var(--P) / -2) 0 0 calc(var(--P) / -2);
+        z-index: 2;
+      }
+      /* just the suitcase, cut out of the photo, sitting on the tablecloth */
+      .player .cutout {
+        position: absolute;
+        inset: 0;
+        will-change: transform;
+        filter: drop-shadow(0 1vmin 1.2vmin rgba(40, 10, 10, 0.5));
+      }
+      .player .cutout img {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      /* our friends in the lid's Polaroids */
+      .lidpic {
+        position: absolute;
+        overflow: hidden;
+        translate: -50% -50%;
+        filter: saturate(0.85) contrast(1.05) brightness(0.95) sepia(0.12);
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+      }
+      .lidpic img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+      .lidpic::after { /* a little of the photo's own flash and grain */
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, rgba(255, 255, 255, 0.18), transparent 45%);
+      }
+      /* the record sits on the photo's platter; the wrapper squashes it to the camera's angle */
+      .recwrap {
+        position: absolute;
+        left: 44.25%;
+        top: 51.4%;
+        width: 31.5%;
+        aspect-ratio: 1;
+        translate: -50% -50%;
+        transform: scaleY(0.9);
+      }
+      .record {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle, transparent 0 31%, rgba(255, 255, 255, 0.05) 31.5%, transparent 32%),
+          repeating-radial-gradient(circle, #151214 0 1.5px, #221d20 1.5px 2.6px),
+          #151214;
+        box-shadow: 0 0.4vmin 1vmin rgba(0, 0, 0, 0.55);
+      }
+      .record::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: conic-gradient(from 20deg, transparent 0 10%, rgba(255, 240, 220, 0.16) 14%, transparent 20% 60%, rgba(255, 240, 220, 0.1) 64%, transparent 70%);
+      }
+      .label {
+        position: absolute;
+        inset: 33%;
+        border-radius: 50%;
+        overflow: hidden;
+        background: var(--brat);
+        display: grid;
+        place-items: center;
+      }
+      .label span {
+        font: 400 calc(var(--P) * 0.016) / 1 Arial, 'Helvetica Neue', sans-serif;
+        letter-spacing: -0.02em;
+        color: #000;
+        transform: scaleX(0.86);
+        filter: blur(0.3px);
+      }
+      .label i {
+        position: absolute;
+        width: 7%;
+        height: 7%;
+        border-radius: 50%;
+        background: #3a3537;
+      }
+      /* a small "tap to play" hint on the bare record; hides once it's playing */
+      .taphint {
+        position: absolute;
+        left: 50%;
+        top: 112%;
+        translate: -50% 0;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        padding: 0.4em 0.8em;
+        border-radius: 99px;
+        background: rgba(20, 12, 8, 0.72);
+        color: #f3e7d2;
+        font: 400 calc(var(--P) * 0.016)/1 var(--mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        transition: opacity 0.3s;
+      }
+      .taphint b { width: 0; height: 0; border-top: 0.42em solid transparent; border-bottom: 0.42em solid transparent; border-left: 0.6em solid #8ace00; animation: nudgeTri 1.4s ease-in-out infinite; }
+      @keyframes nudgeTri { 50% { translate: 0.15em 0; } }
+      .player.playing .taphint { opacity: 0; pointer-events: none; }
+
+      .sleeve {
+        position: absolute;
+        left: 44.25%;
+        top: 51.4%;
+        width: 35%;
+        height: 32%;
+        margin: -16% 0 0 -17.5%;
+        background:
+          radial-gradient(rgba(120, 100, 80, 0.06) 0.7px, transparent 1px) 0 0 / 3px 3px,
+          linear-gradient(160deg, #f8f1e4, #ebe0cc);
+        color: #6e1d2a;
+        border-radius: 0.3vmin;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.35), 0 1.2vmin 2.6vmin rgba(0, 0, 0, 0.45);
+        padding: 3%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        z-index: 3;
+        cursor: pointer;
+        rotate: -3deg;
+      }
+      .sleeve:focus-visible { outline: 3px solid #8ace00; outline-offset: 4px; }
+      .sleeve small {
+        font: 400 calc(var(--P) * 0.013) / 1.4 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(110, 29, 42, 0.7);
+      }
+      .sleeve big {
+        font: 400 calc(var(--P) * 0.05) / 0.95 'Bowlby One', sans-serif;
+        color: #d8462f;
+      }
+      .sleeve .tri {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        margin-right: 0.18em;
+        vertical-align: 0.1em;
+        border-top: 0.32em solid transparent;
+        border-bottom: 0.32em solid transparent;
+        border-left: 0.52em solid currentColor;
+        animation: nudgeTri 1.6s ease-in-out infinite;
+      }
+      @keyframes nudgeTri { 50% { translate: 0.12em 0; } }
+      .sleeve .rpm {
+        position: absolute;
+        right: 7%;
+        bottom: 9%;
+        width: 24%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: #fffaf2;
+        box-shadow: 0 0.3vmin 0.6vmin rgba(0, 0, 0, 0.15);
+        display: grid;
+        place-items: center;
+        text-align: center;
+        rotate: 12deg;
+        font: 400 calc(var(--P) * 0.016) / 1.1 'Bowlby One', sans-serif;
+        color: #6e1d2a;
+      }
+      .sleeve .rpm small { display: block; font-size: calc(var(--P) * 0.01); }
+
+      /* ---- playing cards with collage glued on: real cards, inside jokes ---- */
+      .pcard {
+        will-change: transform;
+        --w: min(16.5vh, 27vw, 190px);
+        left: 50%;
+        top: 50%;
+        width: var(--w);
+        aspect-ratio: 5 / 7;
+        margin: calc(var(--w) * -0.7) 0 0 calc(var(--w) / -2);
+        transform-style: preserve-3d;
+        z-index: 3;
+      }
+      .pcard .face {
+        position: absolute;
+        inset: 0;
+        border-radius: calc(var(--w) * 0.06);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4), 0 0.6vmin 1.2vmin rgba(0, 0, 0, 0.35), 0 1.8vmin 3.6vmin rgba(0, 0, 0, 0.35);
+      }
+      .pcard .front {
+        overflow: hidden;
+        color: var(--suit);
+        /* real card stock: faint paper tooth, a touch warm under the flash */
+        background:
+          radial-gradient(rgba(120, 100, 80, 0.05) 0.7px, transparent 1px) 0 0 / 3px 3px,
+          linear-gradient(160deg, #fffdf8, #f2ece1);
+      }
+      .pcard .front::after { /* flash glare across the glossy face */
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        pointer-events: none;
+        background: linear-gradient(118deg, transparent 32%, rgba(255, 255, 255, 0.38) 44%, rgba(255, 255, 255, 0.08) 52%, transparent 62%);
+      }
+      .pcard .print {
+        position: absolute;
+        inset: 14% 13%;
+        z-index: 2;
+        overflow: hidden;
+        background: var(--tint, #e9dcc8);
+        box-shadow: 0 0 0 calc(var(--w) * 0.006) var(--suit);
+        display: grid;
+        place-items: center;
+      }
+      .pcard .print img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; }
+      .pcard .print span { font: italic 500 calc(var(--w) * 0.3) / 1 Georgia, serif; color: rgba(36, 31, 34, 0.4); }
+      .pcard .print b {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 4% 0 3%;
+        text-align: center;
+        background: #fbf9f4;
+        font: 700 calc(var(--w) * 0.05) / 1 Georgia, serif;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--suit);
+      }
+      .pcard .corner {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font: 700 calc(var(--w) * 0.13) / 0.9 Georgia, 'Times New Roman', serif;
+        letter-spacing: -0.04em;
+        z-index: 1;
+      }
+      .pcard .corner small { font-size: 0.72em; }
+      .pcard .corner.tl { top: 3%; left: 5%; }
+      .pcard .corner.br { bottom: 3%; right: 5%; rotate: 180deg; }
+      .pcard .pip {
+        position: absolute;
+        translate: -50% -50%;
+        font: calc(var(--w) * 0.17) / 1 Georgia, serif;
+      }
+      .pcard .pip.down { rotate: 180deg; }
+      .pcard .pip.ace { font-size: calc(var(--w) * 0.5); }
+      /* glued-on bits */
+      .pcard .cut {
+        position: absolute;
+        background: #fff;
+        padding: calc(var(--w) * 0.025);
+        border-radius: calc(var(--w) * 0.03);
+        box-shadow: 0 0.3vmin 0.7vmin rgba(0, 0, 0, 0.3);
+        z-index: 2;
+      }
+      .pcard .cut img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; border-radius: calc(var(--w) * 0.015); }
+      .pcard .cut.initial {
+        display: grid;
+        place-items: center;
+        background: #fff;
+      }
+      .pcard .cut.initial span {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        place-items: center;
+        border-radius: calc(var(--w) * 0.015);
+        background: var(--tint, #e9dcc8);
+        font: italic 500 calc(var(--w) * 0.3) / 1 var(--serif);
+        color: rgba(36, 31, 34, 0.55);
+      }
+      .pcard .strip {
+        position: absolute;
+        z-index: 3;
+        padding: calc(var(--w) * 0.018) calc(var(--w) * 0.035);
+        font: 700 calc(var(--w) * 0.058) / 1.05 'Jost', 'Futura', sans-serif;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        box-shadow: 0 0.2vmin 0.4vmin rgba(0, 0, 0, 0.25);
+      }
+      .pcard .strip.black { background: #141113; color: #fff; }
+      .pcard .strip.red { background: #d8262f; color: #fff; }
+      .pcard .strip.paper { background: #f1e3b4; color: #141113; font-family: 'Courier Prime', monospace; }
+      .pcard .stick {
+        position: absolute;
+        z-index: 2;
+        line-height: 1;
+        filter: drop-shadow(0 0 1.2px #fff) drop-shadow(0 0 1.2px #fff) drop-shadow(0 0 1.2px #fff) drop-shadow(0 0.3vmin 0.4vmin rgba(0, 0, 0, 0.3));
+      }
+      .pcard .bigword {
+        position: absolute;
+        z-index: 2;
+        translate: -50% -50%;
+        padding: 4% 6%;
+        background: #fff;
+        box-shadow: 0 0.3vmin 0.6vmin rgba(0, 0, 0, 0.25);
+        font: 700 calc(var(--w) * 0.11) / 1 'Jost', sans-serif;
+        text-transform: uppercase;
+        color: #141113;
+        rotate: -6deg;
+      }
+      .pcard .ban {
+        position: absolute;
+        z-index: 3;
+        left: 50%;
+        top: 52%;
+        width: 66%;
+        aspect-ratio: 1;
+        translate: -50% -50%;
+        border-radius: 50%;
+        border: calc(var(--w) * 0.05) solid #d8262f;
+      }
+      .pcard .ban::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: -5%;
+        width: calc(var(--w) * 0.05);
+        height: 110%;
+        translate: -50% 0;
+        rotate: -45deg;
+        background: #d8262f;
+      }
+      .pcard .faces {
+        position: absolute;
+        inset: 16% 10% 14%;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 3%;
+      }
+      .pcard .faces i {
+        background: #fff;
+        padding: 6%;
+        box-shadow: 0 0.2vmin 0.4vmin rgba(0, 0, 0, 0.25);
+        rotate: var(--r);
+      }
+      .pcard .faces img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; object-position: 50% 30%; }
+      /* classic card back: red lattice */
+      .pcard .back {
+        transform: rotateY(180deg);
+        background:
+          repeating-linear-gradient(45deg, transparent 0 calc(var(--w) * 0.05), rgba(255, 255, 255, 0.55) calc(var(--w) * 0.05) calc(var(--w) * 0.058)),
+          repeating-linear-gradient(-45deg, transparent 0 calc(var(--w) * 0.05), rgba(255, 255, 255, 0.55) calc(var(--w) * 0.05) calc(var(--w) * 0.058)),
+          #c8323c;
+        box-shadow: inset 0 0 0 calc(var(--w) * 0.05) #fbf9f4, 0 0.3vmin 0.6vmin rgba(0, 0, 0, 0.25), 0 1.4vmin 3vmin rgba(0, 0, 0, 0.4);
+      }
+
+      /* ---- last round: the cheers photo, with a tag on everyone's drink ---- */
+      .cheers {
+        will-change: transform;
+        --C: max(100vw, 100vh);
+        left: 50%;
+        top: 50%;
+        width: var(--C);
+        aspect-ratio: 1;
+        margin: calc(var(--C) / -2) 0 0 calc(var(--C) / -2);
+        z-index: 2;
+        transform: translateY(110vh);
+      }
+      .cheers > img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .pin {
+        position: absolute;
+        width: 0;
+        height: 0;
+        opacity: 0;
+        transition: opacity 0.35s ease, scale 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+        scale: 0.6;
+      }
+      .pin.on { opacity: 1; scale: 1; }
+      .pin::before { /* the dot on the glass */
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: -6px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.35), 0 0 12px rgba(255, 230, 180, 0.9);
+      }
+      .pin span {
+        position: absolute;
+        left: 14px;
+        bottom: 10px;
+        padding: 0.5em 0.75em 0.45em;
+        white-space: nowrap;
+        background: #fbf6ec;
+        color: #141113;
+        font: 600 clamp(11px, 1.5vmin, 15px) / 1.15 'Jost', 'Futura', sans-serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        box-shadow: 0 0.4vmin 1vmin rgba(0, 0, 0, 0.4);
+        rotate: var(--r, -3deg);
+      }
+      .pin span small {
+        display: block;
+        margin-top: 0.25em;
+        font: 600 1.25em / 1 'Caveat', cursive;
+        letter-spacing: 0;
+        text-transform: none;
+        color: #b3262f;
+      }
+      .pin.left span { left: auto; right: 14px; }
+
+      /* ---- words + chrome ---- */
+      .casthead {
+        position: fixed;
+        left: 0; right: 0;
+        top: 7vh;
+        z-index: 42;
+        text-align: center;
+        pointer-events: none;
+        color: #f3e6d0;
+        opacity: 0;
+      }
+      .casthead em { display: block; font: italic 400 clamp(16px, 2.4vmin, 26px)/1 'Playfair Display', serif; letter-spacing: 0.2em; color: #e7b7a0; }
+      .casthead b { display: block; margin: 0.1em 0 0.25em; font: 400 clamp(38px, 8vmin, 96px)/0.95 'Playfair Display', serif; letter-spacing: 0.06em; text-shadow: 0 2px 20px rgba(0,0,0,.5); }
+      .casthead small { display: block; font: 400 clamp(11px, 1.5vmin, 15px)/1 'Jost', sans-serif; letter-spacing: 0.3em; text-transform: uppercase; color: #c98f78; }
+
+      /* sticker letters: chunky black with a thick white die-cut outline */
+      .word {
+        position: absolute;
+        font: 400 clamp(26px, 5.4vmin, 58px) / 1.05 'Bowlby One', 'Arial Black', sans-serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #141113;
+        -webkit-text-stroke: 0.22em #fff;
+        paint-order: stroke fill;
+        filter: drop-shadow(0 0.35vmin 0.5vmin rgba(0, 0, 0, 0.35));
+        white-space: nowrap;
+        z-index: 42; /* above the flash falloff so it stays crisp */
+        pointer-events: none;
+      }
+
+      /* a friend's individual intro: their card big in the middle, a credit underneath */
+      .intro {
+        position: fixed;
+        z-index: 42;
+        left: 0;
+        right: 0;
+        bottom: 6vh;
+        text-align: center;
+        pointer-events: none;
+        opacity: 0;
+        color: #fbf6ec;
+        text-shadow: 0 2px 18px rgba(0, 0, 0, 0.7);
+      }
+      .intro small { display: block; font: italic 400 clamp(16px, 2.4vmin, 24px) / 1 var(--serif); color: #f0d9a8; }
+      .intro b { display: block; margin: 0.15em 0 0.2em; font: 400 clamp(40px, 8vmin, 92px) / 1 'Bowlby One', sans-serif; letter-spacing: 0.03em; }
+      .intro em { display: block; font: 600 clamp(20px, 3vmin, 32px) / 1 'Caveat', cursive; font-style: normal; color: #f0d9a8; }
+
+      /* the film reel running down both margins while you scroll */
+      .sprockets {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        z-index: 45;
+        width: clamp(20px, 3.2vw, 44px);
+        pointer-events: none;
+        background:
+          repeating-linear-gradient(to bottom, transparent 0 10px, #efe6d6 10px 26px, transparent 26px 40px) center / 46% 100% no-repeat,
+          #0e0b0c;
+      }
+      .sprockets.l { left: 0; }
+      .sprockets.r { right: 0; }
+
+      /* film burn: the cheers photo catches in the projector and burns through to the show */
+      #burn {
+        position: fixed;
+        inset: -20%;
+        z-index: 35;
+        pointer-events: none;
+        opacity: 0;
+        background: radial-gradient(circle at 46% 52%, #fff8e0 0%, #ffd27a 12%, #ff7a2f 26%, rgba(160, 30, 10, 0.6) 40%, transparent 58%);
+      }
+
+      /* frames that advance like film after the cheers: title, previously on, this week's episode */
+      .frame {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        overflow: hidden;
+        pointer-events: none; /* never block taps on the record player underneath */
+        transform: translateY(110vh);
+      }
+      .f-title {
+        background-color: #22140c;
+        background-image:
+          radial-gradient(65% 55% at 50% 44%, rgba(255, 214, 150, 0.14), transparent 70%),
+          linear-gradient(rgba(10, 5, 2, 0.35), rgba(10, 5, 2, 0.35)),
+          url('textures/dark_wood.jpg');
+        background-size: auto, auto, 1100px 1100px;
+        background-position: center;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 6vh 6vw;
+      }
+      .f-title .snaps {
+        position: relative;
+        width: min(62vmin, 520px);
+        height: 42vh;
+        margin-bottom: 3vh;
+      }
+      .f-title .snaps figure {
+        position: absolute;
+        margin: 0;
+        width: 42%;
+        padding: 4% 4% 12%;
+        background: #fdfaf3;
+        box-shadow: 0 1.2vh 3vh rgba(0, 0, 0, 0.5);
+      }
+      .f-title .snaps img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; object-position: 50% 30%; filter: saturate(0.95) contrast(1.03) brightness(0.98); }
+      .f-title .snaps figcaption { position: absolute; left: 0; right: 0; bottom: 3%; text-align: center; font: 600 clamp(12px, 1.5vmin, 16px)/1 'Caveat', cursive; color: #3a2a2a; }
+      .f-title .snaps .s0 { left: 2%; top: 6%; rotate: -7deg; z-index: 2; }
+      .f-title .snaps .s1 { right: 4%; top: 0; rotate: 6deg; z-index: 3; }
+      .f-title .snaps .s2 { left: 26%; bottom: 0; rotate: -2deg; z-index: 4; }
+      .f-title .snaps i { position: absolute; width: 11%; height: 4%; background: rgba(240, 224, 190, 0.8); box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+      .f-title .type { color: #f4e7d2; }
+      .f-title small { display: block; font: 500 clamp(11px, 1.3vw, 15px)/1 'Jost', sans-serif; letter-spacing: 0.5em; text-transform: uppercase; color: #e0b36a; }
+      .f-title h1 { margin: 0.25em 0 0.3em; font-weight: 400; }
+      .f-title h1 em { display: block; font: italic 400 clamp(30px, 5vw, 70px)/0.9 'Playfair Display', serif; color: #f4e7d2; margin-bottom: -0.1em; }
+      .f-title h1 span { display: block; font: italic 500 clamp(52px, 11vw, 150px)/0.86 'Fraunces', serif; letter-spacing: -0.01em; color: #fdfaf3; }
+      .f-title p { margin: 0; font: 600 clamp(14px, 1.8vw, 22px)/1.3 'Caveat', cursive; letter-spacing: 0.02em; color: #e0b36a; }
+      .paperbg {
+        background-color: #efe4d8;
+        background-image: radial-gradient(rgba(120, 80, 60, 0.07) 1px, transparent 1.4px), radial-gradient(rgba(255, 255, 255, 0.35) 1px, transparent 1.4px);
+        background-size: 7px 7px, 11px 11px;
+      }
+      .f-prev { display: grid; align-content: center; justify-items: center; gap: 5vh; padding: 4vh 6vw; color: #241f22; }
+      .f-prev h2 { margin: 0; font: 300 clamp(14px, 1.6vw, 18px) / 1.4 'Jost', sans-serif; letter-spacing: 0.35em; text-transform: uppercase; color: #d0604a; text-align: center; }
+      .f-prev h2 em { font: italic 400 1.4em / 1 'Playfair Display', serif; letter-spacing: 0; text-transform: none; color: #241f22; }
+      .stills { display: flex; gap: 2.4vw; justify-content: center; flex-wrap: wrap; }
+      .still {
+        margin: 0;
+        width: clamp(200px, 26vw, 320px);
+        padding: 10px 10px 14px;
+        background: #f8f1e7;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+        opacity: 0;
+        transform: translateY(16px) rotate(var(--r));
+        transition: opacity 0.3s, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+      .still.shown { opacity: 1; transform: translateY(0) rotate(var(--r)); }
+      .still .shot { aspect-ratio: 4 / 3; display: grid; place-items: center; padding: 14px; background: var(--c); }
+      .still .bubble { max-width: 90%; padding: 10px 14px; border-radius: 18px 18px 18px 4px; background: #fff; color: #1b1220; font: 400 clamp(14px, 1.4vw, 17px) / 1.25 -apple-system, system-ui, sans-serif; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2); }
+      .still figcaption { margin-top: 10px; font: italic 400 15px / 1.3 'Playfair Display', serif; }
+      .still figcaption b { font: 400 11px / 1 var(--mono); letter-spacing: 0.15em; margin-right: 6px; color: #d0604a; font-style: normal; }
+      .f-ep { display: grid; place-items: center; padding: 6vh 8vw; color: #24161b; }
+      .f-ep article { width: min(760px, 100%); }
+      .f-ep .meta { margin: 0 0 18px; font: 400 12px / 1.4 var(--mono); letter-spacing: 0.2em; text-transform: uppercase; color: #d0604a; }
+      .f-ep .typer { min-height: 3.6em; margin: 0 0 5vh; font: 400 clamp(22px, 3.4vw, 38px) / 1.35 var(--mono); }
+      .f-ep .caret { display: inline-block; width: 0.55em; height: 1.05em; margin-left: 2px; vertical-align: -0.15em; background: #24161b; animation: blink 1s steps(1) infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+      .f-ep .answers { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+      .f-ep .ans { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px; background: #fff; border: 1px solid #eadbc4; border-radius: 16px; opacity: 0; transform: translateY(10px); transition: opacity 0.5s, transform 0.5s; }
+      .f-ep.done .ans { opacity: 1; transform: none; }
+      .f-ep .ans b { font: 500 16px / 1 'Jost', sans-serif; letter-spacing: 0.06em; }
+      .f-ep .dots { display: inline-flex; gap: 4px; padding: 8px 10px; border-radius: 12px; background: #efe5d6; }
+      .f-ep .dots i { width: 6px; height: 6px; border-radius: 50%; background: #9a8a80; animation: dot 1.3s ease-in-out infinite; }
+      .f-ep .dots i:nth-child(2) { animation-delay: 0.18s; }
+      .f-ep .dots i:nth-child(3) { animation-delay: 0.36s; }
+      @keyframes dot { 30% { transform: translateY(-4px); } }
+      @media (max-aspect-ratio: 4/5) {
+        .f-title .snaps { width: 86vw; height: 34vh; }
+      }
+
+      /* ransom-note letters: each on its own torn scrap of paper */
+      .rn {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.05em 0.03em;
+        filter: drop-shadow(0 0.25vmin 0.35vmin rgba(60, 20, 20, 0.25));
+      }
+      .rn .w { display: flex; gap: 0.03em; margin-right: 0.18em; }
+      .rn i {
+        display: inline-grid;
+        place-items: center;
+        min-width: 0.78em;
+        padding: 0.12em 0.1em 0.06em;
+        font-style: normal;
+        line-height: 0.9;
+        color: var(--fg);
+        background:
+          radial-gradient(rgba(255, 255, 255, 0.35) 0.8px, transparent 1.2px) 0 0 / 5px 5px,
+          radial-gradient(rgba(0, 0, 0, 0.12) 0.8px, transparent 1.2px) 2px 3px / 7px 7px,
+          var(--bg);
+        font-family: var(--f);
+        rotate: var(--r);
+        translate: 0 var(--y);
+        clip-path: var(--clip);
+      }
+      .tag {
+        position: fixed;
+        z-index: 60;
+        font: 400 11px/1 var(--mono);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #f3e7d2;
+        background: rgba(20, 12, 8, 0.6);
+        padding: 6px 10px 5px;
+        border-radius: 99px;
+      }
+      .tag.tl { top: 18px; left: 18px; }
+      .tag.br { bottom: 18px; right: 18px; }
+      .tag.bl { bottom: 18px; left: 18px; }
+      /* the little record that follows you around: tap to pause / play */
+      .mini {
+        position: fixed;
+        z-index: 60;
+        left: 16px;
+        bottom: 44px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 18px 8px 8px;
+        border: 1px solid rgba(240, 217, 168, 0.45);
+        border-radius: 99px;
+        background: rgba(20, 10, 6, 0.62);
+        color: #f0d9a8;
+        cursor: pointer;
+        opacity: 0;
+        translate: 0 12px;
+        transition: opacity 0.4s ease, translate 0.4s ease, scale 0.15s ease;
+      }
+      .mini.show { opacity: 1; translate: 0 0; }
+      .mini:hover { scale: 1.04; }
+      .mini:active { scale: 0.96; }
+      .mini .disc {
+        position: relative;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: repeating-radial-gradient(circle, #151214 0 1.5px, #262124 1.5px 2.6px);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+        animation: miniSpin 1.8s linear infinite;
+      }
+      .mini .disc::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: conic-gradient(from 20deg, transparent 0 10%, rgba(255, 240, 220, 0.18) 14%, transparent 20% 60%, rgba(255, 240, 220, 0.12) 64%, transparent 70%);
+      }
+      .mini .disc i {
+        position: absolute;
+        inset: 33%;
+        border-radius: 50%;
+        background: #8ace00;
+        box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.1);
+      }
+      .mini .disc i::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 4px;
+        height: 4px;
+        margin: -2px;
+        border-radius: 50%;
+        background: #151214;
+      }
+      .mini .pp { /* pause bars while playing, a play triangle when paused */
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        animation: miniSpin 1.8s linear infinite reverse; /* stays upright while the disc spins */
+      }
+      .mini .pp::before {
+        content: '';
+        width: 12px;
+        height: 14px;
+        border-left: 4px solid #141113;
+        border-right: 4px solid #141113;
+        box-sizing: border-box;
+      }
+      .mini:hover .pp { opacity: 1; }
+      .mini.paused .disc, .mini.paused .pp { animation-play-state: paused; }
+      .mini.paused .pp { opacity: 1; }
+      .mini.paused .pp::before {
+        width: 0;
+        height: 0;
+        border: 0;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-left: 13px solid #141113;
+        margin-left: 4px;
+      }
+      @keyframes miniSpin { to { rotate: 360deg; } }
+      .mini .np { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; text-align: left; }
+      .mini .np small { font: 400 10px/1 var(--mono); letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.75; }
+      .mini .np b { font: 400 17px/1 'Bowlby One', sans-serif; letter-spacing: 0.02em; color: #fbf6ec; }
+      .mini.paused .np small::after { content: ' · paused'; }
+      .chooser {
+        position: fixed;
+        z-index: 61;
+        left: 50%;
+        bottom: 9vh;
+        translate: -50% 0;
+        text-align: center;
+        transition: opacity 0.5s, translate 0.5s;
+      }
+      .chooser.hide { opacity: 0; translate: -50% 20px; pointer-events: none; }
+      .chooser p {
+        margin: 0 0 12px;
+        font: 400 13px/1 var(--mono);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #fff;
+        text-shadow: 0 1px 10px rgba(0,0,0,0.6);
+      }
+      .chooser .opts { display: flex; gap: 12px; justify-content: center; }
+      .chooser button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 13px 22px;
+        border-radius: 99px;
+        border: 0;
+        cursor: pointer;
+        font: 500 15px/1 'Jost', sans-serif;
+        letter-spacing: 0.04em;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+        transition: scale 0.15s;
+      }
+      .chooser button:hover { scale: 1.05; }
+      .chooser button:active { scale: 0.97; }
+      .chooser #chooseAuto { background: #d8462f; color: #fff; }
+      .chooser #chooseScroll { background: #fbf6ec; color: #3a2a2a; }
+      .chooser button b { font-size: 1.1em; }
+      @media (max-aspect-ratio: 3/4) { .chooser .opts { flex-direction: column; } }
+
+      .modebtn {
+        position: fixed;
+        z-index: 60;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s;
+        top: 14px;
+        left: 50%;
+        translate: -50% 0;
+        font: 400 11px/1 var(--mono);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #f3e7d2;
+        background: rgba(20, 12, 8, 0.6);
+        border: 1px solid rgba(243, 231, 210, 0.3);
+        padding: 7px 14px 6px;
+        border-radius: 99px;
+        cursor: pointer;
+        transition: scale 0.15s, background 0.2s;
+      }
+      .modebtn.on { opacity: 1; pointer-events: auto; }
+      .modebtn:hover { scale: 1.05; background: rgba(20, 12, 8, 0.78); }
+      .modebtn:active { scale: 0.96; }
+      #sound {
+        position: fixed;
+        z-index: 60;
+        top: 14px;
+        right: 14px;
+        font: 400 12px/1 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--chrome, #f6ead8);
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid currentColor;
+        border-radius: 99px;
+        padding: 8px 12px 7px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="kraft"></div>
+    <div id="weave"></div>
+    <div id="cloth"></div>
+    <div id="zebra"></div>
+    <div id="flash"></div>
+    <div id="grain"></div>
+    <span class="tag tl">the groupchat</span>
+    <button id="sound" type="button" hidden>sound on</button>
+    <button id="mini" class="mini" type="button" hidden aria-label="Pause the song">
+      <span class="disc"><i></i><em class="pp"></em></span>
+      <span class="np"><small>now playing</small><b>island in the sun</b></span>
+    </button>
+    <span class="tag bl" id="beat">side a</span>
+    <span class="tag br" id="hintTag">scroll ↓</span>
+    <button class="modebtn" id="mode" type="button" aria-label="Play automatically">auto&nbsp;▶</button>
+    <div class="chooser" id="chooser">
+      <p>how do you want to watch?</p>
+      <div class="opts">
+        <button id="chooseAuto" type="button"><b>▶</b> play it for me</button>
+        <button id="chooseScroll" type="button"><b>↓</b> i'll scroll</button>
+      </div>
+    </div>
+
+    <!-- 1. the suitcase record player -->
+    <div class="obj player" id="player">
+      <div class="cutout"><img class="photo" src="scenes/player-cut.png" alt="An open cream suitcase record player, Polaroids and tickets taped inside the lid" /></div>
+      <div class="lidpic" style="left: 34.4%; top: 15%; width: 11%; height: 6.3%; rotate: -7deg"><img src="cast/kavya.jpg" alt="arkavs" /></div>
+      <div class="lidpic" style="left: 65.3%; top: 14.4%; width: 9.8%; height: 7%; rotate: 11deg"><img src="cast/friend2.jpg" alt="hesatwink" /></div>
+      <div class="recwrap"><div class="record" id="record" role="button" tabindex="0" aria-label="Play the record"><div class="label"><span>the groupchat</span><i></i></div><span class="taphint" id="tapHint"><b></b>tap to play</span></div></div>
+    </div>
+
+    <!-- 2. trading cards: the cast -->
+    <div id="deck"></div>
+    <div class="intro" id="intro"><small>starring</small><b></b><em></em></div>
+    <div class="casthead" id="w2"><em>starring</em><b>all of us</b><small>we already know your type</small></div>
+
+    <!-- 3. view-master -->
+    <div class="obj cheers" id="vm"><img src="scenes/cheers.jpg" alt="Everyone's hands raising cocktails together in a toast" /></div>
+    <div class="word" id="w3" style="left: 50%; top: 14%; translate: -50% 0; text-align: center">and you, obviously</div>
+
+    <!-- 4. the reel keeps going: title, previously on, this week's episode -->
+    <section class="frame f-prev paperbg" id="fPrev" aria-label="Previously on The Groupchat">
+      <h2>previously on <em>The Groupchat</em>…</h2>
+      <div class="stills">
+        <figure class="still" style="--r:-3deg;--c:#6f8fd0"><div class="shot"><span class="bubble">“we got a fourth roommate”</span></div><figcaption><b>S1 E1</b>We Are Not Getting a Fourth Roommate</figcaption></figure>
+        <figure class="still" style="--r:2deg;--c:#e2725b"><div class="shot"><span class="bubble">“nobody speak of it”</span></div><figcaption><b>S1 E2</b>The Lasagna Incident</figcaption></figure>
+        <figure class="still" style="--r:-1deg;--c:#eda15f"><div class="shot"><span class="bubble">“wait… he’s my DENTIST?”</span></div><figcaption><b>S1 E3</b>Hinge, Interrupted</figcaption></figure>
+      </div>
+    </section>
+    <section class="frame f-ep paperbg" id="fEp" aria-label="This week's episode">
+      <article>
+        <p class="meta">S1 E4 · “The Roommate Clause”</p>
+        <p class="typer"><span id="typed"></span><span class="caret"></span></p>
+        <div class="answers">
+          <div class="ans"><b>arkavs</b><span class="dots"><i></i><i></i><i></i></span></div>
+          <div class="ans"><b>hesatwink</b><span class="dots"><i></i><i></i><i></i></span></div>
+          <div class="ans"><b>friend three</b><span class="dots"><i></i><i></i><i></i></span></div>
+          <div class="ans"><b>friend four</b><span class="dots"><i></i><i></i><i></i></span></div>
+        </div>
+      </article>
+    </section>
+    <div id="burn" aria-hidden="true"></div>
+    <i class="sprockets l" aria-hidden="true"></i><i class="sprockets r" aria-hidden="true"></i>
+
+    <script>
+      // ---------- sound: small, one per movement ----------
+      const snd = {
+        ctx: null,
+        start() {
+          if (this.ctx) return;
+          const ctx = (this.ctx = new AudioContext());
+          this.out = ctx.createGain();
+          this.out.gain.value = 0.8;
+          this.out.connect(ctx.destination);
+          const len = ctx.sampleRate;
+          this.noise = ctx.createBuffer(1, len, ctx.sampleRate);
+          const d = this.noise.getChannelData(0);
+          for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+        },
+        burst(type, f, dur, gain, at = 0, fEnd) {
+          if (!this.ctx) return;
+          const t = this.ctx.currentTime + at;
+          const s = this.ctx.createBufferSource();
+          s.buffer = this.noise;
+          const fl = this.ctx.createBiquadFilter();
+          fl.type = type;
+          fl.frequency.setValueAtTime(f, t);
+          if (fEnd) fl.frequency.exponentialRampToValueAtTime(fEnd, t + dur);
+          const g = this.ctx.createGain();
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.linearRampToValueAtTime(gain, t + 0.004);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+          s.connect(fl).connect(g).connect(this.out);
+          s.start(t, Math.random() * 0.5);
+          s.stop(t + dur + 0.05);
+        },
+        tone(f, dur, gain, type = 'sine', at = 0) {
+          if (!this.ctx) return;
+          const t = this.ctx.currentTime + at;
+          const o = this.ctx.createOscillator();
+          o.type = type;
+          o.frequency.value = f;
+          const g = this.ctx.createGain();
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.linearRampToValueAtTime(gain, t + 0.005);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+          o.connect(g).connect(this.out);
+          o.start(t);
+          o.stop(t + dur + 0.05);
+        },
+        // record sliding against the paper sleeve
+        slide() { this.burst('bandpass', 900, 0.35, 0.12, 0, 2400); },
+        // the needle lands: a soft thump, then the crackle starts
+        needle() {
+          this.tone(90, 0.12, 0.25);
+          this.burst('highpass', 3000, 0.06, 0.2);
+          this.crackle(true);
+          music.play();
+        },
+        crackle(on) {
+          clearTimeout(this.ct);
+          this.crackling = on;
+          const pop = () => {
+            if (!this.crackling) return;
+            this.burst('bandpass', 1500 + Math.random() * 3500, 0.012, 0.05 + Math.random() * 0.08);
+            this.ct = setTimeout(pop, 40 + Math.random() * 260);
+          };
+          if (on) pop();
+        },
+        // a card flicked onto the table
+        flick() {
+          this.burst('bandpass', 3200, 0.05, 0.22, 0, 1800);
+          this.burst('lowpass', 500, 0.06, 0.18, 0.04);
+        },
+        // view-master advance: the two-part click
+        // two glasses touching
+        clink() {
+          this.tone(2637, 0.5, 0.06);
+          this.tone(3322, 0.4, 0.04, 'sine', 0.012);
+          this.tone(1975, 0.3, 0.03, 'sine', 0.02);
+        },
+        click() {
+          this.burst('bandpass', 1900, 0.025, 0.3);
+          this.burst('bandpass', 1300, 0.03, 0.22, 0.07);
+        },
+        swish() { this.burst('bandpass', 500, 0.4, 0.1, 0, 1800); },
+        key() { this.burst('bandpass', 2200 + Math.random() * 900, 0.025, 0.2 + Math.random() * 0.1); },
+        ding() { this.tone(2093, 1.2, 0.07); this.tone(3136, 0.8, 0.03); },
+        burn() {
+          this.burst('lowpass', 900, 1.1, 0.35, 0, 4000);
+          for (let i = 0; i < 14; i++) this.burst('bandpass', 1500 + Math.random() * 4000, 0.012, 0.25, 0.2 + Math.random() * 0.8);
+        },
+        clack() { this.burst('bandpass', 620, 0.045, 0.3); this.burst('bandpass', 380, 0.06, 0.25, 0.1); },
+      };
+      // the real song (music/theme.mp3). Browsers only allow audio to start inside a tap,
+      // so "play me" starts it silently right away (prime), and the needle drop fades it up.
+      // It runs through Web Audio so fades and mute work everywhere, including iPhone.
+      const music = {
+        el: null,
+        gain: null,
+        prime() {
+          if (!snd.ctx) return;
+          if (!this.el) {
+            this.el = new Audio('music/theme.mp3');
+            this.el.loop = true;
+            this.gain = snd.ctx.createGain();
+            this.gain.gain.value = 0;
+            snd.ctx.createMediaElementSource(this.el).connect(this.gain).connect(snd.out);
+          }
+          this.el.play().catch((e) => console.warn('song could not start', e));
+        },
+        fade(to, secs) {
+          if (!this.gain) return;
+          const g = this.gain.gain, t = snd.ctx.currentTime;
+          g.cancelScheduledValues(t);
+          g.setValueAtTime(g.value, t);
+          g.linearRampToValueAtTime(to, t + secs);
+        },
+        play() { this.fade(0.85, 1.2); },
+        stop() {
+          this.fade(0, 0.6);
+          setTimeout(() => { if (this.gain && this.gain.gain.value < 0.02) this.el.pause(); }, 700);
+        },
+      };
+      const soundBtn = document.getElementById('sound');
+      const unlock = () => {
+        snd.start();
+        snd.ctx.resume();
+        if (p > 0.95 && p < 1.5) snd.crackle(true);
+      };
+      // after "play me", the pill is a mute switch
+      let muted = false;
+      soundBtn.addEventListener('click', () => {
+        muted = !muted;
+        if (snd.out) snd.out.gain.value = muted ? 0 : 0.8;
+        if (music.el) music.el.muted = muted;
+        soundBtn.textContent = muted ? 'sound off' : 'sound on';
+      });
+      // tapping "play me" on the sleeve: sound on, sleeve off, needle down, song on
+      const mini = document.getElementById('mini');
+      const playerEl = document.getElementById('player');
+      let songOn = false, paused = false;
+      function setPaused(v) {
+        paused = v;
+        playerEl.classList.toggle('playing', songOn && !v);
+        mini.classList.toggle('paused', v);
+        mini.setAttribute('aria-label', v ? 'Play the song' : 'Pause the song');
+      }
+      // start the record + song (must run inside the tap)
+      function play() {
+        unlock();
+        music.prime();
+        music.play();
+        songOn = true;
+        setPaused(false);
+        snd.needle();
+      }
+      function pause() {
+        music.stop();
+        snd.crackle(false);
+        setPaused(true);
+      }
+      // tapping the bare record toggles play / pause
+      const recEl = document.getElementById('record');
+      recEl.addEventListener('click', () => (songOn && !paused ? pause() : play()));
+      recEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); songOn && !paused ? pause() : play(); }
+      });
+      // the mini record pauses / plays from anywhere after the player
+      mini.addEventListener('click', () => (paused ? (music.prime(), music.play(), setPaused(false)) : pause()));
+
+      // ---------- ransom-note letters ----------
+      (() => {
+        let seed = 7;
+        const r = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+        const papers = [
+          ['#e8664f', '#241f22'], ['#f3d27a', '#6e1d2a'], ['#8cc7a1', '#f6ead8'], ['#9db8e8', '#241f22'],
+          ['#f2b3c4', '#6e1d2a'], ['#f6ead8', '#b3262f'], ['#241f22', '#f3d27a'], ['#6e1d2a', '#f6ead8'],
+        ];
+        const fonts = ["'Alfa Slab One'", "'Abril Fatface'", "'Bowlby One'", "'Ultra'", "'Rubik'"];
+        const torn = () => {
+          const j = () => (r() * 7).toFixed(1);
+          return `polygon(${j()}% ${j()}%, 30% ${j() / 2}%, ${100 - j()}% ${j()}%, ${100 - j() / 2}% 50%, ${100 - j()}% ${100 - j()}%, 60% ${100 - j() / 2}%, ${j()}% ${100 - j()}%, ${j() / 2}% 45%)`;
+        };
+        let last = -1;
+        document.querySelectorAll('.rn').forEach((h) => {
+          h.innerHTML = h.dataset.text
+            .split(' ')
+            .map((word) => `<span class="w">${[...word]
+              .map((ch) => {
+                let k;
+                do k = Math.floor(r() * papers.length); while (k === last);
+                last = k;
+                const [bg, fg] = papers[k];
+                return `<i style="--bg:${bg};--fg:${fg};--f:${fonts[Math.floor(r() * fonts.length)]};--r:${(r() * 10 - 5).toFixed(1)}deg;--y:${(r() * 0.12 - 0.06).toFixed(2)}em;--clip:${torn()}">${r() < 0.5 ? ch.toUpperCase() : ch}</i>`;
+              })
+              .join('')}</span>`)
+            .join('');
+          h.setAttribute('aria-label', h.dataset.text);
+        });
+      })();
+
+      // ---------- build the deck ----------
+      // the cast, plus extra inside-joke cards. Swap captions for the real ones.
+      const ME = 'cast/kavya.jpg', HIM = 'cast/friend2.jpg';
+      const DECK = [
+        { rank: 'A', suit: '♥', name: 'arkavs', tag: 'up at 3am again', photo: ME },
+        { rank: '10', suit: '♠', name: 'hesatwink', tag: 'no thoughts just sunglasses', photo: HIM },
+        { rank: '7', suit: '♦', name: 'friend three', tag: 'just one drink', tint: '#e9d9c4' },
+        { rank: '3', suit: '♣', name: 'friend four', tag: 'has a spreadsheet for this', tint: '#dfe3e6' },
+      ];
+      // classic pip layouts, as (x%, y%) — bottom-half pips get turned upside down
+      const C = [30, 50, 70], R = [20, 35, 50, 65, 80];
+      const PIPS = {
+        A: [[50, 50]],
+        2: [[50, 20], [50, 80]],
+        3: [[50, 20], [50, 50], [50, 80]],
+        4: [[30, 20], [70, 20], [30, 80], [70, 80]],
+        7: [[30, 20], [70, 20], [50, 35], [30, 50], [70, 50], [30, 80], [70, 80]],
+        9: [[30, 20], [70, 20], [30, 40], [70, 40], [50, 50], [30, 60], [70, 60], [30, 80], [70, 80]],
+        10: [[30, 20], [70, 20], [50, 30], [30, 40], [70, 40], [30, 60], [70, 60], [50, 70], [30, 80], [70, 80]],
+        K: [[50, 50]],
+      };
+      const deck = document.getElementById('deck');
+      deck.innerHTML = DECK.map((c, k) => {
+        const red = c.suit === '♥' || c.suit === '♦';
+        const corner = `<b>${c.rank}</b><small>${c.suit}</small>`;
+        const pips = (c.name ? [] : PIPS[c.rank] || [])
+          .map(([x, y]) => `<span class="pip${c.rank === 'A' ? ' ace' : ''}${y > 55 ? ' down' : ''}" style="left:${x}%;top:${y}%">${c.suit}</span>`)
+          .join('');
+        let glued = '';
+        if (c.name) glued += `<div class="print"${c.tint ? ` style="--tint:${c.tint}"` : ''}>${c.photo ? `<img src="${c.photo}" alt="${c.name}">` : `<span>${c.name[0]}</span>`}<b>${c.name}</b></div>`;
+        if (c.cut) glued += c.photo
+          ? `<div class="cut" style="${c.cut}"><img src="${c.photo}" alt="${c.name}"></div>`
+          : `<div class="cut initial" style="${c.cut};--tint:${c.tint}"><span>${c.name[0]}</span></div>`;
+        if (c.faces) glued += `<div class="faces">${c.faces.map((f, n) => `<i style="--r:${((n * 37) % 11) - 5}deg"><img src="${f}" alt=""></i>`).join('')}</div>`;
+        if (c.stick) glued += `<span class="stick" style="${c.stick[1]}">${c.stick[0]}</span>`;
+        if (c.word) glued += `<span class="bigword" style="${c.word[1]}">${c.word[0]}</span>`;
+        if (c.ban) glued += '<i class="ban"></i>';
+        if (c.label) glued += `<span class="strip ${c.label[0]}" style="${c.label[2]}">${c.label[1]}</span>`;
+        return `<article class="obj pcard" style="--suit:${red ? '#d8262f' : '#141113'}">
+          <div class="face front" aria-label="${c.rank}${c.suit}${c.name ? ' ' + c.name : ''}: ${c.label ? c.label[1] : ''}">
+            <span class="corner tl">${corner}</span>${pips}${glued}<span class="corner br">${corner}</span>
+          </div>
+          <div class="face back"></div>
+        </article>`;
+      }).join('');
+      const cards = [...deck.children];
+      const CASTLIST = DECK.filter((c) => c.name), CASTN = CASTLIST.length;
+      const introOrder = DECK.map((c, k) => (c.name ? k : -1)).filter((k) => k >= 0);
+      const introEl = document.getElementById('intro');
+
+      // ---------- last round: a tag on everyone's drink ----------
+      // (x%, y%) of each glass in the photo; swap names and drinks for the real ones
+      const vm = document.getElementById('vm');
+      const ROUND = [
+        { x: 29, y: 30, drink: 'sunglasses spritz', who: 'hesatwink', r: -4, left: true },
+        { x: 46, y: 26, drink: 'the 3am', who: 'arkavs', r: 3 },
+        { x: 61, y: 31, drink: 'the cosmo, obviously', who: 'you', r: -2 },
+        { x: 39, y: 50, drink: 'the 3am, again', who: 'arkavs (never just one)', r: 2, left: true },
+        { x: 56, y: 58, drink: 'the spreadsheet sour', who: 'friend four', r: -3 },
+        { x: 77, y: 50, drink: 'just one drink', who: 'friend three', r: 4, left: true },
+      ];
+      vm.insertAdjacentHTML('beforeend', ROUND.map((d) =>
+        `<div class="pin${d.left ? ' left' : ''}" style="left:${d.x}%;top:${d.y}%;--r:${d.r}deg"><span>${d.drink}<small>${d.who}</small></span></div>`).join(''));
+      const pins = [...vm.querySelectorAll('.pin')];
+
+      // ---------- scroll drives a playhead; objects follow it ----------
+      const $ = (id) => document.getElementById(id);
+      // belt and braces: if anything ever nudges the page (focus, find-in-page), snap it back
+history.scrollRestoration = 'manual';
+      scrollTo(0, 0);
+      addEventListener('scroll', () => { if (scrollY || scrollX) scrollTo(0, 0); });
+      const kraft = $('kraft'), weave = $('weave'), cloth = $('cloth'), zebra = $('zebra');
+      const fPrev = $('fPrev'), fEp = $('fEp'), burnEl = $('burn');
+      const stills = [...fPrev.querySelectorAll('.still')];
+      const sprockets = [...document.querySelectorAll('.sprockets')];
+      let renderedP = -1;
+      const DIM = {};
+      function measure() {
+        DIM.W = innerWidth; DIM.H = innerHeight;
+        DIM.P = el.player.offsetWidth;
+        DIM.cw = cards[0].offsetWidth; DIM.ch = DIM.cw * 1.4;
+        DIM.vmHide = DIM.H / 2 + el.vm.offsetHeight * 1.18 / 2 + 60; // clear the scaled square cheers fully, any aspect ratio
+        renderedP = -1; // force one redraw after a resize
+      }
+      addEventListener('resize', measure);
+      // the typewriter on this week's episode
+      const TYPED = 'I couldn’t help but wonder… is it a red flag if he still lives with his college roommate?';
+      const typing = { started: false, timer: null };
+      function startTyping() {
+        typing.started = true;
+        const out = $('typed');
+        out.textContent = '';
+        fEp.classList.remove('done');
+        let i = 0;
+        const step = () => {
+          if (i >= TYPED.length) { snd.ding(); fEp.classList.add('done'); return; }
+          const ch = TYPED[i++];
+          out.textContent += ch;
+          if (ch !== ' ') snd.key();
+          typing.timer = setTimeout(step, ch === '…' ? 650 : ch === ' ' ? 70 : 38 + Math.random() * 60);
+        };
+        typing.timer = setTimeout(step, 500);
+      }
+      function resetTyping() {
+        clearTimeout(typing.timer);
+        typing.started = false;
+        $('typed').textContent = '';
+        fEp.classList.remove('done');
+      }
+      const el = { player: $('player'), record: $('record'), vm, w2: $('w2'), w3: $('w3'), beat: $('beat') };
+      const MAX = 5 + DECK.filter((c) => c.name).length; // record, one intro per friend, the spread, the cheers, previously, episode
+      let target = 0, p = 0, idle = null, spin = 0, last = performance.now();
+      const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+      const mix = (a, b, t) => {
+        const h = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+        const [x, y] = [h(a), h(b)];
+        return `rgb(${x.map((v, i) => Math.round(v + (y[i] - v) * t)).join(',')})`;
+      };
+      const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+      // ---------- autoplay vs scroll ----------
+      let auto = false, autoTimer = null, autoStep = -1;
+      const modeBtn = document.getElementById('mode');
+      const hintTag = document.getElementById('hintTag');
+      // how long to linger on each scene before advancing on its own
+      function dwell(step) {
+        if (step === 0) return 2600;                 // the record (plays, then moves on)
+        if (step === MAX - 1) return 9000;           // this week's episode: time to read it type out
+        if (step === MAX - 2) return 4200;           // previously on
+        if (step >= 2 && step <= 1 + CASTN) return 2600; // each friend's intro
+        return 3400;
+      }
+      function scheduleAuto() {
+        clearTimeout(autoTimer);
+        if (!auto) return;
+        const step = Math.round(p);
+        if (step >= MAX) { setAuto(false); return; } // reached the end
+        autoTimer = setTimeout(() => { if (auto) target = Math.min(MAX, step + 1); }, dwell(step));
+      }
+      function setAuto(on) {
+        auto = on;
+        autoStep = -1;
+        clearTimeout(autoTimer);
+        modeBtn.textContent = on ? 'auto ❙❙' : 'auto ▶';
+        modeBtn.setAttribute('aria-label', on ? 'Pause autoplay' : 'Play automatically');
+        hintTag.style.opacity = on ? '0.3' : '';
+        if (on) { play(); scheduleAuto(); } // the click is the gesture that lets the song start
+      }
+      modeBtn.addEventListener('click', () => setAuto(!auto));
+      // the upfront chooser (clear, in the middle); the corner pill takes over after a choice
+      const chooser = document.getElementById('chooser');
+      let chosen = false;
+      function choose(mode) {
+        if (chosen) return;
+        chosen = true;
+        chooser.classList.add('hide');
+        modeBtn.classList.add('on');
+        if (mode === 'auto') setAuto(true);
+      }
+      document.getElementById('chooseAuto').addEventListener('click', () => choose('auto'));
+      document.getElementById('chooseScroll').addEventListener('click', () => choose('scroll'));
+
+      function nudge(d) {
+        if (!chosen) choose('scroll');
+        if (auto) setAuto(false); // any manual scroll drops back to scroll mode
+        target = clamp(target + d, 0, MAX);
+        clearTimeout(idle);
+        // settle on the nearest beat when you stop
+        idle = setTimeout(() => (target = Math.round(target)), 260);
+      }
+      addEventListener('wheel', (e) => { e.preventDefault(); nudge((e.deltaY + e.deltaX) / 700); }, { passive: false });
+      let ty = null;
+      addEventListener('touchstart', (e) => (ty = e.touches[0].clientY), { passive: true });
+      addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const y = e.touches[0].clientY;
+        nudge((ty - y) / 420);
+        ty = y;
+      }, { passive: false });
+      addEventListener('keydown', (e) => {
+        const down = ['ArrowDown', 'ArrowRight', ' ', 'PageDown'].includes(e.key);
+        const up = ['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key);
+        if (down || up) { if (auto) setAuto(false); e.preventDefault(); target = clamp(Math.round(target) + (down ? 1 : -1), 0, MAX); }
+      });
+
+      // fire a sound once each time a movement crosses a mark
+      const marks = {};
+      function crossed(key, value, at, fn) {
+        const was = marks[key] ?? value;
+        if (was < at && value >= at) fn(1);
+        if (was >= at && value < at) fn(-1);
+        marks[key] = value;
+      }
+
+      function frame(now) {
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        p += (target - p) * Math.min(1, dt * 9);
+        if (Math.abs(target - p) < 0.0005) p = target;
+        if (auto && p === target) { const st = Math.round(p); if (st !== autoStep) { autoStep = st; scheduleAuto(); } }
+        // only do the per-frame layout when something is actually changing
+        const spinning = p < 1.35 && songOn && !paused;
+        const typingNow = typing.started && !fEp.classList.contains('done');
+        if (p === renderedP && !spinning && !typingNow) { requestAnimationFrame(frame); return; }
+        renderedP = p;
+
+        const { P, W, H, cw, ch } = DIM;
+        const N = CASTN; // friends introduced one by one after the record player
+        const t0 = clamp(p, 0, 1), pi = clamp(p - 1, 0, N + 1), t1 = clamp(p - 1 - N, 0, 1), t2 = clamp(p - 2 - N, 0, 1);
+
+        // 1 · the sleeve slides off the record, the needle drops, the record spins on the player;
+        //     then the whole player (record and all) slides away
+        // the vinyl only turns while the song is actually playing and you're on the player screen
+        const playing = t0 > 0.98 && p < 1.35 && songOn && !paused;
+        if (playing) spin += dt * 200; // 33 rpm-ish while the needle is down
+        el.record.style.transform = `rotate(${t0 * 40 + spin}deg)`;
+        el.player.style.transform = `translateY(${ease(clamp(p - 1, 0, 1)) * H * 1.15}px)`; // leaves as the intros begin
+        const armIn = clamp((t0 - 0.7) / 0.3, 0, 1) * (1 - clamp(t1 * 4, 0, 1));
+
+        crossed('slide', t0, 0.2, (d) => d > 0 && snd.slide());
+        crossed('needle', clamp((t0 - 0.7) / 0.3, 0, 1), 0.98, (d) => (d > 0 ? snd.needle() : (snd.crackle(false), music.stop(), setPaused(true))));
+
+        // 2 · a hand of cards is dealt into a messy 3x3, one flick at a time, then swept away
+        const JIT = [[-6, 4, -7], [3, -5, 4], [-4, 6, -3], [5, 3, 6], [-2, -4, -2], [4, 5, 8], [-5, -3, -5], [2, 6, 3], [6, -2, 7]];
+        let order = 0;
+        const bigness = {};
+        cards.forEach((card, k) => {
+          const col = (k % 2) - 0.5, row = Math.floor(k / 2) - 0.5;
+          const fx = col * cw * 1.3 + JIT[k][0] * cw * 0.01;
+          const fy = row * ch * 1.12 + JIT[k][1] * cw * 0.01;
+          const fr = JIT[k][2];
+          const sweep = ease(clamp((t2 - k * 0.03) / 0.5, 0, 1));
+          let x, y, r, sc = 1, slide, turn;
+          if (DECK[k].name) {
+            // individual intro: each friend holds centred, then leaves BEFORE the next arrives
+            const j = order++;
+            const a = pi - j;                                  // this card's own clock
+            const arrive = ease(clamp((a - 0.5) / 0.5, 0, 1)); // slides up + flips in the 2nd half → big at a=1
+            const settle = ease(clamp((a - 1) / 0.5, 0, 1));   // then settles onto the table in the next half
+            slide = arrive;
+            turn = arrive;
+            const big = Math.min((H * 0.6) / ch, (W * 0.7) / cw);
+            const cx = 0, cy = -H * 0.06, cr = j % 2 ? 2 : -2;
+            const sy0 = H * 0.78 + ch * big; // just below the bottom edge
+            x = cx + (fx - cx) * settle;
+            y = sy0 + (cy - sy0) * arrive + (fy - cy) * settle;
+            r = (j % 2 ? 6 : -6) * (1 - arrive) + cr * arrive + (fr - cr) * settle;
+            sc = big + (1 - big) * settle;
+            bigness[k] = arrive * (1 - settle);
+            card.style.zIndex = settle > 0.5 ? 3 + k : 30 + j;
+          } else {
+            // the rest of the deck: slides into place face-down, then turns over
+            const a = clamp((t1 - k * 0.05) / 0.45, 0, 1);
+            slide = ease(clamp(a / 0.6, 0, 1));
+            turn = ease(clamp((a - 0.6) / 0.4, 0, 1));
+            const sy0 = H * 0.75 + ch;
+            x = fx * slide;
+            y = sy0 + (fy - sy0) * slide;
+            r = fr * slide;
+            sc = 1 + Math.sin(Math.PI * turn) * 0.04;
+            card.style.zIndex = 3 + k;
+          }
+          x += sweep * (col * W * 0.2);
+          y += sweep * H;
+          r += sweep * col * 20;
+          const flip = (1 - turn) * 180;
+          card.style.transform = `perspective(1800px) translate(${x}px, ${y}px) rotate(${r}deg) scale(${sc}) rotateY(${flip}deg)`;
+          crossed('card' + k, slide, 0.97, (d) => d > 0 && snd.flick());
+        });
+        // the credit follows whichever card is biggest on the table right now
+        let cur = 0, curOn = 0;
+        introOrder.forEach((k, ci) => { if (bigness[k] > curOn) { curOn = bigness[k]; cur = ci; } });
+        const who = CASTLIST[cur];
+        if (introEl.dataset.who !== who.name) {
+          introEl.dataset.who = who.name;
+          introEl.querySelector('small').textContent = cur === 0 ? 'starring' : 'and';
+          introEl.querySelector('b').textContent = who.name;
+          introEl.querySelector('em').textContent = who.tag || '';
+        }
+        introEl.style.opacity = clamp((curOn - 0.5) / 0.4, 0, 1).toFixed(3);
+        el.w2.style.opacity = clamp((t1 - 0.5) * 3, 0, 1) * (1 - t2 * 3);
+
+        // 3 · last round: the cheers photo slides up and pulls back; a tag lands on each drink with a clink
+        const rise = ease(clamp(t2 / 0.45, 0, 1));
+        const pull = ease(clamp((t2 - 0.2) / 0.8, 0, 1));
+        el.vm.style.transform = `translateY(${(1 - rise) * DIM.vmHide}px) scale(${1.18 - pull * 0.18})`;
+        pins.forEach((pin, k) => {
+          const at = 0.42 + k * 0.09;
+          pin.classList.toggle('on', t2 >= at);
+          crossed('pin' + k, t2, at, (d) => d > 0 && snd.clink());
+        });
+        el.w3.style.opacity = clamp((t2 - 0.35) * 3, 0, 1);
+        crossed('vmrise', t2, 0.15, (d) => d > 0 && snd.swish());
+
+        // 4 · the reel advances frame by frame: cheers → title → previously on → this week's episode
+        const reelP = clamp(p - (3 + N), 0, 2);
+        const gapH = H * 1.04;
+        // cheers → previously-on is a film burn: the photo overexposes, a hot glow blooms, the show burns through
+        const b = clamp(reelP, 0, 1);
+        const glow = Math.sin(Math.PI * clamp((b - 0.1) / 0.8, 0, 1));
+        el.vm.style.filter = b > 0 ? `sepia(${b}) saturate(${1 + b * 3}) brightness(${1 + b * 1.8}) contrast(${1 + b * 0.5})` : '';
+        el.vm.style.opacity = 1 - clamp((b - 0.55) / 0.3, 0, 1);
+        if (reelP > 0) el.vm.style.transform += ` translateY(${-reelP * gapH}px)`;
+        el.w3.style.opacity = Math.min(el.w3.style.opacity || 1, 1 - clamp(b * 3, 0, 1));
+        burnEl.style.opacity = glow.toFixed(3);
+        burnEl.style.transform = `scale(${0.4 + b * 2})`;
+        // the reel advances: cheers → previously on → this week
+        [fPrev, fEp].forEach((f, i) => { f.style.transform = `translateY(${(i + 1 - reelP) * gapH}px)`; });
+        crossed('burn', reelP, 0.12, (d) => d > 0 && snd.burn());
+        crossed('reel2', reelP, 1.5, () => snd.clack());
+        // previously-on stills drop in one by one as that frame arrives
+        stills.forEach((st, i) => {
+          const on = reelP > 0.7 + i * 0.08;
+          if (on !== st.classList.contains('shown')) { st.classList.toggle('shown', on); if (on) snd.flick(); }
+        });
+        // the typewriter starts once this week's episode is in place
+        if (reelP > 1.95 && !typing.started) startTyping();
+        if (reelP < 1.5 && typing.started) resetTyping();
+
+        // vinyl crackle only while you're at the record player and the song is playing
+        const crackleOn = songOn && !paused && p > 0.97 && p < 1.3;
+        if (snd.ctx && crackleOn !== !!snd.crackling) snd.crackle(crackleOn);
+        const showMini = songOn && p > 1.25;
+        if (showMini && mini.hidden) mini.hidden = false;
+        mini.classList.toggle('show', showMini);
+        mini.tabIndex = showMini ? 0 : -1;
+        el.beat.textContent = p < 0.5 ? 'side a' : p < 1.5 ? 'side a · playing' : p < 1.5 + N ? 'starring' : p < 2.5 + N ? 'the cast' : p < 3.5 + N ? 'last round' : p < 4.5 + N ? 'previously' : 'this week';
+
+        // the room changes colour with the playhead: cherry fabric → black card table → cherry
+        const toTable = clamp(p - 1, 0, 1), toCherry = clamp(p - 2, 0, 1);
+        weave.style.opacity = 0;
+        cloth.style.opacity = 1 - clamp(toTable * 1.6, 0, 1);
+        zebra.style.opacity = (clamp((p - 1.2) * 2.2, 0, 1) * (1 - clamp(p - (2.4 + N), 0, 1))).toFixed(3);
+        // labels read dark on the paper, light on the table and fabric
+        document.body.style.setProperty('--chrome', '#f0d9a8');
+        measure();
+      requestAnimationFrame(frame);
+      }
+      measure();
+      requestAnimationFrame(frame);
+    </script>
+  </body>
+</html>
