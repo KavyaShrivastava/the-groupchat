@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Alfa+Slab+One&family=Bowlby+One&family=Courier+Prime&family=Fraunces:ital,opsz,wght@1,72,500&family=Rubik:wght@800&family=Ultra&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Caveat:wght@600&family=Alfa+Slab+One&family=Bowlby+One&family=Courier+Prime&family=Fraunces:ital,opsz,wght@1,72,500&family=Rubik:wght@800&family=Ultra&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -68,20 +68,176 @@
       }
       .obj { position: absolute; will-change: transform; }
 
-      /* ---- vinyl ---- */
+      /* ---- suitcase record player ---- */
+      .player {
+        --P: min(86vw, 58vh, 600px);
+        left: 50%;
+        top: 46%;
+        width: var(--P);
+        margin-left: calc(var(--P) / -2);
+        margin-top: calc(var(--P) * -0.61);
+        z-index: 2;
+      }
+      .lid, .base {
+        position: relative;
+        width: 100%;
+        background: #efe3cd;
+        box-shadow: 0 1.6vmin 4vmin rgba(10, 20, 60, 0.35), inset 0 0 0 calc(var(--P) * 0.012) rgba(150, 110, 70, 0.18);
+      }
+      .lid::after, .base::after { /* stitched edge */
+        content: '';
+        position: absolute;
+        inset: calc(var(--P) * 0.018);
+        border: 1.5px dashed rgba(140, 100, 60, 0.35);
+        border-radius: calc(var(--P) * 0.02);
+        pointer-events: none;
+      }
+      .lid {
+        height: calc(var(--P) * 0.6);
+        border-radius: calc(var(--P) * 0.035) calc(var(--P) * 0.035) calc(var(--P) * 0.008) calc(var(--P) * 0.008);
+        padding: calc(var(--P) * 0.04);
+      }
+      .hinge {
+        height: calc(var(--P) * 0.018);
+        margin: 0 4%;
+        background: #8c6a4a;
+        border-radius: 99px;
+      }
+      .base {
+        height: calc(var(--P) * 0.6);
+        border-radius: calc(var(--P) * 0.008) calc(var(--P) * 0.008) calc(var(--P) * 0.035) calc(var(--P) * 0.035);
+        padding: calc(var(--P) * 0.04);
+      }
+      .latch {
+        position: absolute;
+        bottom: calc(var(--P) * -0.012);
+        width: calc(var(--P) * 0.07);
+        height: calc(var(--P) * 0.03);
+        border-radius: calc(var(--P) * 0.006);
+        background: linear-gradient(#e2c27a, #b8913e);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
+      .latch.l { left: 18%; }
+      .latch.r { right: 18%; }
+
+      /* the lid lining is a scrapbook page */
+      .lidin {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: calc(var(--P) * 0.012);
+        overflow: hidden;
+        background:
+          radial-gradient(rgba(120, 90, 60, 0.08) 1px, transparent 1.4px) 0 0 / 5px 5px,
+          #f7efe2;
+      }
+      .lidin > * { position: absolute; }
+      .lidin .rn { left: 6%; top: 8%; width: 52%; font-size: calc(var(--P) * 0.05); }
+      .snap {
+        background: #fff;
+        padding: 3% 3% 10%;
+        box-shadow: 0 0.6vmin 1.4vmin rgba(60, 40, 30, 0.22);
+      }
+      .snap img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 30%; }
+      .snap b {
+        position: absolute;
+        left: 0; right: 0; bottom: 2%;
+        text-align: center;
+        font: 600 calc(var(--P) * 0.032) / 1 'Caveat', cursive;
+        color: #3a2a2a;
+      }
+      .snap.a { right: 6%; top: 7%; width: 24%; rotate: 6deg; }
+      .snap.b { right: 34%; top: 36%; width: 19%; rotate: -6deg; }
+      .tape {
+        position: absolute;
+        top: -5%;
+        left: 50%;
+        width: 50%;
+        height: 9%;
+        translate: -50% 0;
+        background: rgba(236, 222, 190, 0.85);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+      .snap.a .tape { rotate: -8deg; }
+      .snap.b .tape { rotate: 6deg; }
+      .ticket {
+        left: 5%;
+        bottom: 3%;
+        width: 31%;
+        padding: 3% 4%;
+        background: #f3d27a;
+        rotate: -4deg;
+        font: 400 calc(var(--P) * 0.02) / 1.35 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #6e1d2a;
+        box-shadow: 0 0.4vmin 1vmin rgba(60, 40, 30, 0.18);
+        -webkit-mask: radial-gradient(circle calc(var(--P) * 0.012) at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat,
+          radial-gradient(circle calc(var(--P) * 0.012) at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+        mask: radial-gradient(circle calc(var(--P) * 0.012) at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat,
+          radial-gradient(circle calc(var(--P) * 0.012) at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+      }
+      .ticket strong { display: block; font: 400 calc(var(--P) * 0.034) / 1 'Bowlby One', sans-serif; letter-spacing: 0.02em; }
+      .note {
+        left: 7%;
+        top: 33%;
+        width: 27%;
+        padding: 3% 4% 4%;
+        rotate: 3deg;
+        background:
+          repeating-linear-gradient(transparent 0 calc(var(--P) * 0.026), rgba(120, 150, 200, 0.35) calc(var(--P) * 0.026) calc(var(--P) * 0.028)),
+          #fffdf7;
+        font: 600 calc(var(--P) * 0.03) / 1.15 'Caveat', cursive;
+        color: #2f3f8a;
+        box-shadow: 0 0.4vmin 1vmin rgba(60, 40, 30, 0.15);
+      }
+      .stk { font-size: calc(var(--P) * 0.06); filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2)); }
+      .stk.heart { right: 4%; top: 58%; color: #e8664f; rotate: 12deg; }
+      .stk.star { left: 34%; bottom: 18%; color: #e9b949; rotate: -10deg; }
+      .bubble {
+        left: 50%;
+        top: 12%;
+        padding: 1.2% 2.4%;
+        border-radius: 99px;
+        background: #9db8e8;
+        font: 400 calc(var(--P) * 0.026) / 1 'Bowlby One', sans-serif;
+        color: #fff;
+        rotate: -8deg;
+        box-shadow: 0 0 0 calc(var(--P) * 0.006) #fff, 0 0.4vmin 0.8vmin rgba(0, 0, 0, 0.15);
+      }
+
+      /* the deck: platter, record, tonearm */
+      .deck {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: calc(var(--P) * 0.015);
+        background: #2a2627;
+        box-shadow: inset 0 0 0 calc(var(--P) * 0.006) #3a3537;
+      }
+      .platter {
+        position: absolute;
+        left: calc(var(--P) * 0.13);
+        top: calc(var(--P) * 0.03);
+        width: calc(var(--P) * 0.46);
+        height: calc(var(--P) * 0.46);
+        border-radius: 50%;
+        background: repeating-radial-gradient(circle, #4a4446 0 2px, #403a3c 2px 4px);
+      }
       .record {
-        width: var(--S);
-        height: var(--S);
-        left: calc(38% - var(--S) / 2);
-        top: calc(50% - var(--S) / 2);
+        position: absolute;
+        left: calc(var(--P) * 0.135);
+        top: calc(var(--P) * 0.035);
+        width: calc(var(--P) * 0.45);
+        height: calc(var(--P) * 0.45);
         border-radius: 50%;
         background:
           radial-gradient(circle, transparent 0 31%, rgba(255, 255, 255, 0.05) 31.5%, transparent 32%),
           repeating-radial-gradient(circle, #1b1719 0 2px, #262124 2px 3px),
           #1b1719;
-        box-shadow: 0 1.5vmin 4vmin rgba(0, 0, 0, 0.45);
+        box-shadow: 0 0.6vmin 1.4vmin rgba(0, 0, 0, 0.5);
       }
-      .record::after { /* a soft sheen so the spin reads */
+      .record::after {
         content: '';
         position: absolute;
         inset: 0;
@@ -96,79 +252,91 @@
         background: var(--brat);
         display: grid;
         place-items: center;
-        box-shadow: inset 0 0 0 0.6vmin rgba(0, 0, 0, 0.08);
       }
       .label span {
-        font: 400 calc(var(--S) * 0.05) / 1 Arial, 'Helvetica Neue', sans-serif;
+        font: 400 calc(var(--P) * 0.024) / 1 Arial, 'Helvetica Neue', sans-serif;
         letter-spacing: -0.02em;
-        text-align: center;
         color: #000;
         transform: scaleX(0.86);
-        filter: blur(0.5px);
+        filter: blur(0.4px);
       }
       .label i {
         position: absolute;
-        width: 6%;
-        height: 6%;
+        width: 7%;
+        height: 7%;
         border-radius: 50%;
-        background: var(--black);
+        background: #2a2627;
       }
+      .tonearm {
+        position: absolute;
+        left: calc(var(--P) * 0.349);
+        top: calc(var(--P) * -0.017);
+        width: calc(var(--P) * 0.55);
+        height: calc(var(--P) * 0.55);
+        transform-origin: 82% 14%;
+        pointer-events: none;
+        z-index: 2;
+      }
+      .knob {
+        position: absolute;
+        width: calc(var(--P) * 0.05);
+        height: calc(var(--P) * 0.05);
+        border-radius: 50%;
+        background: radial-gradient(circle at 40% 35%, #f3ead8, #b9ad9a);
+      }
+      .speed {
+        position: absolute;
+        right: calc(var(--P) * 0.03);
+        bottom: calc(var(--P) * 0.028);
+        font: 400 calc(var(--P) * 0.018) / 1 var(--mono);
+        letter-spacing: 0.12em;
+        color: #b9ad9a;
+      }
+
+      /* the sleeve starts on top of the record, then slides off */
       .sleeve {
-        width: var(--S);
-        height: var(--S);
-        left: calc(38% - var(--S) / 2);
-        top: calc(50% - var(--S) / 2);
+        position: absolute;
+        left: calc(var(--P) * 0.12);
+        top: calc(var(--P) * 0.02);
+        width: calc(var(--P) * 0.48);
+        height: calc(var(--P) * 0.48);
         background: var(--cream);
         color: var(--cherry);
-        border-radius: 0.6vmin;
-        box-shadow: 0 1.6vmin 4vmin rgba(0, 0, 0, 0.4);
-        padding: calc(var(--S) * 0.07);
+        border-radius: 0.5vmin;
+        box-shadow: 0 1.4vmin 3vmin rgba(0, 0, 0, 0.4);
+        padding: calc(var(--P) * 0.03);
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        z-index: 2;
-      }
-      .sleeve h1 {
-        margin: 0.4em 0 0;
-        font-size: calc(var(--S) * 0.112);
+        z-index: 3;
       }
       .sleeve small {
-        font: 400 calc(var(--S) * 0.03) / 1.4 var(--mono);
+        font: 400 calc(var(--P) * 0.018) / 1.4 var(--mono);
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: rgba(110, 29, 42, 0.65);
+        color: rgba(110, 29, 42, 0.7);
+      }
+      .sleeve big {
+        font: 400 calc(var(--P) * 0.07) / 0.95 'Bowlby One', sans-serif;
+        color: #e8664f;
       }
       .sleeve .rpm {
         position: absolute;
-        right: 9%;
-        bottom: 12%;
-        width: 24%;
+        right: 8%;
+        bottom: 10%;
+        width: 26%;
         aspect-ratio: 1;
         border-radius: 50%;
         background: #fffaf2;
-        box-shadow: 0 0.5vmin 1vmin rgba(0, 0, 0, 0.15);
+        box-shadow: 0 0.4vmin 0.8vmin rgba(0, 0, 0, 0.15);
         display: grid;
         place-items: center;
         text-align: center;
         rotate: 12deg;
-        font: 400 calc(var(--S) * 0.032) / 1.1 'Bowlby One', sans-serif;
+        font: 400 calc(var(--P) * 0.022) / 1.1 'Bowlby One', sans-serif;
         color: var(--cherry);
       }
-      .sleeve .rpm small {
-        display: block;
-        font: 400 calc(var(--S) * 0.022) / 1 var(--mono);
-        letter-spacing: 0.1em;
-        color: rgba(110, 29, 42, 0.7);
-      }
-      .tonearm {
-        width: calc(var(--S) * 0.62);
-        height: calc(var(--S) * 0.62);
-        left: calc(38% + var(--S) * 0.13);
-        top: calc(50% - var(--S) * 0.62);
-        transform-origin: 85% 12%;
-        z-index: 3;
-        pointer-events: none;
-      }
+      .sleeve .rpm small { display: block; font-size: calc(var(--P) * 0.014); }
 
       /* ---- playing cards ---- */
       .pcard {
@@ -336,11 +504,6 @@
       .tag.tl { top: 18px; left: 18px; }
       .tag.br { bottom: 18px; right: 18px; }
       .tag.bl { bottom: 18px; left: 18px; }
-      @media (max-aspect-ratio: 1/1) {
-        :root { --S: 46vmin; }
-        .record, .sleeve { left: calc(30% - var(--S) / 2); }
-        .tonearm { left: calc(30% + var(--S) * 0.13); }
-      }
       #sound {
         position: fixed;
         z-index: 60;
@@ -366,23 +529,44 @@
     <span class="tag bl" id="beat">side a</span>
     <span class="tag br">scroll ↓</span>
 
-    <!-- 1. vinyl -->
-    <div class="obj record" id="record"><div class="label"><span>the groupchat</span><i></i></div></div>
-    <svg class="obj tonearm" id="arm" viewBox="0 0 100 100" aria-hidden="true">
-      <circle cx="85" cy="12" r="7" fill="#e9dcc6" />
-      <circle cx="85" cy="12" r="3" fill="#8f8478" />
-      <path d="M85 12 L40 78 L30 84" stroke="#e9dcc6" stroke-width="2.6" fill="none" stroke-linecap="round" />
-      <rect x="22" y="80" width="12" height="7" rx="1.5" fill="#6f6359" transform="rotate(-30 28 84)" />
-    </svg>
-    <div class="obj sleeve" id="sleeve">
-      <div>
-        <small>side a · season one</small>
-        <h1 class="rn" data-text="the groupchat"></h1>
+    <!-- 1. the suitcase record player -->
+    <div class="obj player" id="player">
+      <div class="lid">
+        <div class="lidin">
+          <h1 class="rn" data-text="the groupchat"></h1>
+          <span class="bubble">lol</span>
+          <figure class="snap a"><i class="tape"></i><img src="/cast/kavya.jpg" alt="arkavs" /><b>arkavs</b></figure>
+          <figure class="snap b"><i class="tape"></i><img src="/cast/friend2.jpg" alt="hesatwink" /><b>hesatwink</b></figure>
+          <p class="note">recorded mostly at 3am ♡</p>
+          <div class="ticket"><strong>admit all</strong>side a · season one<br />no. 000001</div>
+          <span class="stk heart">♥</span>
+          <span class="stk star">★</span>
+        </div>
       </div>
-      <small>written by us · recorded mostly at 3am</small>
-      <div class="rpm"><span>33⅓<small>RPM</small></span></div>
+      <div class="hinge"></div>
+      <div class="base">
+        <div class="deck">
+          <div class="platter"></div>
+          <div class="record" id="record"><div class="label"><span>the groupchat</span><i></i></div></div>
+          <svg class="tonearm" id="arm" viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="82" cy="14" r="8" fill="#d9cfbf" />
+            <circle cx="82" cy="14" r="3.5" fill="#7d7266" />
+            <path d="M82 14 L30 70 L20 80" stroke="#e9dcc6" stroke-width="2.8" fill="none" stroke-linecap="round" />
+            <rect x="13" y="76" width="13" height="8" rx="1.6" fill="#6f6359" transform="rotate(-45 19 80)" />
+          </svg>
+          <i class="knob" style="right: 9%; bottom: 22%"></i>
+          <i class="knob" style="right: 20%; bottom: 14%"></i>
+          <span class="speed">33 · 45</span>
+          <div class="sleeve" id="sleeve">
+            <small>side a · season one</small>
+            <big>play<br />me</big>
+            <div class="rpm"><span>33⅓<small>RPM</small></span></div>
+          </div>
+        </div>
+        <i class="latch l"></i><i class="latch r"></i>
+      </div>
     </div>
-    <button class="word playbtn" id="w1" type="button" style="left: 50%; bottom: 9%; translate: -50% 0"><span class="tri"></span>press play</button>
+    <button class="word playbtn" id="w1" type="button" style="left: 50%; bottom: 4%; translate: -50% 0"><span class="tri"></span>press play</button>
 
     <!-- 2. trading cards: the cast -->
     <div id="deck"></div>
@@ -562,8 +746,12 @@
 
       // ---------- scroll drives a playhead; objects follow it ----------
       const $ = (id) => document.getElementById(id);
+      // belt and braces: if anything ever nudges the page (focus, find-in-page), snap it back
+history.scrollRestoration = 'manual';
+      scrollTo(0, 0);
+      addEventListener('scroll', () => { if (scrollY || scrollX) scrollTo(0, 0); });
       const kraft = $('kraft'), weave = $('weave');
-      const el = { record: $('record'), sleeve: $('sleeve'), arm: $('arm'), vm, w1: $('w1'), w2: $('w2'), w3: $('w3'), beat: $('beat') };
+      const el = { player: $('player'), record: $('record'), sleeve: $('sleeve'), arm: $('arm'), vm, w1: $('w1'), w2: $('w2'), w3: $('w3'), beat: $('beat') };
       const MAX = 3;
       let target = 0, p = 0, idle = null, spin = 0, last = performance.now();
       const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -609,22 +797,20 @@
         p += (target - p) * Math.min(1, dt * 9);
         if (Math.abs(target - p) < 0.0005) p = target;
 
-        const S = el.record.offsetWidth;
+        const P = el.player.offsetWidth;
         const W = innerWidth, H = innerHeight;
         const t0 = clamp(p, 0, 1), t1 = clamp(p - 1, 0, 1), t2 = clamp(p - 2, 0, 1);
 
-        // 1 · the record slides out of its sleeve, rolling as it goes, then rolls away
-        const out = ease(t0) * S * 0.56;
-        const away = t1 * (W * 0.75);
-        const x = out + away;
-        const playing = t0 > 0.98 && t1 < 0.02;
+        // 1 · the sleeve slides off the record, the needle drops, the record spins on the player;
+        //     then the whole player (record and all) slides away
+        const off = ease(t0);
+        el.sleeve.style.transform = `translate(${-off * P * 0.62}px, ${off * P * 0.22}px) rotate(${-off * 14}deg)`;
+        const playing = t0 > 0.98;
         if (playing) spin += dt * 200; // 33 rpm-ish while the needle is down
-        const rot = (x / (S / 2)) * (180 / Math.PI) + spin;
-        el.record.style.transform = `translate(${x}px, ${t1 * -H * 0.1}px) rotate(${rot}deg)`;
-        el.sleeve.style.transform = `translate(${-t1 * W * 0.05}px, ${ease(t1) * H * 1.1}px) rotate(${-t1 * 10}deg)`;
-        const armIn = clamp((t0 - 0.75) / 0.25, 0, 1) * (1 - clamp(t1 * 4, 0, 1));
-        el.arm.style.transform = `translateX(${out}px) rotate(${-38 + armIn * 38}deg)`;
-        el.arm.style.opacity = clamp(t0 * 3 - 1.5, 0, 1) * (1 - clamp(t1 * 3, 0, 1));
+        el.record.style.transform = `rotate(${t0 * 40 + spin}deg)`;
+        el.player.style.transform = `translateY(${ease(t1) * H * 1.15}px) rotate(${t1 * 6}deg)`;
+        const armIn = clamp((t0 - 0.7) / 0.3, 0, 1) * (1 - clamp(t1 * 4, 0, 1));
+        el.arm.style.transform = `rotate(${-34 + armIn * 34}deg)`;
         // the play button is there at the start and fades once the record is out
         const btn = 1 - clamp(t0 * 2.5, 0, 1);
         el.w1.style.opacity = btn;
