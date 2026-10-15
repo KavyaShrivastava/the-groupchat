@@ -61,8 +61,8 @@
         z-index: 1;
         pointer-events: none;
         rotate: -4deg;
-        filter: sepia(0.18) saturate(0.85) contrast(0.95) blur(0.35px);
-        background-color: #eadbbd;
+        filter: sepia(0.08) saturate(1.1) contrast(1.02) blur(0.3px);
+        background-color: #f1e2c4;
         background-image:
           /* tea and wine stains */
           radial-gradient(9vmin 7vmin at 22% 70%, rgba(120, 70, 30, 0.16), transparent 70%),
@@ -74,8 +74,8 @@
           /* worn cotton fibres */
           url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9 0.35' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.33  0 0 0 0 0.22  0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E"),
           /* the checks, faded to brick, darker where they cross */
-          repeating-linear-gradient(0deg, rgba(165, 52, 46, 0.4) 0 34px, transparent 34px 68px),
-          repeating-linear-gradient(90deg, rgba(165, 52, 46, 0.4) 0 34px, transparent 34px 68px);
+          repeating-linear-gradient(0deg, rgba(186, 32, 40, 0.6) 0 34px, transparent 34px 68px),
+          repeating-linear-gradient(90deg, rgba(186, 32, 40, 0.6) 0 34px, transparent 34px 68px);
         background-size: auto, auto, auto, auto, auto, 300px 300px, auto, auto;
       }
       #cloth::after { /* soft folds in the fabric */
