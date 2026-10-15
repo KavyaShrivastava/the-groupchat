@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Groupchat · objects demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Fraunces:ital,opsz,wght@1,72,500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --paper: #f4ece0;
+        --ink: #241f22;
+        --soft: #8a7d76;
+        --serif: 'Fraunces', Georgia, serif;
+        --mono: 'Courier Prime', monospace;
+        --S: min(54vmin, 440px); /* record / sleeve size */
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        overscroll-behavior: none;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--mono);
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(rgba(120, 90, 60, 0.06) 1px, transparent 1.4px) 0 0 / 6px 6px;
+        z-index: 50;
+      }
+      .obj { position: absolute; will-change: transform; }
+
+      /* ---- vinyl ---- */
+      .record {
+        width: var(--S);
+        height: var(--S);
+        left: calc(38% - var(--S) / 2);
+        top: calc(50% - var(--S) / 2);
+        border-radius: 50%;
+        background:
+          radial-gradient(circle, transparent 0 31%, rgba(255, 255, 255, 0.05) 31.5%, transparent 32%),
+          repeating-radial-gradient(circle, #1b1719 0 2px, #262124 2px 3px),
+          #1b1719;
+        box-shadow: 0 1.5vmin 3vmin rgba(40, 25, 20, 0.25);
+      }
+      .record::after { /* a soft sheen so the spin reads */
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: conic-gradient(from 20deg, transparent 0 10%, rgba(255, 255, 255, 0.12) 14%, transparent 20% 60%, rgba(255, 255, 255, 0.08) 64%, transparent 70%);
+      }
+      .label {
+        position: absolute;
+        inset: 32%;
+        border-radius: 50%;
+        overflow: hidden;
+        background: #f3c9b8;
+        display: grid;
+        place-items: center;
+        box-shadow: inset 0 0 0 0.6vmin #f6e7d8;
+      }
+      .label span {
+        font: italic 500 calc(var(--S) * 0.045) / 1.1 var(--serif);
+        text-align: center;
+        color: #6a3a2e;
+      }
+      .label i {
+        position: absolute;
+        width: 6%;
+        height: 6%;
+        border-radius: 50%;
+        background: var(--paper);
+      }
+      .sleeve {
+        width: var(--S);
+        height: var(--S);
+        left: calc(38% - var(--S) / 2);
+        top: calc(50% - var(--S) / 2);
+        background: #efe2cf;
+        border-radius: 0.6vmin;
+        box-shadow: 0 1.6vmin 3.6vmin rgba(60, 35, 20, 0.22), inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+        padding: calc(var(--S) * 0.07);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        z-index: 2;
+      }
+      .sleeve h1 {
+        margin: 0;
+        font: italic 500 calc(var(--S) * 0.13) / 0.92 var(--serif);
+        letter-spacing: -0.02em;
+      }
+      .sleeve small {
+        font: 400 calc(var(--S) * 0.03) / 1.4 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--soft);
+      }
+      .sleeve .pic {
+        position: absolute;
+        right: 9%;
+        bottom: 10%;
+        width: 38%;
+        aspect-ratio: 3 / 4;
+        padding: 3% 3% 9%;
+        background: #fff;
+        rotate: 6deg;
+        box-shadow: 0 0.8vmin 1.6vmin rgba(0, 0, 0, 0.15);
+      }
+      .sleeve .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .tonearm {
+        width: calc(var(--S) * 0.62);
+        height: calc(var(--S) * 0.62);
+        left: calc(38% + var(--S) * 0.13);
+        top: calc(50% - var(--S) * 0.62);
+        transform-origin: 85% 12%;
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      /* ---- photobooth ---- */
+      .slot {
+        left: 50%;
+        top: 0;
+        width: min(30vmin, 240px);
+        height: 4vmin;
+        translate: -50% 0;
+        background: #c8b49c;
+        border-radius: 0 0 1.4vmin 1.4vmin;
+        box-shadow: inset 0 -0.8vmin 0 #a8927a;
+        z-index: 4;
+      }
+      .strip {
+        left: 50%;
+        top: 0;
+        width: min(17vmin, 150px);
+        margin-left: calc(min(17vmin, 150px) / -2);
+        padding: 1.2vmin 1.2vmin 3vmin;
+        background: #fffaf2;
+        box-shadow: 0 1.2vmin 3vmin rgba(60, 35, 20, 0.2);
+        display: flex;
+        flex-direction: column;
+        gap: 1vmin;
+        z-index: 3;
+      }
+      .frame {
+        aspect-ratio: 1 / 1.08;
+        overflow: hidden;
+        background: #eadbc8;
+        display: grid;
+        place-items: center;
+      }
+      .frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .frame span { font: italic 500 7vmin/1 var(--serif); color: rgba(36, 31, 34, 0.45); }
+      .strip small {
+        position: absolute;
+        bottom: 0.8vmin;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font: 400 1.3vmin/1 var(--mono);
+        letter-spacing: 0.15em;
+        color: var(--soft);
+      }
+
+      /* ---- view-master ---- */
+      .vm {
+        width: min(96vmin, 860px);
+        aspect-ratio: 1;
+        left: 50%;
+        top: 100%;
+        margin-left: calc(min(96vmin, 860px) / -2);
+        border-radius: 50%;
+        background: radial-gradient(circle, #f6f1e7 0 58%, #ebe3d5 100%);
+        box-shadow: 0 2vmin 5vmin rgba(60, 35, 20, 0.25);
+        z-index: 2;
+      }
+      .vm .s {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 17%;
+        height: 12.5%;
+        margin: -6.25% 0 0 -8.5%;
+        border-radius: 1.6vmin;
+        overflow: hidden;
+        background: #eadbc8;
+        box-shadow: inset 0 0 0 0.4vmin rgba(0, 0, 0, 0.18);
+        display: grid;
+        place-items: center;
+      }
+      .vm .s img { width: 100%; height: 100%; object-fit: cover; }
+      .vm .s span { font: italic 500 4vmin/1 var(--serif); color: rgba(36, 31, 34, 0.45); }
+      .vm .hub {
+        position: absolute;
+        inset: 45%;
+        border-radius: 50%;
+        background: #e3dccf;
+        box-shadow: inset 0 0 0 1vmin #efe9de;
+      }
+      .vm .num {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        font: 700 2.2vmin/1 var(--mono);
+        color: #6d5d55;
+      }
+
+      /* ---- words + chrome ---- */
+      .word {
+        position: absolute;
+        font: italic 500 clamp(28px, 6vmin, 64px) / 1 var(--serif);
+        z-index: 5;
+        pointer-events: none;
+      }
+      .tag {
+        position: fixed;
+        z-index: 60;
+        font: 400 12px/1 var(--mono);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--soft);
+      }
+      .tag.tl { top: 18px; left: 18px; }
+      .tag.br { bottom: 18px; right: 18px; }
+      .tag.bl { bottom: 18px; left: 18px; }
+      @media (max-aspect-ratio: 1/1) {
+        :root { --S: 46vmin; }
+        .record, .sleeve { left: calc(30% - var(--S) / 2); }
+        .tonearm { left: calc(30% + var(--S) * 0.13); }
+      }
+      #sound {
+        position: fixed;
+        z-index: 60;
+        top: 14px;
+        right: 14px;
+        font: 400 12px/1 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink);
+        background: #fffaf2;
+        border: 1px solid #d9cbb8;
+        border-radius: 99px;
+        padding: 8px 12px 7px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <span class="tag tl">the groupchat · objects demo</span>
+    <button id="sound" type="button">tap for sound</button>
+    <span class="tag bl" id="beat">side a</span>
+    <span class="tag br">scroll ↓</span>
+
+    <!-- 1. vinyl -->
+    <div class="obj record" id="record"><div class="label"><span>the<br />groupchat</span><i></i></div></div>
+    <svg class="obj tonearm" id="arm" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="85" cy="12" r="7" fill="#cbbfae" />
+      <circle cx="85" cy="12" r="3" fill="#8f8478" />
+      <path d="M85 12 L40 78 L30 84" stroke="#b9ad9c" stroke-width="2.6" fill="none" stroke-linecap="round" />
+      <rect x="22" y="80" width="12" height="7" rx="1.5" fill="#6f6359" transform="rotate(-30 28 84)" />
+    </svg>
+    <div class="obj sleeve" id="sleeve">
+      <div>
+        <small>side a · season one</small>
+        <h1>the<br />groupchat</h1>
+      </div>
+      <small>written by us · recorded mostly at 3am</small>
+      <div class="pic"><img src="/cast/kavya.jpg" alt="Kavya" /></div>
+    </div>
+    <div class="word" id="w1" style="left: 50%; bottom: 9%; translate: -50% 0">press play</div>
+
+    <!-- 2. photobooth -->
+    <div class="obj slot" id="slot"></div>
+    <div class="obj strip" id="strip">
+      <div class="frame"><img src="/cast/kavya.jpg" alt="Kavya" /></div>
+      <div class="frame"><span>F</span></div>
+      <div class="frame"><span>T</span></div>
+      <div class="frame"><span>S</span></div>
+      <small>THE CAST · 4 POSES</small>
+    </div>
+    <div class="word" id="w2" style="left: 8%; top: 40%">starring<br />all of us</div>
+
+    <!-- 3. view-master -->
+    <div class="obj vm" id="vm"></div>
+    <div class="word" id="w3" style="left: 50%; top: 14%; translate: -50% 0; text-align: center">and you, obviously</div>
+
+    <script>
+      // ---------- sound: small, one per movement ----------
+      const snd = {
+        ctx: null,
+        start() {
+          if (this.ctx) return;
+          const ctx = (this.ctx = new AudioContext());
+          this.out = ctx.createGain();
+          this.out.gain.value = 0.8;
+          this.out.connect(ctx.destination);
+          const len = ctx.sampleRate;
+          this.noise = ctx.createBuffer(1, len, ctx.sampleRate);
+          const d = this.noise.getChannelData(0);
+          for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+        },
+        burst(type, f, dur, gain, at = 0, fEnd) {
+          if (!this.ctx) return;
+          const t = this.ctx.currentTime + at;
+          const s = this.ctx.createBufferSource();
+          s.buffer = this.noise;
+          const fl = this.ctx.createBiquadFilter();
+          fl.type = type;
+          fl.frequency.setValueAtTime(f, t);
+          if (fEnd) fl.frequency.exponentialRampToValueAtTime(fEnd, t + dur);
+          const g = this.ctx.createGain();
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.linearRampToValueAtTime(gain, t + 0.004);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+          s.connect(fl).connect(g).connect(this.out);
+          s.start(t, Math.random() * 0.5);
+          s.stop(t + dur + 0.05);
+        },
+        tone(f, dur, gain, type = 'sine', at = 0) {
+          if (!this.ctx) return;
+          const t = this.ctx.currentTime + at;
+          const o = this.ctx.createOscillator();
+          o.type = type;
+          o.frequency.value = f;
+          const g = this.ctx.createGain();
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.linearRampToValueAtTime(gain, t + 0.005);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+          o.connect(g).connect(this.out);
+          o.start(t);
+          o.stop(t + dur + 0.05);
+        },
+        // record sliding against the paper sleeve
+        slide() { this.burst('bandpass', 900, 0.35, 0.12, 0, 2400); },
+        // the needle lands: a soft thump, then the crackle starts
+        needle() {
+          this.tone(90, 0.12, 0.25);
+          this.burst('highpass', 3000, 0.06, 0.2);
+          this.crackle(true);
+          music.play();
+        },
+        crackle(on) {
+          clearTimeout(this.ct);
+          this.crackling = on;
+          const pop = () => {
+            if (!this.crackling) return;
+            this.burst('bandpass', 1500 + Math.random() * 3500, 0.012, 0.05 + Math.random() * 0.08);
+            this.ct = setTimeout(pop, 40 + Math.random() * 260);
+          };
+          if (on) pop();
+        },
+        // one photobooth frame: motor whir + shutter tick
+        booth() {
+          this.tone(110, 0.18, 0.06, 'sawtooth');
+          this.burst('bandpass', 2600, 0.03, 0.18, 0.16);
+        },
+        // view-master advance: the two-part click
+        click() {
+          this.burst('bandpass', 1900, 0.025, 0.3);
+          this.burst('bandpass', 1300, 0.03, 0.22, 0.07);
+        },
+        swish() { this.burst('bandpass', 500, 0.4, 0.1, 0, 1800); },
+      };
+      // the real song, if one is in /music/theme.mp3; starts on the needle drop
+      const music = {
+        el: null,
+        play() {
+          if (!snd.ctx || this.el) return;
+          const el = new Audio('/music/theme.mp3');
+          el.loop = true;
+          el.volume = 0;
+          el.play().then(() => {
+            const up = setInterval(() => {
+              el.volume = Math.min(0.8, el.volume + 0.05);
+              if (el.volume >= 0.8) clearInterval(up);
+            }, 60);
+          }).catch(() => {});
+          this.el = el;
+        },
+      };
+      const soundBtn = document.getElementById('sound');
+      const unlock = () => {
+        snd.start();
+        soundBtn.textContent = 'sound on';
+        if (p > 0.95 && p < 1.5) snd.crackle(true);
+      };
+      soundBtn.addEventListener('click', unlock);
+      addEventListener('pointerdown', unlock, { once: true });
+      addEventListener('keydown', unlock, { once: true });
+
+      // ---------- build the view-master ----------
+      const vm = document.getElementById('vm');
+      const pics = ['<img src="/cast/kavya.jpg" alt="">', '<span>F</span>', '<span>T</span>', '<span>S</span>', '<span>you</span>', '<img src="/cast/kavya.jpg" alt="">', '<span>F</span>'];
+      vm.innerHTML =
+        pics.map((h, i) => `<div class="s" style="transform: rotate(${(360 / 7) * i}deg) translateY(-300%)">${h}</div>`).join('') +
+        pics.map((_, i) => `<span class="num" style="transform: translate(-50%,-50%) rotate(${(360 / 7) * i + 360 / 14}deg) translateY(-1500%)">${i + 1}</span>`).join('') +
+        '<i class="hub"></i>';
+
+      // ---------- scroll drives a playhead; objects follow it ----------
+      const $ = (id) => document.getElementById(id);
+      const el = { record: $('record'), sleeve: $('sleeve'), arm: $('arm'), strip: $('strip'), slot: $('slot'), vm, w1: $('w1'), w2: $('w2'), w3: $('w3'), beat: $('beat') };
+      const MAX = 3;
+      let target = 0, p = 0, idle = null, spin = 0, last = performance.now();
+      const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+      const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+      function nudge(d) {
+        target = clamp(target + d, 0, MAX);
+        clearTimeout(idle);
+        // settle on the nearest beat when you stop
+        idle = setTimeout(() => (target = Math.round(target)), 260);
+      }
+      addEventListener('wheel', (e) => { e.preventDefault(); nudge((e.deltaY + e.deltaX) / 700); }, { passive: false });
+      let ty = null;
+      addEventListener('touchstart', (e) => (ty = e.touches[0].clientY), { passive: true });
+      addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const y = e.touches[0].clientY;
+        nudge((ty - y) / 420);
+        ty = y;
+      }, { passive: false });
+      addEventListener('keydown', (e) => {
+        if (['ArrowDown', 'ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); target = clamp(Math.round(target) + 1, 0, MAX); }
+        if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); target = clamp(Math.round(target) - 1, 0, MAX); }
+      });
+
+      // fire a sound once each time a movement crosses a mark
+      const marks = {};
+      function crossed(key, value, at, fn) {
+        const was = marks[key] ?? value;
+        if (was < at && value >= at) fn(1);
+        if (was >= at && value < at) fn(-1);
+        marks[key] = value;
+      }
+
+      function frame(now) {
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        p += (target - p) * Math.min(1, dt * 9);
+        if (Math.abs(target - p) < 0.0005) p = target;
+
+        const S = el.record.offsetWidth;
+        const W = innerWidth, H = innerHeight;
+        const t0 = clamp(p, 0, 1), t1 = clamp(p - 1, 0, 1), t2 = clamp(p - 2, 0, 1);
+
+        // 1 · the record slides out of its sleeve, rolling as it goes, then rolls away
+        const out = ease(t0) * S * 0.56;
+        const away = t1 * (W * 0.75);
+        const x = out + away;
+        const playing = t0 > 0.98 && t1 < 0.02;
+        if (playing) spin += dt * 200; // 33 rpm-ish while the needle is down
+        const rot = (x / (S / 2)) * (180 / Math.PI) + spin;
+        el.record.style.transform = `translate(${x}px, ${t1 * -H * 0.1}px) rotate(${rot}deg)`;
+        el.sleeve.style.transform = `translate(${-t1 * W * 0.05}px, ${ease(t1) * H * 1.1}px) rotate(${-t1 * 10}deg)`;
+        const armIn = clamp((t0 - 0.75) / 0.25, 0, 1) * (1 - clamp(t1 * 4, 0, 1));
+        el.arm.style.transform = `translateX(${out}px) rotate(${-38 + armIn * 38}deg)`;
+        el.arm.style.opacity = clamp(t0 * 3 - 1.5, 0, 1) * (1 - t1);
+        el.w1.style.opacity = clamp((t0 - 0.6) * 3, 0, 1) * (1 - t1 * 3);
+        el.w1.style.transform = `translateY(${(1 - t0) * 20}px)`;
+
+        crossed('slide', t0, 0.2, (d) => d > 0 && snd.slide());
+        crossed('needle', armIn, 0.98, (d) => (d > 0 ? snd.needle() : snd.crackle(false)));
+
+        // 2 · a photobooth strip feeds down from the slot, one frame at a time
+        const stripH = el.strip.offsetHeight;
+        const feed = ease(t1);
+        const stripY = -stripH + feed * (stripH + el.slot.offsetHeight * 0.6);
+        const flyX = ease(t2) * -W * 0.8;
+        el.strip.style.transform = `translate(${flyX}px, ${stripY + t2 * H * 0.15}px) rotate(${t2 * -24 + Math.sin(t1 * Math.PI) * 2}deg)`;
+        el.slot.style.transform = `translateY(${(1 - clamp(t0 * 2 - 1, 0, 1)) * -100 + t2 * -100}%)`;
+        el.w2.style.opacity = clamp((t1 - 0.5) * 3, 0, 1) * (1 - t2 * 3);
+        for (let k = 1; k <= 4; k++) crossed('booth' + k, t1, k / 4.2, (d) => d > 0 && snd.booth());
+
+        // 3 · the view-master rises and turns with your scroll, clicking at every picture
+        const rise = ease(clamp(t2 / 0.45, 0, 1));
+        const turn = clamp((t2 - 0.3) / 0.7, 0, 1) * 3 * (360 / 7);
+        el.vm.style.transform = `translateY(${-rise * H * 0.62}px) rotate(${-turn}deg)`;
+        el.w3.style.opacity = clamp((t2 - 0.4) * 3, 0, 1);
+        crossed('vmrise', t2, 0.15, (d) => d > 0 && snd.swish());
+        for (let k = 1; k <= 3; k++) crossed('vm' + k, turn, k * (360 / 7) - 1, () => snd.click());
+
+        el.beat.textContent = p < 0.5 ? 'side a' : p < 1.5 ? 'side a · playing' : p < 2.5 ? 'the cast' : 'and you';
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    </script>
+  </body>
+</html>
