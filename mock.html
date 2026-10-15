@@ -34,7 +34,7 @@
         height: 100%;
         overflow: hidden;
         overscroll-behavior: none;
-        background: var(--cherry);
+        background: #2b46a6;
         color: var(--cream);
         font-family: var(--mono);
       }
@@ -635,7 +635,7 @@
 
         // the room changes colour with the playhead: cherry fabric → black card table → cherry
         const toTable = clamp(p - 1, 0, 1), toCherry = clamp(p - 2, 0, 1);
-        document.body.style.backgroundColor = mix('#2a2627', '#6e1d2a', toCherry);
+        document.body.style.backgroundColor = mix('#2a2627', '#2b46a6', toCherry);
         kraft.style.opacity = 1 - toTable;
         weave.style.opacity = toCherry;
         // labels read dark on the paper, light on the table and fabric
