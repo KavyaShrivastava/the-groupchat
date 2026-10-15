@@ -521,6 +521,23 @@
         pointer-events: none;
       }
 
+      /* a friend's individual intro: their card big in the middle, a credit underneath */
+      .intro {
+        position: fixed;
+        z-index: 42;
+        left: 0;
+        right: 0;
+        bottom: 6vh;
+        text-align: center;
+        pointer-events: none;
+        opacity: 0;
+        color: #fbf6ec;
+        text-shadow: 0 2px 18px rgba(0, 0, 0, 0.7);
+      }
+      .intro small { display: block; font: italic 400 clamp(16px, 2.4vmin, 24px) / 1 var(--serif); color: #f0d9a8; }
+      .intro b { display: block; margin: 0.15em 0 0.2em; font: 400 clamp(40px, 8vmin, 92px) / 1 'Bowlby One', sans-serif; letter-spacing: 0.03em; }
+      .intro em { display: block; font: 600 clamp(20px, 3vmin, 32px) / 1 'Caveat', cursive; font-style: normal; color: #f0d9a8; }
+
       /* ransom-note letters: each on its own torn scrap of paper */
       .rn {
         display: flex;
@@ -697,6 +714,7 @@
 
     <!-- 2. trading cards: the cast -->
     <div id="deck"></div>
+    <div class="intro" id="intro"><small>starring</small><b></b><em></em></div>
     <div class="word" id="w2" style="left: 50%; top: 9%; translate: -50% 0; text-align: center">starring all of us</div>
 
     <!-- 3. view-master -->
@@ -918,13 +936,13 @@
       const ME = '/cast/kavya.jpg', HIM = '/cast/friend2.jpg';
       const DECK = [
         { rank: '9', suit: '♥' },
-        { rank: 'A', suit: '♥', name: 'arkavs', photo: ME },
+        { rank: 'A', suit: '♥', name: 'arkavs', tag: 'up at 3am again', photo: ME },
         { rank: '7', suit: '♣' },
-        { rank: '10', suit: '♠', name: 'hesatwink', photo: HIM },
+        { rank: '10', suit: '♠', name: 'hesatwink', tag: 'no thoughts just sunglasses', photo: HIM },
         { rank: '4', suit: '♦' },
-        { rank: '7', suit: '♦', name: 'friend three', tint: '#e9d9c4' },
+        { rank: '7', suit: '♦', name: 'friend three', tag: 'just one drink', tint: '#e9d9c4' },
         { rank: 'K', suit: '♣' },
-        { rank: '3', suit: '♣', name: 'friend four', tint: '#dfe3e6' },
+        { rank: '3', suit: '♣', name: 'friend four', tag: 'has a spreadsheet for this', tint: '#dfe3e6' },
         { rank: '2', suit: '♠' },
       ];
       // classic pip layouts, as (x%, y%) — bottom-half pips get turned upside down
@@ -964,6 +982,8 @@
         </article>`;
       }).join('');
       const cards = [...deck.children];
+      const CASTLIST = DECK.filter((c) => c.name), CASTN = CASTLIST.length;
+      const introEl = document.getElementById('intro');
 
       // ---------- last round: a tag on everyone's drink ----------
       // (x%, y%) of each glass in the photo; swap names and drinks for the real ones
@@ -988,7 +1008,7 @@ history.scrollRestoration = 'manual';
       addEventListener('scroll', () => { if (scrollY || scrollX) scrollTo(0, 0); });
       const kraft = $('kraft'), weave = $('weave'), cloth = $('cloth');
       const el = { player: $('player'), record: $('record'), sleeve: $('sleeve'), vm, w2: $('w2'), w3: $('w3'), beat: $('beat') };
-      const MAX = 3;
+      const MAX = 3 + DECK.filter((c) => c.name).length; // record, one intro per friend, the spread, the cheers
       let target = 0, p = 0, idle = null, spin = 0, last = performance.now();
       const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
       const mix = (a, b, t) => {
@@ -1035,7 +1055,8 @@ history.scrollRestoration = 'manual';
 
         const P = el.player.offsetWidth;
         const W = innerWidth, H = innerHeight;
-        const t0 = clamp(p, 0, 1), t1 = clamp(p - 1, 0, 1), t2 = clamp(p - 2, 0, 1);
+        const N = CASTN; // friends introduced one by one after the record player
+        const t0 = clamp(p, 0, 1), pi = clamp(p - 1, 0, N + 1), t1 = clamp(p - 1 - N, 0, 1), t2 = clamp(p - 2 - N, 0, 1);
 
         // 1 · the sleeve slides off the record, the needle drops, the record spins on the player;
         //     then the whole player (record and all) slides away
@@ -1044,7 +1065,7 @@ history.scrollRestoration = 'manual';
         const playing = t0 > 0.98;
         if (playing) spin += dt * 200; // 33 rpm-ish while the needle is down
         el.record.style.transform = `rotate(${t0 * 40 + spin}deg)`;
-        el.player.style.transform = `translateY(${ease(t1) * H * 1.15}px)`;
+        el.player.style.transform = `translateY(${ease(clamp(p - 1, 0, 1)) * H * 1.15}px)`; // leaves as the intros begin
         const armIn = clamp((t0 - 0.7) / 0.3, 0, 1) * (1 - clamp(t1 * 4, 0, 1));
 
         crossed('slide', t0, 0.2, (d) => d > 0 && snd.slide());
@@ -1053,24 +1074,55 @@ history.scrollRestoration = 'manual';
         // 2 · a hand of cards is dealt into a messy 3x3, one flick at a time, then swept away
         const cw = cards[0].offsetWidth, ch = cw * 1.4;
         const JIT = [[-6, 4, -7], [3, -5, 4], [-4, 6, -3], [5, 3, 6], [-2, -4, -2], [4, 5, 8], [-5, -3, -5], [2, 6, 3], [6, -2, 7]];
+        let order = 0;
         cards.forEach((card, k) => {
-          const deal = ease(clamp((t1 - 0.05 - k * 0.075) / 0.28, 0, 1));
           const col = (k % 3) - 1, row = Math.floor(k / 3) - 1;
           const fx = col * cw * 1.14 + JIT[k][0] * cw * 0.01;
           const fy = row * ch * 1.04 + JIT[k][1] * cw * 0.01 + H * 0.04;
           const fr = JIT[k][2];
           const sx = -W * 0.1, sy = H * 0.9, sr = -25 + k * 4; // the deck, below the table edge
           const sweep = ease(clamp((t2 - k * 0.03) / 0.5, 0, 1));
-          const x = sx + (fx - sx) * deal + sweep * (col * W * 0.2);
-          const y = sy + (fy - sy) * deal + sweep * H;
-          const r = sr + (fr - sr) * deal + sweep * col * 20;
-          // dealt face-down, flipped face-up as it lands
+          let x, y, r, sc = 1, deal;
+          if (DECK[k].name) {
+            // individual intro: up from the deck to big in the middle, then down onto its spot on the table
+            const j = order++;
+            const arrive = ease(clamp(pi - j, 0, 1));
+            const settle = ease(clamp(pi - j - 1, 0, 1));
+            const big = Math.min((H * 0.6) / ch, (W * 0.7) / cw);
+            const cx = 0, cy = -H * 0.06, cr = j % 2 ? 3 : -3;
+            x = sx + (cx - sx) * arrive + (fx - cx) * settle;
+            y = sy + (cy - sy) * arrive + (fy - cy) * settle;
+            r = sr + (cr - sr) * arrive + (fr - cr) * settle;
+            sc = 1 + (big - 1) * arrive - (big - 1) * settle;
+            deal = arrive;
+            card.style.zIndex = 20 + j;
+          } else {
+            deal = ease(clamp((t1 - 0.05 - k * 0.06) / 0.28, 0, 1));
+            x = sx + (fx - sx) * deal;
+            y = sy + (fy - sy) * deal;
+            r = sr + (fr - sr) * deal;
+            card.style.zIndex = 3 + k;
+          }
+          x += sweep * (col * W * 0.2);
+          y += sweep * H;
+          r += sweep * col * 20;
+          // dealt face-down, flipped face-up as it comes in
           const flip = (1 - clamp((deal - 0.45) / 0.55, 0, 1)) * 180;
-          card.style.transform = `perspective(1400px) translate(${x}px, ${y}px) rotate(${r}deg) rotateY(${flip}deg)`;
-          card.style.zIndex = 3 + k;
+          card.style.transform = `perspective(1400px) translate(${x}px, ${y}px) rotate(${r}deg) scale(${sc}) rotateY(${flip}deg)`;
           crossed('card' + k, deal, 0.6, (d) => d > 0 && snd.flick());
         });
-        el.w2.style.opacity = clamp((t1 - 0.65) * 3, 0, 1) * (1 - t2 * 3);
+        // the credit for whoever's in the middle right now
+        const cur = clamp(Math.round(pi) - 1, 0, N - 1);
+        const curOn = ease(clamp(pi - cur, 0, 1)) * (1 - ease(clamp(pi - cur - 1, 0, 1)));
+        const who = CASTLIST[cur];
+        if (introEl.dataset.who !== who.name) {
+          introEl.dataset.who = who.name;
+          introEl.querySelector('small').textContent = cur === 0 ? 'starring' : 'and';
+          introEl.querySelector('b').textContent = who.name;
+          introEl.querySelector('em').textContent = who.tag || '';
+        }
+        introEl.style.opacity = curOn > 0.85 ? (curOn - 0.85) / 0.15 : 0;
+        el.w2.style.opacity = clamp((t1 - 0.5) * 3, 0, 1) * (1 - t2 * 3);
 
         // 3 · last round: the cheers photo slides up and pulls back; a tag lands on each drink with a clink
         const rise = ease(clamp(t2 / 0.45, 0, 1));
@@ -1091,7 +1143,7 @@ history.scrollRestoration = 'manual';
         if (showMini && mini.hidden) mini.hidden = false;
         mini.classList.toggle('show', showMini);
         mini.tabIndex = showMini ? 0 : -1;
-        el.beat.textContent = p < 0.5 ? 'side a' : p < 1.5 ? 'side a · playing' : p < 2.5 ? 'the cast' : 'last round';
+        el.beat.textContent = p < 0.5 ? 'side a' : p < 1.5 ? 'side a · playing' : p < 1.5 + N ? 'starring' : p < 2.5 + N ? 'the cast' : 'last round';
 
         // the room changes colour with the playhead: cherry fabric → black card table → cherry
         const toTable = clamp(p - 1, 0, 1), toCherry = clamp(p - 2, 0, 1);
