@@ -53,6 +53,29 @@
         background-size: auto, 1100px 1100px;
         background-position: center;
       }
+      /* a drawn cherry gingham tablecloth, only under the record player */
+      #cloth {
+        position: fixed;
+        inset: -4vmax;
+        z-index: 1;
+        pointer-events: none;
+        rotate: -4deg;
+        background-color: #f6efe3;
+        background-image:
+          /* woven thread texture */
+          repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.035) 0 1px, transparent 1px 3px),
+          repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.03) 0 1px, transparent 1px 3px),
+          /* the checks: translucent red bands both ways, darker where they cross */
+          repeating-linear-gradient(0deg, rgba(196, 34, 44, 0.55) 0 34px, transparent 34px 68px),
+          repeating-linear-gradient(90deg, rgba(196, 34, 44, 0.55) 0 34px, transparent 34px 68px);
+      }
+      #cloth::after { /* soft folds in the fabric */
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.12) 28%, transparent 36%, transparent 62%, rgba(0, 0, 0, 0.08) 70%, transparent 78%);
+      }
       /* direct on-camera flash: hot warm centre, falling off into darkness */
       #flash {
         position: fixed;
@@ -98,12 +121,18 @@
         aspect-ratio: 1;
         margin: calc(var(--P) / -2) 0 0 calc(var(--P) / -2);
         z-index: 2;
-        /* fade the photo's edges into the table so it's all one surface */
-        -webkit-mask: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent), linear-gradient(transparent, #000 7%, #000 93%, transparent);
-        -webkit-mask-composite: source-in;
-        mask: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent) intersect, linear-gradient(transparent, #000 7%, #000 93%, transparent);
       }
-      .player > img.photo { display: block; width: 100%; height: 100%; }
+      /* just the suitcase, cut out of the photo, sitting on the tablecloth */
+      .player .cutout {
+        position: absolute;
+        inset: 0;
+        filter: drop-shadow(0 1.2vmin 1.4vmin rgba(60, 10, 10, 0.45)) drop-shadow(0 0.3vmin 0.4vmin rgba(40, 10, 10, 0.35));
+      }
+      .player .cutout img {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
       /* our friends in the lid's Polaroids */
       .lidpic {
         position: absolute;
@@ -529,6 +558,98 @@
       .tag.tl { top: 18px; left: 18px; }
       .tag.br { bottom: 18px; right: 18px; }
       .tag.bl { bottom: 18px; left: 18px; }
+      /* the little record that follows you around: tap to pause / play */
+      .mini {
+        position: fixed;
+        z-index: 60;
+        left: 16px;
+        bottom: 44px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 18px 8px 8px;
+        border: 1px solid rgba(240, 217, 168, 0.45);
+        border-radius: 99px;
+        background: rgba(20, 10, 6, 0.62);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        color: #f0d9a8;
+        cursor: pointer;
+        opacity: 0;
+        translate: 0 12px;
+        transition: opacity 0.4s ease, translate 0.4s ease, scale 0.15s ease;
+      }
+      .mini.show { opacity: 1; translate: 0 0; }
+      .mini:hover { scale: 1.04; }
+      .mini:active { scale: 0.96; }
+      .mini .disc {
+        position: relative;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: repeating-radial-gradient(circle, #151214 0 1.5px, #262124 1.5px 2.6px);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+        animation: miniSpin 1.8s linear infinite;
+      }
+      .mini .disc::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: conic-gradient(from 20deg, transparent 0 10%, rgba(255, 240, 220, 0.18) 14%, transparent 20% 60%, rgba(255, 240, 220, 0.12) 64%, transparent 70%);
+      }
+      .mini .disc i {
+        position: absolute;
+        inset: 33%;
+        border-radius: 50%;
+        background: #8ace00;
+        box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.1);
+      }
+      .mini .disc i::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 4px;
+        height: 4px;
+        margin: -2px;
+        border-radius: 50%;
+        background: #151214;
+      }
+      .mini .pp { /* pause bars while playing, a play triangle when paused */
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        animation: miniSpin 1.8s linear infinite reverse; /* stays upright while the disc spins */
+      }
+      .mini .pp::before {
+        content: '';
+        width: 12px;
+        height: 14px;
+        border-left: 4px solid #141113;
+        border-right: 4px solid #141113;
+        box-sizing: border-box;
+      }
+      .mini:hover .pp { opacity: 1; }
+      .mini.paused .disc, .mini.paused .pp { animation-play-state: paused; }
+      .mini.paused .pp { opacity: 1; }
+      .mini.paused .pp::before {
+        width: 0;
+        height: 0;
+        border: 0;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-left: 13px solid #141113;
+        margin-left: 4px;
+      }
+      @keyframes miniSpin { to { rotate: 360deg; } }
+      .mini .np { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; text-align: left; }
+      .mini .np small { font: 400 10px/1 var(--mono); letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.75; }
+      .mini .np b { font: 400 17px/1 'Bowlby One', sans-serif; letter-spacing: 0.02em; color: #fbf6ec; }
+      .mini.paused .np small::after { content: ' · paused'; }
       #sound {
         position: fixed;
         z-index: 60;
@@ -549,16 +670,21 @@
   <body>
     <div id="kraft"></div>
     <div id="weave"></div>
+    <div id="cloth"></div>
     <div id="flash"></div>
     <div id="grain"></div>
     <span class="tag tl">the groupchat · objects demo</span>
     <button id="sound" type="button" hidden>sound on</button>
+    <button id="mini" class="mini" type="button" hidden aria-label="Pause the song">
+      <span class="disc"><i></i><em class="pp"></em></span>
+      <span class="np"><small>now playing</small><b>island in the sun</b></span>
+    </button>
     <span class="tag bl" id="beat">side a</span>
     <span class="tag br">scroll ↓</span>
 
     <!-- 1. the suitcase record player -->
     <div class="obj player" id="player">
-      <img class="photo" src="/scenes/player.jpg" alt="An open cream suitcase record player on a dark wooden bar table, Polaroids and tickets taped inside the lid" />
+      <div class="cutout"><img class="photo" src="/scenes/player-cut.png" alt="An open cream suitcase record player, Polaroids and tickets taped inside the lid" /></div>
       <div class="lidpic" style="left: 34.4%; top: 15%; width: 11%; height: 6.3%; rotate: -7deg"><img src="/cast/kavya.jpg" alt="arkavs" /></div>
       <div class="lidpic" style="left: 65.3%; top: 14.4%; width: 9.8%; height: 7%; rotate: 11deg"><img src="/cast/friend2.jpg" alt="hesatwink" /></div>
       <div class="recwrap"><div class="record" id="record"><div class="label"><span>the groupchat</span><i></i></div></div></div>
@@ -660,27 +786,40 @@
         },
         swish() { this.burst('bandpass', 500, 0.4, 0.1, 0, 1800); },
       };
-      // the real song, if one is in /music/theme.mp3; starts on the needle drop
+      // the real song (/music/theme.mp3). Browsers only allow audio to start inside a tap,
+      // so "play me" starts it silently right away (prime), and the needle drop fades it up.
+      // It runs through Web Audio so fades and mute work everywhere, including iPhone.
       const music = {
         el: null,
-        play() {
-          if (!snd.ctx || this.el) return;
-          const el = new Audio('/music/theme.mp3');
-          el.loop = true;
-          el.volume = 0;
-          el.play().then(() => {
-            const up = setInterval(() => {
-              el.volume = Math.min(0.8, el.volume + 0.05);
-              if (el.volume >= 0.8) clearInterval(up);
-            }, 60);
-          }).catch(() => {});
-          this.el = el;
+        gain: null,
+        prime() {
+          if (!snd.ctx) return;
+          if (!this.el) {
+            this.el = new Audio('/music/theme.mp3');
+            this.el.loop = true;
+            this.gain = snd.ctx.createGain();
+            this.gain.gain.value = 0;
+            snd.ctx.createMediaElementSource(this.el).connect(this.gain).connect(snd.out);
+          }
+          this.el.play().catch((e) => console.warn('song could not start', e));
+        },
+        fade(to, secs) {
+          if (!this.gain) return;
+          const g = this.gain.gain, t = snd.ctx.currentTime;
+          g.cancelScheduledValues(t);
+          g.setValueAtTime(g.value, t);
+          g.linearRampToValueAtTime(to, t + secs);
+        },
+        play() { this.fade(0.85, 1.2); },
+        stop() {
+          this.fade(0, 0.6);
+          setTimeout(() => { if (this.gain && this.gain.gain.value < 0.02) this.el.pause(); }, 700);
         },
       };
       const soundBtn = document.getElementById('sound');
       const unlock = () => {
         snd.start();
-        soundBtn.hidden = false;
+        snd.ctx.resume();
         if (p > 0.95 && p < 1.5) snd.crackle(true);
       };
       // after "play me", the pill is a mute switch
@@ -694,9 +833,49 @@
       // tapping "play me" on the sleeve: sound on, sleeve off, needle down, song on
       const playMe = () => {
         unlock();
+        music.prime(); // must happen inside the tap
+        songOn = true;
+        setPaused(false);
         clearTimeout(idle);
         target = Math.max(target, 1);
       };
+      // the mini record: pause / play from anywhere after the record player
+      const mini = document.getElementById('mini');
+      let songOn = false, paused = false;
+      function setPaused(v) {
+        paused = v;
+        mini.classList.toggle('paused', v);
+        mini.setAttribute('aria-label', v ? 'Play the song' : 'Pause the song');
+      }
+      mini.addEventListener('click', () => {
+        if (paused) {
+          music.prime();
+          music.play();
+          setPaused(false);
+        } else {
+          music.stop();
+          snd.crackle(false);
+          setPaused(true);
+        }
+      });
+      // tapping the spinning record stops it: song fades out, sleeve goes back on
+      const stopMe = () => {
+        if (target < 1 || target > 1.5) return;
+        music.stop();
+        snd.crackle(false);
+        setPaused(true);
+        clearTimeout(idle);
+        target = 0;
+      };
+      const recEl = document.getElementById('record');
+      recEl.setAttribute('role', 'button');
+      recEl.setAttribute('tabindex', '0');
+      recEl.setAttribute('aria-label', 'Stop the record');
+      recEl.style.cursor = 'pointer';
+      recEl.addEventListener('click', stopMe);
+      recEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); stopMe(); }
+      });
       const sleeveEl = document.getElementById('sleeve');
       sleeveEl.addEventListener('click', playMe);
       sleeveEl.addEventListener('keydown', (e) => {
@@ -807,7 +986,7 @@
 history.scrollRestoration = 'manual';
       scrollTo(0, 0);
       addEventListener('scroll', () => { if (scrollY || scrollX) scrollTo(0, 0); });
-      const kraft = $('kraft'), weave = $('weave');
+      const kraft = $('kraft'), weave = $('weave'), cloth = $('cloth');
       const el = { player: $('player'), record: $('record'), sleeve: $('sleeve'), vm, w2: $('w2'), w3: $('w3'), beat: $('beat') };
       const MAX = 3;
       let target = 0, p = 0, idle = null, spin = 0, last = performance.now();
@@ -869,7 +1048,7 @@ history.scrollRestoration = 'manual';
         const armIn = clamp((t0 - 0.7) / 0.3, 0, 1) * (1 - clamp(t1 * 4, 0, 1));
 
         crossed('slide', t0, 0.2, (d) => d > 0 && snd.slide());
-        crossed('needle', armIn, 0.98, (d) => (d > 0 ? snd.needle() : snd.crackle(false)));
+        crossed('needle', clamp((t0 - 0.7) / 0.3, 0, 1), 0.98, (d) => (d > 0 ? snd.needle() : (snd.crackle(false), music.stop(), setPaused(true))));
 
         // 2 · a hand of cards is dealt into a messy 3x3, one flick at a time, then swept away
         const cw = cards[0].offsetWidth, ch = cw * 1.4;
@@ -905,11 +1084,19 @@ history.scrollRestoration = 'manual';
         el.w3.style.opacity = clamp((t2 - 0.35) * 3, 0, 1);
         crossed('vmrise', t2, 0.15, (d) => d > 0 && snd.swish());
 
+        // vinyl crackle only while you're at the record player and the song is playing
+        const crackleOn = songOn && !paused && p > 0.97 && p < 1.3;
+        if (snd.ctx && crackleOn !== !!snd.crackling) snd.crackle(crackleOn);
+        const showMini = songOn && p > 1.25;
+        if (showMini && mini.hidden) mini.hidden = false;
+        mini.classList.toggle('show', showMini);
+        mini.tabIndex = showMini ? 0 : -1;
         el.beat.textContent = p < 0.5 ? 'side a' : p < 1.5 ? 'side a · playing' : p < 2.5 ? 'the cast' : 'last round';
 
         // the room changes colour with the playhead: cherry fabric → black card table → cherry
         const toTable = clamp(p - 1, 0, 1), toCherry = clamp(p - 2, 0, 1);
         weave.style.opacity = 0;
+        cloth.style.opacity = 1 - clamp(toTable * 1.6, 0, 1);
         // labels read dark on the paper, light on the table and fabric
         document.body.style.setProperty('--chrome', '#f0d9a8');
         requestAnimationFrame(frame);
