@@ -201,7 +201,7 @@ addEventListener('touchend', (e) => {
 });
 
 addEventListener('keydown', (e) => {
-  if (e.target.closest('button') && (e.key === 'Enter' || e.key === ' ')) return;
+  if (e.target.closest?.('button') && (e.key === 'Enter' || e.key === ' ')) return;
   if (['ArrowDown', 'ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) {
     e.preventDefault();
     if (!started) begin(true);

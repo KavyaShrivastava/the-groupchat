@@ -1,5 +1,5 @@
 import { SHOW, CAST, PREVIOUSLY, EPISODE } from './cast.js';
-import { INKS, today, photo, negative, doodle, building, viewMaster } from './collage.js';
+import { photo, card, doodle, building, viewMaster } from './collage.js';
 
 // Each scene is one frame of the opening. `in` names the transition used to
 // cut INTO it; `era` drives the film look (pre = before the reel starts,
@@ -20,12 +20,13 @@ export function buildScenes() {
     era: 'reel',
     in: CAST_CUTS[i % CAST_CUTS.length],
     rec: true,
-    html: `<div class="paper layout-${i % 2}">
-        <div class="print">${photo(c, INKS[i % INKS.length])}<i class="tape t1"></i><i class="tape t2"></i></div>
-        ${negative(c, i * 3)}
+    html: `<div class="table layout-${i % 2}">
+        ${CAST.filter((_, k) => k !== i)
+          .slice(0, 3)
+          .map((o, k) => card(o, CAST.indexOf(o), `ghost g${k}`))
+          .join('')}
+        ${card(c, i, 'hero')}
         ${doodle(i, 'd1')}
-        <p class="cap">${c.role}</p>
-        <p class="stamp">${today}</p>
       </div>
       <div class="credit ink">
         <small>${i === 0 ? 'starring' : 'and'}</small>

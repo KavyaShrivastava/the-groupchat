@@ -3,9 +3,9 @@
 :root {
   --paper: #efe4d8;
   --paper-2: #f8f1e7;
-  --riso-red: #d6452e;
-  --riso-blue: #2f4bb0;
-  --riso-orange: #e9733a;
+  --riso-red: #e2725b;
+  --riso-blue: #6f8fd0;
+  --riso-orange: #eda15f;
   --ink: #1f1a1d;
   --burgundy: #5a1d22;
   --poster: 'Anton', 'Impact', sans-serif;
@@ -66,74 +66,96 @@
 .ph.empty .fig .strap {
   stroke: var(--figc, var(--ink));
 }
-.ph.empty[data-ink='riso-blue'] { background: #4a66c9; --figc: #1c2b85; }
-.ph.empty[data-ink='riso-red'] { background: var(--riso-red); --figc: #6e1712; }
-.ph.empty[data-ink='riso-cross'] { background: var(--riso-orange); --figc: #10304a; }
-.ph.empty[data-ink='riso-bw'] { background: #cfc6bb; --figc: var(--ink); }
+.ph.empty[data-ink='riso-blue'] { background: #dbe4f4; --figc: #5f7fc4; }
+.ph.empty[data-ink='riso-red'] { background: #f7d6cc; --figc: #d0604a; }
+.ph.empty[data-ink='riso-cross'] { background: #f8e2c4; --figc: #c9803f; }
+.ph.empty[data-ink='riso-bw'] { background: #e3ead9; --figc: #6f9a62; }
 
-/* ---------- cast collages ---------- */
+/* ---------- cast: player cards ---------- */
 
-.print {
+.table {
   position: absolute;
-  z-index: 2;
-  left: 9%;
-  top: calc(var(--bar) + 6vh);
-  height: 64vh;
-  aspect-ratio: 4 / 5;
-  padding: 1.4vh 1.4vh 5vh;
-  background: var(--paper-2);
-  box-shadow: 0 1.4vh 3.4vh rgba(70, 35, 20, 0.28);
-  transform: rotate(-3deg);
+  inset: 0;
+  background-color: #231e22;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1.4px);
+  background-size: 6px 6px;
 }
-.tape {
+.card {
   position: absolute;
-  width: 12vh;
-  height: 3.4vh;
-  background: rgba(236, 222, 190, 0.78);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-}
-.tape.t1 { top: -1.6vh; left: 14%; transform: rotate(-7deg); }
-.tape.t2 { top: -1.4vh; right: 10%; transform: rotate(9deg); }
-
-.neg {
-  position: absolute;
-  z-index: 1;
-  right: -4%;
-  bottom: calc(var(--bar) + 5vh);
-  width: 60vw;
   display: flex;
-  gap: 1.2vh;
-  padding: 4.2vh 2vh;
-  background: #16110f;
-  transform: rotate(-5deg);
-  box-shadow: 0 1.2vh 3vh rgba(40, 20, 10, 0.3);
+  flex-direction: column;
+  gap: 1vh;
+  height: 72vh;
+  aspect-ratio: 5 / 7.4;
+  padding: 1.8vh;
+  border-radius: 1.6vh;
+  background: var(--card);
+  box-shadow: 0 2vh 5vh rgba(0, 0, 0, 0.45);
 }
-.neg::before,
-.neg::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 1.3vh;
-  background: repeating-linear-gradient(90deg, transparent 0 1.2vh, #e9dfd0 1.2vh 2.6vh, transparent 2.6vh 3.4vh);
+.card .tag {
+  align-self: flex-start;
+  margin: 0.2vh 0 0 0.4vh;
+  padding: 0.7vh 1.4vh 0.6vh;
+  border-radius: 99px;
+  background: #fff8ec;
+  font: 400 clamp(11px, 1.9vh, 18px) / 1 var(--poster);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #2a2226;
+  rotate: -2deg;
 }
-.neg::before { top: 0.9vh; }
-.neg::after { bottom: 0.9vh; }
-.neg .nf {
+.card .cardph {
   flex: 1;
-  height: auto;
-  aspect-ratio: 3 / 2;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 1vh;
 }
-.neg .edge {
-  position: absolute;
-  left: 2.4vh;
-  font: 400 1.2vh/1 var(--type);
-  letter-spacing: 0.15em;
-  color: var(--riso-orange);
-  white-space: nowrap;
+.card .stats {
+  margin: 0;
+  padding: 1vh 1.4vh;
+  border-radius: 1vh;
+  background: rgba(255, 252, 245, 0.55);
+  display: grid;
+  gap: 0.2vh;
+  font: 400 clamp(10px, 1.45vh, 14px) / 1.5 var(--type);
+  color: #2a2226;
 }
-.neg .edge.top { top: 2.5vh; }
-.neg .edge.bottom { bottom: 2.4vh; }
+.card .stats div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1vh;
+  border-bottom: 1px solid rgba(42, 34, 38, 0.25);
+}
+.card .stats div:last-child {
+  border-bottom: 0;
+}
+.card .stats dt {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.card .stats dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.card.hero {
+  z-index: 3;
+  left: 12%;
+  top: calc(var(--bar) + 4vh);
+  rotate: -3deg;
+}
+.card.ghost {
+  z-index: 1;
+  height: 54vh;
+  filter: saturate(0.85) brightness(0.8);
+}
+.card.g0 { left: -9%; bottom: -16vh; rotate: 12deg; }
+.card.g1 { right: -6%; top: -10vh; rotate: -14deg; }
+.card.g2 { right: 14%; bottom: -26vh; rotate: 7deg; }
+.layout-1 .card.hero { left: auto; right: 12%; rotate: 3deg; }
+.layout-1 .card.g1 { right: auto; left: -6%; }
+.layout-1 .card.g2 { right: auto; left: 16%; }
+.layout-1 .card.g0 { left: auto; right: -9%; }
 
 .doodle {
   position: absolute;
@@ -153,31 +175,6 @@
 }
 @keyframes draw {
   to { stroke-dashoffset: 0; }
-}
-
-.cap {
-  position: absolute;
-  z-index: 3;
-  left: calc(9% + 1vh);
-  top: calc(var(--bar) + 6vh + 64vh + 1.8vh);
-  margin: 0;
-  max-width: 44vh;
-  font: 400 clamp(13px, 1.9vh, 18px) / 1.3 var(--type);
-  color: var(--ink);
-  transform: rotate(-3deg);
-}
-.cap::before {
-  content: '— ';
-}
-.stamp {
-  position: absolute;
-  z-index: 3;
-  right: 6%;
-  top: calc(var(--bar) + 4vh);
-  margin: 0;
-  font: 400 clamp(12px, 1.6vh, 15px) / 1 var(--type);
-  letter-spacing: 0.15em;
-  color: var(--riso-orange);
 }
 
 .credit.ink {
@@ -207,11 +204,7 @@
 }
 
 /* the second layout mirrors the first */
-.layout-1 .print { left: auto; right: 9%; transform: rotate(3deg); }
-.layout-1 .neg { right: auto; left: -4%; transform: rotate(5deg); }
 .layout-1 .doodle.d1 { left: auto; right: 40%; }
-.layout-1 .cap { left: auto; right: calc(9% + 1vh); text-align: right; transform: rotate(3deg); }
-.layout-1 .stamp { right: auto; left: 6%; }
 .f-cast-1 .credit.ink,
 .f-cast-3 .credit.ink {
   right: auto;
@@ -222,7 +215,7 @@
 /* ---------- the building ---------- */
 
 .f-building {
-  background: #1a1420;
+  background: #b8694f;
 }
 .building {
   position: absolute;
@@ -244,17 +237,17 @@
   grid-template-rows: repeat(6, 1fr);
   gap: 2.6vmin 3vmin;
   padding: calc(var(--bar) + 3vh) 5vw calc(var(--bar) + 3vh);
-  background-color: #4a2621;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.18) 2px, transparent 2px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.12) 2px, transparent 2px);
+  background-color: #b8694f;
+  background-image: linear-gradient(rgba(255, 235, 215, 0.22) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(255, 235, 215, 0.16) 2px, transparent 2px);
   background-size: 64px 26px, 32px 52px;
 }
 .win {
   position: relative;
   overflow: hidden;
-  background: #1c1724;
-  border: 0.9vmin solid #2a1712;
-  outline: 0.35vmin solid #7a4634;
+  background: #4a4360;
+  border: 0.9vmin solid #f3e7d3;
+  outline: 0.35vmin solid #e6d6bd;
 }
 .win::before {
   content: '';
@@ -294,7 +287,7 @@
   top: 0;
   bottom: 0;
   width: 28%;
-  background: repeating-linear-gradient(90deg, rgba(214, 69, 46, 0.7) 0 6px, rgba(160, 40, 30, 0.7) 6px 10px);
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.55) 0 6px, rgba(255, 245, 235, 0.35) 6px 10px);
 }
 .win .curtain.l { left: 0; }
 .win .curtain.r { right: 0; }
@@ -556,19 +549,17 @@
 /* ---------- tall screens (phones) ---------- */
 
 @media (max-aspect-ratio: 4/5) {
-  .print,
-  .layout-1 .print {
+  .card.hero,
+  .layout-1 .card.hero {
     left: 50%;
     right: auto;
-    top: calc(var(--bar) + 17vh);
+    top: calc(var(--bar) + 15vh);
     height: auto;
-    width: 72vw;
+    width: 74vw;
     translate: -50% 0;
   }
-  .neg,
-  .layout-1 .neg {
-    width: 120vw;
-    bottom: calc(var(--bar) + 3vh);
+  .in .card.hero {
+    animation: none;
   }
   .credit.ink,
   .f-cast-1 .credit.ink,
@@ -578,7 +569,6 @@
     top: calc(var(--bar) + 3vh);
     text-align: left;
   }
-  .cap,
   .doodle.d1 {
     display: none;
   }
@@ -615,8 +605,7 @@
 /* ---------- liveliness ---------- */
 
 /* a slight handheld drift on every shot of the opening */
-#stage[data-era='reel'] .in .building,
-#stage[data-era='reel'] .in .paper {
+#stage[data-era='reel'] .in .building {
   animation-name: crane, handheld;
   animation-duration: 14s, 5s;
   animation-timing-function: cubic-bezier(0.3, 0, 0.3, 1), ease-in-out;
@@ -624,7 +613,7 @@
   animation-direction: normal, alternate;
   animation-fill-mode: both, none;
 }
-#stage[data-era='reel'] .in .paper {
+#stage[data-era='reel'] .in .table {
   animation-name: handheld;
   animation-duration: 5s;
   animation-iteration-count: infinite;
@@ -666,46 +655,27 @@
   64% { opacity: 1; }
 }
 
-/* the collage assembles itself */
-.in .print {
-  animation: slap 0.55s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+/* the hand of cards is dealt */
+.in .card.hero {
+  animation: deal 0.6s cubic-bezier(0.2, 1.3, 0.4, 1) both;
 }
-@keyframes slap {
-  from { opacity: 0; scale: 1.35; rotate: -9deg; }
-  40% { opacity: 1; }
+.in .card.ghost {
+  animation: dealGhost 0.7s cubic-bezier(0.2, 1, 0.3, 1) both;
 }
-.in .tape {
-  animation: tapeOn 0.35s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+.in .card.g1 { animation-delay: 0.08s; }
+.in .card.g2 { animation-delay: 0.16s; }
+@keyframes deal {
+  from { opacity: 0; translate: 0 40vh; scale: 0.9; }
 }
-.in .tape.t1 { animation-delay: 0.5s; }
-.in .tape.t2 { animation-delay: 0.64s; }
-@keyframes tapeOn {
-  from { opacity: 0; scale: 0.2 1; }
+@keyframes dealGhost {
+  from { opacity: 0; translate: 0 30vh; }
 }
-.in .neg {
-  animation: slideIn 0.7s 0.25s cubic-bezier(0.2, 1.2, 0.3, 1) both;
-}
-.in .layout-1 .neg {
-  animation-name: slideInL;
-}
-@keyframes slideIn {
-  from { translate: 70vw 0; }
-}
-@keyframes slideInL {
-  from { translate: -70vw 0; }
-}
-.in .stamp {
-  animation: stamp 0.3s 0.85s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+.in .credit.ink h2 {
+  animation: stamp 0.34s 0.6s cubic-bezier(0.3, 1.5, 0.5, 1) both;
 }
 @keyframes stamp {
   from { opacity: 0; scale: 2.2; }
 }
-.in .credit.ink h2 {
-  animation: stamp 0.34s 1.1s cubic-bezier(0.3, 1.5, 0.5, 1) both;
-}
 .in .credit.ink small {
-  animation: creditFade 0.6s 1.3s both;
-}
-.in .cap {
-  animation: creditFade 0.8s 1.5s both;
+  animation: creditFade 0.6s 0.8s both;
 }
