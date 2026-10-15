@@ -39,48 +39,17 @@
         font-family: var(--mono);
       }
       /* crumpled kraft paper, only behind the vinyl */
-      /* stacked folder tabs, like a designer's desk folders, only behind the vinyl */
+      /* bright blue, only behind the vinyl */
       #kraft {
         position: fixed;
         inset: 0;
         z-index: 0;
         pointer-events: none;
-        overflow: hidden;
-        background: #ece4d8;
-      }
-      #kraft::after { /* paper grain over everything */
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(rgba(70, 50, 40, 0.09) 1px, transparent 1.4px) 0 0 / 5px 5px;
-      }
-      .folder {
-        position: absolute;
-        left: -4vw;
-        right: -4vw;
-        height: 70vh;
-        border-radius: 1.6vmin 1.6vmin 0 0;
-        background: var(--f);
-        box-shadow: 0 -0.6vh 2.4vh rgba(60, 40, 30, 0.14);
-      }
-      .folder::before { /* the tab */
-        content: '';
-        position: absolute;
-        top: -4.6vh;
-        left: var(--tab);
-        width: min(34vw, 300px);
-        height: 5vh;
-        border-radius: 1.4vmin 1.4vmin 0 0;
-        background: var(--f);
-      }
-      .folder span {
-        position: absolute;
-        top: -3.1vh;
-        left: calc(var(--tab) + 2.2vmin);
-        font: 400 clamp(11px, 1.6vh, 15px) / 1 var(--mono);
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: rgba(40, 30, 28, 0.62);
+        background-color: #2353f5;
+        background-image:
+          radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1.4px),
+          radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(10, 20, 80, 0.35) 100%);
+        background-size: 5px 5px, auto;
       }
       /* woven fabric texture, like the View-Master reference */
       #weave {
@@ -338,7 +307,7 @@
         font: 400 12px/1 var(--mono);
         letter-spacing: 0.18em;
         text-transform: uppercase;
-        color: var(--chrome, #4a3a2c);
+        color: var(--chrome, #f6ead8);
         opacity: 0.8;
       }
       .tag.tl { top: 18px; left: 18px; }
@@ -357,7 +326,7 @@
         font: 400 12px/1 var(--mono);
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: var(--chrome, #4a3a2c);
+        color: var(--chrome, #f6ead8);
         background: rgba(255, 255, 255, 0.12);
         border: 1px solid currentColor;
         border-radius: 99px;
@@ -367,12 +336,7 @@
     </style>
   </head>
   <body>
-    <div id="kraft">
-      <div class="folder" style="--f:#d9c7b4; --tab:58vw; top:8vh"><span>side b</span></div>
-      <div class="folder" style="--f:#e3b9bd; --tab:8vw; top:30vh"><span>season one</span></div>
-      <div class="folder" style="--f:#aebfd2; --tab:40vw; top:52vh"><span>the cast</span></div>
-      <div class="folder" style="--f:#efe6d6; --tab:66vw; top:74vh"><span>canon · do not open</span></div>
-    </div>
+    <div id="kraft"></div>
     <div id="weave"></div>
     <span class="tag tl">the groupchat · objects demo</span>
     <button id="sound" type="button">tap for sound</button>
@@ -675,7 +639,7 @@
         kraft.style.opacity = 1 - toTable;
         weave.style.opacity = toCherry;
         // labels read dark on the paper, light on the table and fabric
-        document.body.style.setProperty('--chrome', mix('#4a3a2c', '#f6ead8', clamp(toTable * 2, 0, 1)));
+        document.body.style.setProperty('--chrome', '#f6ead8');
         requestAnimationFrame(frame);
       }
       requestAnimationFrame(frame);
