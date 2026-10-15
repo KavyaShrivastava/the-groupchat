@@ -846,9 +846,51 @@
       .mini .np small { font: 400 10px/1 var(--mono); letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.75; }
       .mini .np b { font: 400 17px/1 'Bowlby One', sans-serif; letter-spacing: 0.02em; color: #fbf6ec; }
       .mini.paused .np small::after { content: ' · paused'; }
+      .chooser {
+        position: fixed;
+        z-index: 61;
+        left: 50%;
+        bottom: 9vh;
+        translate: -50% 0;
+        text-align: center;
+        transition: opacity 0.5s, translate 0.5s;
+      }
+      .chooser.hide { opacity: 0; translate: -50% 20px; pointer-events: none; }
+      .chooser p {
+        margin: 0 0 12px;
+        font: 400 13px/1 var(--mono);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #fff;
+        text-shadow: 0 1px 10px rgba(0,0,0,0.6);
+      }
+      .chooser .opts { display: flex; gap: 12px; justify-content: center; }
+      .chooser button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 13px 22px;
+        border-radius: 99px;
+        border: 0;
+        cursor: pointer;
+        font: 500 15px/1 'Jost', sans-serif;
+        letter-spacing: 0.04em;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+        transition: scale 0.15s;
+      }
+      .chooser button:hover { scale: 1.05; }
+      .chooser button:active { scale: 0.97; }
+      .chooser #chooseAuto { background: #d8462f; color: #fff; }
+      .chooser #chooseScroll { background: #fbf6ec; color: #3a2a2a; }
+      .chooser button b { font-size: 1.1em; }
+      @media (max-aspect-ratio: 3/4) { .chooser .opts { flex-direction: column; } }
+
       .modebtn {
         position: fixed;
         z-index: 60;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s;
         top: 14px;
         left: 50%;
         translate: -50% 0;
@@ -863,6 +905,7 @@
         cursor: pointer;
         transition: scale 0.15s, background 0.2s;
       }
+      .modebtn.on { opacity: 1; pointer-events: auto; }
       .modebtn:hover { scale: 1.05; background: rgba(20, 12, 8, 0.78); }
       .modebtn:active { scale: 0.96; }
       #sound {
@@ -898,6 +941,13 @@
     <span class="tag bl" id="beat">side a</span>
     <span class="tag br" id="hintTag">scroll ↓</span>
     <button class="modebtn" id="mode" type="button" aria-label="Play automatically">auto&nbsp;▶</button>
+    <div class="chooser" id="chooser">
+      <p>how do you want to watch?</p>
+      <div class="opts">
+        <button id="chooseAuto" type="button"><b>▶</b> play it for me</button>
+        <button id="chooseScroll" type="button"><b>↓</b> i'll scroll</button>
+      </div>
+    </div>
 
     <!-- 1. the suitcase record player -->
     <div class="obj player" id="player">
@@ -1287,8 +1337,21 @@ history.scrollRestoration = 'manual';
         if (on) { play(); scheduleAuto(); } // the click is the gesture that lets the song start
       }
       modeBtn.addEventListener('click', () => setAuto(!auto));
+      // the upfront chooser (clear, in the middle); the corner pill takes over after a choice
+      const chooser = document.getElementById('chooser');
+      let chosen = false;
+      function choose(mode) {
+        if (chosen) return;
+        chosen = true;
+        chooser.classList.add('hide');
+        modeBtn.classList.add('on');
+        if (mode === 'auto') setAuto(true);
+      }
+      document.getElementById('chooseAuto').addEventListener('click', () => choose('auto'));
+      document.getElementById('chooseScroll').addEventListener('click', () => choose('scroll'));
 
       function nudge(d) {
+        if (!chosen) choose('scroll');
         if (auto) setAuto(false); // any manual scroll drops back to scroll mode
         target = clamp(target + d, 0, MAX);
         clearTimeout(idle);
