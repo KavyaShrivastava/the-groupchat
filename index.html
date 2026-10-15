@@ -224,7 +224,29 @@
         border-radius: 50%;
         background: #3a3537;
       }
-      /* the sleeve starts on top of the record, then slides off */
+      /* a small "tap to play" hint on the bare record; hides once it's playing */
+      .taphint {
+        position: absolute;
+        left: 50%;
+        top: 112%;
+        translate: -50% 0;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        padding: 0.4em 0.8em;
+        border-radius: 99px;
+        background: rgba(20, 12, 8, 0.72);
+        color: #f3e7d2;
+        font: 400 calc(var(--P) * 0.016)/1 var(--mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        transition: opacity 0.3s;
+      }
+      .taphint b { width: 0; height: 0; border-top: 0.42em solid transparent; border-bottom: 0.42em solid transparent; border-left: 0.6em solid #8ace00; animation: nudgeTri 1.4s ease-in-out infinite; }
+      @keyframes nudgeTri { 50% { translate: 0.15em 0; } }
+      .player.playing .taphint { opacity: 0; pointer-events: none; }
+
       .sleeve {
         position: absolute;
         left: 44.25%;
@@ -862,12 +884,7 @@
       <div class="cutout"><img class="photo" src="/scenes/player-cut.png" alt="An open cream suitcase record player, Polaroids and tickets taped inside the lid" /></div>
       <div class="lidpic" style="left: 34.4%; top: 15%; width: 11%; height: 6.3%; rotate: -7deg"><img src="/cast/kavya.jpg" alt="arkavs" /></div>
       <div class="lidpic" style="left: 65.3%; top: 14.4%; width: 9.8%; height: 7%; rotate: 11deg"><img src="/cast/friend2.jpg" alt="hesatwink" /></div>
-      <div class="recwrap"><div class="record" id="record"><div class="label"><span>the groupchat</span><i></i></div></div></div>
-      <div class="sleeve" id="sleeve" role="button" tabindex="0" aria-label="Play me: turn on the sound and start the record">
-        <small>side a · season one</small>
-        <big><span class="tri"></span>play<br />me</big>
-        <div class="rpm"><span>33⅓<small>RPM</small></span></div>
-      </div>
+      <div class="recwrap"><div class="record" id="record" role="button" tabindex="0" aria-label="Play the record"><div class="label"><span>the groupchat</span><i></i></div><span class="taphint" id="tapHint"><b></b>tap to play</span></div></div>
     </div>
 
     <!-- 2. trading cards: the cast -->
@@ -1038,56 +1055,37 @@
         soundBtn.textContent = muted ? 'sound off' : 'sound on';
       });
       // tapping "play me" on the sleeve: sound on, sleeve off, needle down, song on
-      const playMe = () => {
-        unlock();
-        music.prime(); // must happen inside the tap
-        songOn = true;
-        setPaused(false);
-        clearTimeout(idle);
-        target = Math.max(target, 1);
-      };
-      // the mini record: pause / play from anywhere after the record player
       const mini = document.getElementById('mini');
+      const playerEl = document.getElementById('player');
       let songOn = false, paused = false;
       function setPaused(v) {
         paused = v;
+        playerEl.classList.toggle('playing', songOn && !v);
         mini.classList.toggle('paused', v);
         mini.setAttribute('aria-label', v ? 'Play the song' : 'Pause the song');
       }
-      mini.addEventListener('click', () => {
-        if (paused) {
-          music.prime();
-          music.play();
-          setPaused(false);
-        } else {
-          music.stop();
-          snd.crackle(false);
-          setPaused(true);
-        }
-      });
-      // tapping the spinning record stops it: song fades out, sleeve goes back on
-      const stopMe = () => {
-        if (target < 1 || target > 1.5) return;
+      // start the record + song (must run inside the tap)
+      function play() {
+        unlock();
+        music.prime();
+        music.play();
+        songOn = true;
+        setPaused(false);
+        snd.needle();
+      }
+      function pause() {
         music.stop();
         snd.crackle(false);
         setPaused(true);
-        clearTimeout(idle);
-        target = 0;
-      };
+      }
+      // tapping the bare record toggles play / pause
       const recEl = document.getElementById('record');
-      recEl.setAttribute('role', 'button');
-      recEl.setAttribute('tabindex', '0');
-      recEl.setAttribute('aria-label', 'Stop the record');
-      recEl.style.cursor = 'pointer';
-      recEl.addEventListener('click', stopMe);
+      recEl.addEventListener('click', () => (songOn && !paused ? pause() : play()));
       recEl.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); stopMe(); }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); songOn && !paused ? pause() : play(); }
       });
-      const sleeveEl = document.getElementById('sleeve');
-      sleeveEl.addEventListener('click', playMe);
-      sleeveEl.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); playMe(); }
-      });
+      // the mini record pauses / plays from anywhere after the player
+      mini.addEventListener('click', () => (paused ? (music.prime(), music.play(), setPaused(false)) : pause()));
 
       // ---------- ransom-note letters ----------
       (() => {
@@ -1124,15 +1122,10 @@
       // the cast, plus extra inside-joke cards. Swap captions for the real ones.
       const ME = '/cast/kavya.jpg', HIM = '/cast/friend2.jpg';
       const DECK = [
-        { rank: '9', suit: '♥' },
         { rank: 'A', suit: '♥', name: 'arkavs', tag: 'up at 3am again', photo: ME },
-        { rank: '7', suit: '♣' },
         { rank: '10', suit: '♠', name: 'hesatwink', tag: 'no thoughts just sunglasses', photo: HIM },
-        { rank: '4', suit: '♦' },
         { rank: '7', suit: '♦', name: 'friend three', tag: 'just one drink', tint: '#e9d9c4' },
-        { rank: 'K', suit: '♣' },
         { rank: '3', suit: '♣', name: 'friend four', tag: 'has a spreadsheet for this', tint: '#dfe3e6' },
-        { rank: '2', suit: '♠' },
       ];
       // classic pip layouts, as (x%, y%) — bottom-half pips get turned upside down
       const C = [30, 50, 70], R = [20, 35, 50, 65, 80];
@@ -1234,7 +1227,7 @@ history.scrollRestoration = 'manual';
         $('typed').textContent = '';
         fEp.classList.remove('done');
       }
-      const el = { player: $('player'), record: $('record'), sleeve: $('sleeve'), vm, w2: $('w2'), w3: $('w3'), beat: $('beat') };
+      const el = { player: $('player'), record: $('record'), vm, w2: $('w2'), w3: $('w3'), beat: $('beat') };
       const MAX = 5 + DECK.filter((c) => c.name).length; // record, one intro per friend, the spread, the cheers, previously, episode
       let target = 0, p = 0, idle = null, spin = 0, last = performance.now();
       const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -1291,8 +1284,6 @@ history.scrollRestoration = 'manual';
 
         // 1 · the sleeve slides off the record, the needle drops, the record spins on the player;
         //     then the whole player (record and all) slides away
-        const off = ease(t0);
-        el.sleeve.style.transform = `translate(${-off * P * 0.55}px, ${off * P * 0.3}px) rotate(${-off * 16}deg)`;
         // the vinyl only turns while the song is actually playing and you're on the player screen
         const playing = t0 > 0.98 && p < 1.35 && songOn && !paused;
         if (playing) spin += dt * 200; // 33 rpm-ish while the needle is down
@@ -1308,9 +1299,9 @@ history.scrollRestoration = 'manual';
         let order = 0;
         const bigness = {};
         cards.forEach((card, k) => {
-          const col = (k % 3) - 1, row = Math.floor(k / 3) - 1;
-          const fx = col * cw * 1.14 + JIT[k][0] * cw * 0.01;
-          const fy = row * ch * 1.04 + JIT[k][1] * cw * 0.01 + H * 0.04;
+          const col = (k % 2) - 0.5, row = Math.floor(k / 2) - 0.5;
+          const fx = col * cw * 1.3 + JIT[k][0] * cw * 0.01;
+          const fy = row * ch * 1.12 + JIT[k][1] * cw * 0.01;
           const fr = JIT[k][2];
           const sweep = ease(clamp((t2 - k * 0.03) / 0.5, 0, 1));
           let x, y, r, sc = 1, slide, turn;
