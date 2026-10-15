@@ -9,14 +9,15 @@ export const SHOW = {
 // Each friend is a player card: a title tag, a colour, and a few honest stats.
 export const CAST = [
   {
-    name: 'Kavya',
+    name: 'arkavs',
     title: 'The 3am Builder',
     color: '#f2c94c',
     photo: '/cast/kavya.jpg',
     stats: [['sites launched', '5'], ['plans made', '12'], ['plans kept', '9'], ['bedtime', '3:04am']],
   },
   {
-    name: 'Friend Two',
+    name: 'hesatwink',
+    photo: '/cast/friend2.jpg',
     title: 'The Voice Note Queen',
     color: '#e8664f',
     stats: [['voice notes', '412'], ['avg length', '6 min'], ['recorded in shower', '38%'], ['ever typed', 'once']],
