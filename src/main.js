@@ -1,4 +1,5 @@
 import './style.css';
+import './collage.css';
 import { Sound } from './audio.js';
 import { Film } from './film.js';
 import { TRANSITIONS } from './transitions.js';
@@ -15,7 +16,7 @@ const sound = new Sound();
 const film = new Film(stage);
 const fx = { flash: $('#fx-flash'), stat: $('#fx-static'), burn: $('#fx-burn'), gate: $('#fx-gate'), film, sound };
 const { scenes, clearTimers } = buildScenes();
-const FIRST_BACKABLE = scenes.findIndex((s) => s.id === 'city');
+const FIRST_BACKABLE = scenes.findIndex((s) => s.id === 'building');
 
 for (const s of scenes) {
   const el = document.createElement('section');
@@ -109,7 +110,10 @@ function begin(withSound) {
   if (started) return;
   started = true;
   film.t0 = performance.now();
-  if (withSound) sound.start();
+  if (withSound) {
+    sound.start();
+    sound.playMusic('/music/theme.mp3');
+  }
   else sound.setMuted(true);
   const mute = $('#mute');
   mute.hidden = false;
@@ -122,6 +126,7 @@ scenes[0].el.querySelector('.silent').addEventListener('click', () => begin(fals
 $('#mute').addEventListener('click', (e) => {
   const turnOn = sound.muted || !sound.ctx;
   sound.start();
+  sound.playMusic('/music/theme.mp3');
   sound.setMuted(!turnOn);
   if (turnOn && stage.dataset.era === 'reel') sound.reelUp();
   e.currentTarget.textContent = turnOn ? 'sound on' : 'sound off';

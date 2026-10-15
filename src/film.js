@@ -75,12 +75,13 @@ export class Film {
     const spawn = () => {
       const era = this.stage.dataset.era;
       if (era !== 'show') {
-        if (Math.random() < 0.7) {
+        if (Math.random() < 0.35) {
           const s = document.createElement('i');
           s.className = 'scratch';
           s.style.left = `${Math.random() * 100}%`;
           s.style.opacity = (0.15 + Math.random() * 0.45).toFixed(2);
           s.style.width = `${Math.random() < 0.8 ? 1 : 2}px`;
+          if (Math.random() < 0.5) s.style.background = 'rgba(40, 26, 24, 0.7)';
           this.scratches.append(s);
           setTimeout(() => s.remove(), 90 + Math.random() * 380);
         }
@@ -93,7 +94,7 @@ export class Film {
           setTimeout(() => d.remove(), 45 + Math.random() * 90);
         }
       }
-      setTimeout(spawn, 70 + Math.random() * 380);
+      setTimeout(spawn, 160 + Math.random() * 600);
     };
     spawn();
   }

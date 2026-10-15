@@ -1,32 +1,17 @@
 import { SHOW, CAST, PREVIOUSLY, EPISODE } from './cast.js';
-import { cityArt, stoopArt, bodegaArt, fireEscapeArt, taxiArt, busArt, busStreetArt } from './art.js';
+import { INKS, today, photo, negative, doodle, building, viewMaster } from './collage.js';
 
 // Each scene is one frame of the opening. `in` names the transition used to
 // cut INTO it; `era` drives the film look (pre = before the reel starts,
 // reel = old film, show = the show proper); `auto` advances on its own.
 
-const PLACE_ART = { stoop: stoopArt, bodega: bodegaArt, fireescape: fireEscapeArt, taxi: taxiArt };
-const CAST_CUTS = ['whip', 'flash', 'whip', 'flash'];
+const CAST_CUTS = ['whip', 'reel', 'whip', 'reel'];
 
 const later = (s, fn, ms) => s.timers.push(setTimeout(fn, ms));
 const clearTimers = (s) => {
   s.timers.forEach(clearTimeout);
   s.timers = [];
 };
-
-function paparazzi(s, el, sound) {
-  const layer = el.querySelector('.pap');
-  [450, 700, 1350, 1520].forEach((ms) =>
-    later(s, () => {
-      const f = document.createElement('i');
-      f.style.left = `${8 + Math.random() * 84}%`;
-      f.style.top = `${10 + Math.random() * 60}%`;
-      layer.append(f);
-      sound.shutter();
-      setTimeout(() => f.remove(), 600);
-    }, ms)
-  );
-}
 
 export function buildScenes() {
   const castScenes = CAST.map((c, i) => ({
@@ -35,15 +20,24 @@ export function buildScenes() {
     era: 'reel',
     in: CAST_CUTS[i % CAST_CUTS.length],
     rec: true,
-    html: `${PLACE_ART[c.place]()}
-      <div class="pap"></div>
-      <div class="credit${c.place === 'taxi' ? ' right' : ''}">
+    html: `<div class="paper layout-${i % 2}">
+        <div class="print">${photo(c, INKS[i % INKS.length])}<i class="tape t1"></i><i class="tape t2"></i></div>
+        ${negative(c, i * 3)}
+        ${doodle(i, 'd1')}
+        <p class="cap">${c.role}</p>
+        <p class="stamp">${today}</p>
+      </div>
+      <div class="credit ink">
         <small>${i === 0 ? 'starring' : 'and'}</small>
         <h2>${c.name}</h2>
-        <p>who ${c.role}</p>
       </div>`,
     enter(el, { sound }) {
-      paparazzi(this, el, sound);
+      later(this, () => sound.slap(), 60);
+      later(this, () => sound.whoosh(), 320);
+      later(this, () => sound.tape(), 560);
+      later(this, () => sound.tape(), 700);
+      later(this, () => sound.thunk(), 900);
+      later(this, () => sound.thunk(), 1150);
     },
   }));
 
@@ -69,7 +63,7 @@ export function buildScenes() {
       id: 'leader',
       label: 'Countdown',
       era: 'reel',
-      in: 'static',
+      in: 'fade',
       auto: 3300,
       html: `<div class="leader"><div class="sweep"></div><div class="ring r1"></div><div class="ring r2"></div><div class="cross"></div><span class="num">3</span></div>`,
       enter(el, { sound }) {
@@ -83,13 +77,12 @@ export function buildScenes() {
       },
     },
     {
-      id: 'city',
-      label: 'The city at dusk',
+      id: 'building',
+      label: 'A building at night, a life in every window',
       era: 'reel',
       in: 'reel',
       rec: true,
-      html: `${cityArt()}
-        <div class="taxis"><i></i><i></i><i></i><i></i></div>
+      html: `${building(CAST)}
         <div class="credit center">
           <small>a group chat production</small>
           <p>filmed on location, mostly in the chat</p>
@@ -97,27 +90,26 @@ export function buildScenes() {
     },
     ...castScenes,
     {
-      id: 'bus',
-      label: 'The bus goes by',
+      id: 'viewmaster',
+      label: 'And you, obviously',
       era: 'reel',
       in: 'iris',
-      rec: true,
-      html: `${busStreetArt()}
-        <div class="bus">${busArt(SHOW.title, SHOW.premiere)}</div>
-        <div class="splash">${Array.from({ length: 28 }, () => {
-          const sz = 14 + Math.random() * 70;
-          return `<i style="left:${(Math.random() * 100).toFixed(1)}%;top:${(Math.random() * 90).toFixed(1)}%;width:${sz.toFixed(0)}px;height:${(sz * (0.8 + Math.random() * 0.5)).toFixed(0)}px;--d:${(Math.random() * 0.25).toFixed(2)}s"></i>`;
-        }).join('')}</div>
-        <div class="credit right late"><small>and</small><h2>you</h2><p>obviously</p></div>`,
+      html: `${viewMaster(CAST)}
+        <div class="vm-words"><span>this is</span><em>the story</em><span>of us</span><small>and you, obviously</small></div>`,
       enter(el, { sound }) {
-        sound.rumble();
-        later(this, () => {
-          el.classList.add('splashed');
-          sound.splash();
-        }, 1500);
+        const disc = el.querySelector('.disc');
+        let turn = 0;
+        // the disc clicks round one picture at a time, like a real View-Master
+        for (let k = 1; k <= 3; k++) {
+          later(this, () => {
+            turn += 360 / 7;
+            disc.style.setProperty('--turn', `${turn}deg`);
+            sound.clack(0.8);
+          }, 600 + k * 750);
+        }
       },
       leave(el) {
-        el.classList.remove('splashed');
+        el.querySelector('.disc').style.setProperty('--turn', '0deg');
       },
     },
     {
@@ -125,10 +117,15 @@ export function buildScenes() {
       label: SHOW.title,
       era: 'show',
       in: 'burn',
-      html: `<div class="title-card">
-          <small>${SHOW.season}</small>
-          <h1>${SHOW.title}<span class="dots"><i></i><i></i><i></i></span></h1>
-          <p>a show about us, written by us</p>
+      html: `<div class="poster">
+          <div class="booth">${CAST.slice(0, 4)
+            .map((c) => photo(c, 'riso-blue', 'bf'))
+            .join('')}</div>
+          <div class="poster-type">
+            <small>${SHOW.season}</small>
+            <h1><em>The</em><span>Groupchat<span class="dots"><i></i><i></i><i></i></span></span></h1>
+            <p>a show about us, written by us</p>
+          </div>
         </div>`,
       enter(el, { sound }) {
         sound.sting();

@@ -55,11 +55,11 @@ export const TRANSITIONS = {
     fx.sound.staticBurst(0.75);
     fx.film.staticOn = true;
     const s = fx.stat;
-    await anim(s, [{ opacity: 0 }, { opacity: 1 }], { duration: 200 });
+    await anim(s, [{ opacity: 0 }, { opacity: 0.5 }], { duration: 160 });
     a.hidden = true;
     b.hidden = false;
-    await wait(170);
-    await anim(s, [{ opacity: 1 }, { opacity: 0.6, offset: 0.3 }, { opacity: 0 }], { duration: 420 });
+    await wait(60);
+    await anim(s, [{ opacity: 0.5 }, { opacity: 0 }], { duration: 300 });
     fx.film.staticOn = false;
   },
 

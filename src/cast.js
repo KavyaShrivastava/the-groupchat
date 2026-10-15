@@ -7,10 +7,10 @@ export const SHOW = {
 };
 
 export const CAST = [
-  { name: 'Kavya', role: 'builds websites at 3am', place: 'stoop' },
-  { name: 'Friend Two', role: 'sends voice notes from the shower', place: 'bodega' },
-  { name: 'Friend Three', role: 'is having “just one drink”', place: 'fireescape' },
-  { name: 'Friend Four', role: 'has a spreadsheet for this', place: 'taxi' },
+  { name: 'Kavya', role: 'builds websites at 3am', photo: '/cast/kavya.jpg' },
+  { name: 'Friend Two', role: 'sends voice notes from the shower' },
+  { name: 'Friend Three', role: 'is having “just one drink”' },
+  { name: 'Friend Four', role: 'has a spreadsheet for this' },
 ];
 
 export const PREVIOUSLY = [

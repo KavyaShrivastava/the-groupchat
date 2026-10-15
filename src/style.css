@@ -89,7 +89,7 @@ body {
   inset: -10px;
   pointer-events: none;
   z-index: 20;
-  opacity: 0.22;
+  opacity: 0.14;
   mix-blend-mode: overlay;
 }
 #stage[data-era='show'] #grain {
@@ -129,13 +129,13 @@ body {
 }
 @keyframes flicker {
   0% { opacity: 0.04; }
-  7% { opacity: 0.12; }
+  7% { opacity: 0.05; }
   9% { opacity: 0.02; }
   31% { opacity: 0.08; }
-  33% { opacity: 0.16; }
+  33% { opacity: 0.06; }
   35% { opacity: 0.03; }
   58% { opacity: 0.07; }
-  74% { opacity: 0.1; }
+  74% { opacity: 0.05; }
   76% { opacity: 0.01; }
   90% { opacity: 0.06; }
 }
@@ -151,7 +151,7 @@ body {
   image-rendering: pixelated;
 }
 #stage[data-era='pre'] #fx-static {
-  opacity: 0.08;
+  opacity: 0;
 }
 
 #fx-flash {
@@ -589,247 +589,6 @@ body {
   font: 400 min(42vmin, 300px) / 1 var(--sans);
   color: #111;
   text-shadow: 0 0 2px #fff;
-}
-
-/* ---------- 2: city ---------- */
-
-.crane {
-  transform-origin: 50% 100%;
-}
-.in .crane {
-  animation: crane 14s cubic-bezier(0.3, 0, 0.3, 1) both;
-}
-@keyframes crane {
-  from { transform: scale(1.02) translateY(2%); }
-  to { transform: scale(1.18) translateY(0); }
-}
-.wins .w {
-  fill: #2a2236;
-}
-.in .wins .w.on {
-  animation: lightup 0.5s var(--d) both;
-}
-@keyframes lightup {
-  0%, 60% { fill: #2a2236; }
-  70% { fill: #ffd48a; }
-  80% { fill: #2a2236; }
-  100% { fill: #ffd48a; }
-}
-.taxis {
-  position: absolute;
-  inset: auto 0 calc(var(--bar) + 1%) 0;
-  height: 5%;
-}
-.taxis i {
-  position: absolute;
-  height: 3px;
-  width: 22vw;
-  border-radius: 3px;
-  background: linear-gradient(90deg, transparent, var(--taxi) 70%, #fff6c8);
-  box-shadow: 0 0 12px var(--taxi);
-  animation: taxi 2.4s linear infinite;
-}
-.taxis i:nth-child(2) { top: 40%; animation-duration: 3.1s; animation-delay: -1.2s; }
-.taxis i:nth-child(3) {
-  top: 70%;
-  animation-duration: 2.7s;
-  animation-delay: -0.4s;
-  animation-direction: reverse;
-  background: linear-gradient(90deg, #ffffff, #ff4a4a 30%, transparent);
-  box-shadow: 0 0 12px #ff4a4a;
-}
-.taxis i:nth-child(4) { top: 20%; animation-duration: 4s; animation-delay: -2.5s; }
-@keyframes taxi {
-  from { transform: translateX(-30vw); }
-  to { transform: translateX(110vw); }
-}
-
-/* ---------- cast backdrops ---------- */
-
-.sign {
-  font: 400 34px/1 var(--sans);
-  letter-spacing: 0.3em;
-  fill: var(--cream);
-}
-.neon {
-  font: 400 86px/1 var(--sans);
-  letter-spacing: 0.08em;
-  fill: #ff5fa2;
-  animation: neon 4s steps(1) infinite;
-}
-@keyframes neon {
-  0%, 100% { opacity: 1; }
-  41% { opacity: 0.2; }
-  43% { opacity: 1; }
-  45% { opacity: 0.3; }
-  47% { opacity: 1; }
-}
-.bulb {
-  fill: #ffe3a0;
-  filter: drop-shadow(0 0 8px #ffcb6b);
-  animation: twinkle 2.6s var(--d) ease-in-out infinite alternate;
-}
-@keyframes twinkle {
-  to { opacity: 0.45; }
-}
-.cabtext {
-  font: 400 54px/1 var(--sans);
-  letter-spacing: 0.2em;
-  fill: #1a1308;
-}
-.cabtext.small {
-  font-size: 30px;
-}
-.bokeh {
-  animation: drift 9s ease-in-out infinite alternate;
-}
-@keyframes drift {
-  to { transform: translateX(-60px); }
-}
-.in .art .fig {
-  animation: walk 6s ease-out both;
-}
-@keyframes walk {
-  from { translate: -40px 0; }
-}
-
-/* ---------- bus ---------- */
-
-.bus {
-  position: absolute;
-  z-index: 2;
-  left: 0;
-  bottom: 8%;
-  width: min(1100px, 170vw);
-  transform: translateX(110vw);
-}
-.bus svg {
-  display: block;
-  width: 100%;
-}
-.in .bus {
-  animation: bus 3.3s cubic-bezier(0.25, 0.1, 0.25, 1) both;
-}
-@keyframes bus {
-  0% { transform: translateX(110vw); }
-  42% { transform: translateX(calc(50vw - 58%)); }
-  62% { transform: translateX(calc(50vw - 46%)); }
-  100% { transform: translateX(-115%); }
-}
-.dest {
-  font: 400 15px/1 var(--sans);
-  letter-spacing: 0.1em;
-  fill: #2a1404;
-}
-.ad {
-  font: italic 600 40px/1 var(--serif);
-  fill: var(--pink);
-}
-.ad2 {
-  font: 400 15px/1 var(--sans);
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  fill: var(--champagne);
-}
-.splash {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  pointer-events: none;
-  opacity: 0;
-}
-.splash i {
-  position: absolute;
-  border-radius: 48% 52% 50% 50% / 60% 60% 40% 40%;
-  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.75) 0 8%, rgba(200, 225, 255, 0.18) 30%, rgba(120, 160, 220, 0.1) 70%);
-  box-shadow: inset 0 -3px 6px rgba(255, 255, 255, 0.25), 0 2px 4px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(3px);
-}
-.splashed .splash {
-  animation: splash 3.4s ease-out forwards;
-}
-.splashed .splash i {
-  animation: drop 3.4s var(--d) ease-in forwards;
-}
-.splashed .art {
-  animation: wet 3s ease-out;
-}
-@keyframes splash {
-  0% { opacity: 0; }
-  4% { opacity: 1; }
-  70% { opacity: 1; }
-  100% { opacity: 0; }
-}
-@keyframes drop {
-  0% { transform: scale(0); }
-  6% { transform: scale(1.05); }
-  12% { transform: scale(1); }
-  100% { transform: translateY(70px) scaleY(1.3); }
-}
-@keyframes wet {
-  0% { filter: none; }
-  5% { filter: blur(5px) saturate(1.4) brightness(1.15); }
-  100% { filter: none; }
-}
-
-/* ---------- title card ---------- */
-
-.f-title {
-  display: grid;
-  place-items: center;
-  background: radial-gradient(ellipse 60% 45% at 50% 48%, #3b1427 0%, #12070d 60%, #050305 100%);
-}
-.title-card {
-  text-align: center;
-  padding: 0 16px;
-}
-.title-card small {
-  display: block;
-  font: 300 clamp(12px, 1.3vw, 15px) / 1 var(--sans);
-  letter-spacing: 0.6em;
-  text-transform: uppercase;
-  color: var(--champagne);
-}
-.title-card h1 {
-  margin: 0.35em 0 0.3em;
-  font: italic 400 clamp(46px, 10vw, 150px) / 0.95 var(--serif);
-  color: #fff;
-  text-shadow: 0 0 40px rgba(255, 111, 165, 0.45);
-}
-.title-card p {
-  margin: 0;
-  font: 300 clamp(13px, 1.4vw, 17px) / 1 var(--sans);
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(246, 234, 210, 0.7);
-}
-.dots {
-  display: inline-flex;
-  gap: 0.09em;
-  margin-left: 0.12em;
-  vertical-align: baseline;
-}
-.dots i {
-  width: 0.13em;
-  height: 0.13em;
-  border-radius: 50%;
-  background: var(--pink);
-  animation: typing 1.3s ease-in-out infinite;
-}
-.dots i:nth-child(2) { animation-delay: 0.18s; }
-.dots i:nth-child(3) { animation-delay: 0.36s; }
-@keyframes typing {
-  0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
-  30% { transform: translateY(-0.12em); opacity: 1; }
-}
-.in .title-card > * {
-  animation: titleIn 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
-.in .title-card small { animation-delay: 0.9s; }
-.in .title-card h1 { animation-delay: 0.3s; }
-.in .title-card p { animation-delay: 1.5s; }
-@keyframes titleIn {
-  from { opacity: 0; transform: scale(1.06); filter: blur(10px); }
 }
 
 /* ---------- previously on ---------- */

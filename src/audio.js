@@ -6,6 +6,8 @@ export class Sound {
   constructor() {
     this.ctx = null;
     this.muted = false;
+    this.sfx = false; // whooshes, clicks and stings; the music carries the opening instead
+    this.track = null;
   }
 
   get ready() {
@@ -34,38 +36,8 @@ export class Sound {
     hp.type = 'highpass';
     hp.frequency.value = 2600;
     this.hiss = ctx.createGain();
-    this.hiss.gain.value = 0.03;
+    this.hiss.gain.value = 0.008;
     this.loopNoise().connect(hp).connect(this.hiss).connect(this.reel);
-
-    // projector clatter: band-passed noise chopped by an 18 Hz square wave
-    const bp = ctx.createBiquadFilter();
-    bp.type = 'bandpass';
-    bp.frequency.value = 950;
-    bp.Q.value = 1.3;
-    const chop = ctx.createGain();
-    chop.gain.value = 0.5;
-    const lfo = ctx.createOscillator();
-    lfo.type = 'square';
-    lfo.frequency.value = 18;
-    const depth = ctx.createGain();
-    depth.gain.value = 0.5;
-    lfo.connect(depth).connect(chop.gain);
-    lfo.start();
-    const whir = ctx.createGain();
-    whir.gain.value = 0.07;
-    this.loopNoise().connect(bp).connect(chop).connect(whir).connect(this.reel);
-
-    // motor hum
-    const hum = ctx.createOscillator();
-    hum.type = 'sawtooth';
-    hum.frequency.value = 55;
-    const hl = ctx.createBiquadFilter();
-    hl.type = 'lowpass';
-    hl.frequency.value = 170;
-    const hg = ctx.createGain();
-    hg.gain.value = 0.03;
-    hum.connect(hl).connect(hg).connect(this.reel);
-    hum.start();
 
     this.crackle();
   }
@@ -87,7 +59,7 @@ export class Sound {
           freq: 700 + Math.random() * 4500,
           q: 2,
           dur: 0.004 + Math.random() * 0.018,
-          gain: 0.08 + Math.random() * 0.3,
+          gain: 0.04 + Math.random() * 0.14,
           attack: 0.001,
           out: this.reel,
         });
@@ -95,6 +67,23 @@ export class Sound {
       setTimeout(pop, 30 + Math.random() * (Math.random() < 0.2 ? 600 : 220));
     };
     pop();
+  }
+
+  // the real soundtrack: a music file, routed through master so mute works.
+  // If the file isn't there yet, this quietly does nothing.
+  playMusic(url) {
+    if (!this.ctx || this.track) return;
+    const el = new Audio(url);
+    el.loop = true;
+    el.preload = 'auto';
+    const src = this.ctx.createMediaElementSource(el);
+    this.musicGain = this.ctx.createGain();
+    this.musicGain.gain.value = 0;
+    src.connect(this.musicGain).connect(this.master);
+    el.play()
+      .then(() => this.musicGain.gain.setTargetAtTime(0.85, this.ctx.currentTime, 0.4))
+      .catch(() => {});
+    this.track = el;
   }
 
   setMuted(m) {
@@ -166,27 +155,32 @@ export class Sound {
   // ---- named effects ----
 
   shutter() {
+    if (!this.sfx) return;
     this.burst({ type: 'highpass', freq: 2800, dur: 0.035, gain: 0.55, attack: 0.001 });
     this.burst({ type: 'bandpass', freq: 1700, q: 2, dur: 0.05, gain: 0.45, attack: 0.001, at: 0.075 });
     this.tone({ freq: 3800, dur: 0.18, gain: 0.02, at: 0.02 }); // flash whine
   }
 
   clack(vol = 1) {
+    if (!this.sfx) return;
     this.burst({ type: 'bandpass', freq: 620, q: 3, dur: 0.045, gain: 0.5 * vol, attack: 0.001 });
     this.burst({ type: 'bandpass', freq: 380, q: 3, dur: 0.06, gain: 0.4 * vol, attack: 0.001, at: 0.1 });
     this.burst({ type: 'bandpass', freq: 520, q: 3, dur: 0.04, gain: 0.25 * vol, attack: 0.001, at: 0.16 });
   }
 
   whoosh() {
+    if (!this.sfx) return;
     this.burst({ type: 'bandpass', freq: 350, freqEnd: 2600, q: 1.4, dur: 0.42, gain: 0.4, attack: 0.18 });
   }
 
   staticBurst(dur = 0.6) {
+    if (!this.sfx) return;
     this.burst({ type: 'bandpass', freq: 3200, q: 0.4, dur, gain: 0.32, attack: 0.04 });
     this.burst({ type: 'lowpass', freq: 600, dur: dur * 0.6, gain: 0.2, attack: 0.02 });
   }
 
   burn() {
+    if (!this.sfx) return;
     this.burst({ type: 'lowpass', freq: 900, freqEnd: 4000, dur: 1.1, gain: 0.35, attack: 0.5 });
     for (let i = 0; i < 14; i++) {
       this.burst({ type: 'bandpass', freq: 1500 + Math.random() * 4000, q: 2, dur: 0.01, gain: 0.3, attack: 0.001, at: 0.2 + Math.random() * 0.8 });
@@ -194,25 +188,49 @@ export class Sound {
   }
 
   rewind() {
+    if (!this.sfx) return;
     this.burst({ type: 'bandpass', freq: 600, freqEnd: 5200, q: 3, dur: 0.5, gain: 0.3, attack: 0.05 });
     for (let i = 0; i < 6; i++) this.tone({ freq: 900 + i * 260, type: 'square', dur: 0.04, gain: 0.025, at: i * 0.07, lp: 2500 });
   }
 
+  // a soft, rounded tick for the countdown instead of a hard test-tone beep
   beep() {
-    this.tone({ freq: 1000, dur: 0.14, gain: 0.12 });
+    this.tone({ freq: 660, type: 'triangle', dur: 0.22, gain: 0.07, attack: 0.01, lp: 1800 });
   }
 
   rumble() {
+    if (!this.sfx) return;
     this.burst({ type: 'lowpass', freq: 160, dur: 3, gain: 0.7, attack: 1.1 });
     this.tone({ freq: 46, type: 'triangle', dur: 2.8, gain: 0.12, attack: 1 });
     this.burst({ type: 'bandpass', freq: 420, q: 6, dur: 0.5, gain: 0.08, attack: 0.3, at: 1.2 }); // brakes hiss
   }
 
   splash() {
+    if (!this.sfx) return;
     this.burst({ type: 'lowpass', freq: 5000, freqEnd: 260, dur: 1, gain: 0.6, attack: 0.02 });
     for (let i = 0; i < 10; i++) {
       this.burst({ type: 'bandpass', freq: 900 + Math.random() * 2400, q: 4, dur: 0.05, gain: 0.18, attack: 0.002, at: 0.15 + Math.random() * 0.6 });
     }
+  }
+
+  // a print slapped onto the table
+  slap() {
+    if (!this.sfx) return;
+    this.burst({ type: 'lowpass', freq: 1400, dur: 0.12, gain: 0.55, attack: 0.002 });
+    this.burst({ type: 'bandpass', freq: 3200, q: 1, dur: 0.05, gain: 0.2, attack: 0.001, at: 0.01 });
+  }
+
+  // a strip of tape pulled and pressed down
+  tape() {
+    if (!this.sfx) return;
+    this.burst({ type: 'bandpass', freq: 2400, freqEnd: 5200, q: 2, dur: 0.16, gain: 0.18, attack: 0.03 });
+  }
+
+  // a rubber stamp
+  thunk() {
+    if (!this.sfx) return;
+    this.tone({ freq: 140, type: 'sine', dur: 0.12, gain: 0.3, attack: 0.002 });
+    this.burst({ type: 'lowpass', freq: 600, dur: 0.08, gain: 0.35, attack: 0.002 });
   }
 
   key() {
@@ -268,6 +286,7 @@ export class Sound {
   // the title sting: an original bouncy UK-indie-pop riff in the spirit of
   // FX's Adults (not its theme). Jangly strums, busy bass, drum machine.
   sting() {
+    if (!this.sfx) return;
     const bpm = 132;
     const b = 60 / bpm; // one beat
     // D – A – Bm – G, one chord per two beats, then a ringing D
