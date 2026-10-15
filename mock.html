@@ -355,10 +355,9 @@
       }
       .sleeve .rpm small { display: block; font-size: calc(var(--P) * 0.014); }
 
-      /* ---- playing cards, Wes Anderson style: pastel, symmetrical, centred ---- */
+      /* ---- playing cards with collage glued on: real cards, inside jokes ---- */
       .pcard {
-        --w: min(30vmin, 250px);
-        --futura: 'Jost', 'Futura', 'Century Gothic', sans-serif;
+        --w: min(16.5vh, 27vw, 190px);
         left: 50%;
         top: 50%;
         width: var(--w);
@@ -370,99 +369,121 @@
       .pcard .face {
         position: absolute;
         inset: 0;
-        border-radius: calc(var(--w) * 0.05);
+        border-radius: calc(var(--w) * 0.06);
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
-        box-shadow: 0 0.4vmin 0.8vmin rgba(0, 0, 0, 0.25), 0 1.8vmin 4vmin rgba(0, 0, 0, 0.45);
+        box-shadow: 0 0.3vmin 0.6vmin rgba(0, 0, 0, 0.25), 0 1.4vmin 3vmin rgba(0, 0, 0, 0.4);
       }
-      .pcard .front {
-        background: var(--bg);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 12% 10% 0;
-      }
-      .pcard .front::before { /* the double ornate border */
-        content: '';
-        position: absolute;
-        inset: 4.5%;
-        border: calc(var(--w) * 0.006) solid var(--ink);
-        outline: calc(var(--w) * 0.004) solid var(--ink);
-        outline-offset: calc(var(--w) * -0.022);
-        border-radius: calc(var(--w) * 0.03);
-        pointer-events: none;
-      }
-      .pcard .arch {
-        position: relative;
-        width: 68%;
-        aspect-ratio: 3 / 4;
-        border-radius: 50% 50% calc(var(--w) * 0.012) calc(var(--w) * 0.012) / 38% 38% calc(var(--w) * 0.012) calc(var(--w) * 0.012);
-        overflow: hidden;
-        background: #f6efe2;
-        box-shadow: 0 0 0 calc(var(--w) * 0.012) #f6efe2, 0 0 0 calc(var(--w) * 0.018) var(--ink);
-        display: grid;
-        place-items: center;
-      }
-      .pcard .arch img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: 50% 30%;
-        filter: saturate(0.92) sepia(0.12) brightness(1.03);
-      }
-      .pcard .arch span {
-        font: 500 calc(var(--w) * 0.2) / 1 var(--futura);
-        color: var(--ink);
-        opacity: 0.55;
-      }
-      .pcard .name {
-        margin-top: 8%;
-        font: 600 calc(var(--w) * 0.058) / 1 var(--futura);
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        color: var(--ink);
-      }
-      .pcard .cap {
-        margin-top: 4%;
-        font: 500 calc(var(--w) * 0.032) / 1 var(--futura);
-        letter-spacing: 0.3em;
-        text-transform: uppercase;
-        color: var(--ink);
-        opacity: 0.75;
-      }
+      .pcard .front { background: #fbf9f4; overflow: hidden; color: var(--suit); }
       .pcard .corner {
         position: absolute;
         display: flex;
         flex-direction: column;
         align-items: center;
-        font: 500 calc(var(--w) * 0.075) / 0.95 var(--futura);
-        color: var(--ink);
+        font: 700 calc(var(--w) * 0.13) / 0.9 Georgia, 'Times New Roman', serif;
+        letter-spacing: -0.04em;
+        z-index: 1;
       }
-      .pcard .corner small { font-size: 0.8em; color: var(--suit); }
-      .pcard .corner.tl { top: 8%; left: 9%; }
-      .pcard .corner.br { bottom: 8%; right: 9%; rotate: 180deg; }
-      /* the back: a pink pastry box with candy stripes and a crest */
+      .pcard .corner small { font-size: 0.72em; }
+      .pcard .corner.tl { top: 3%; left: 5%; }
+      .pcard .corner.br { bottom: 3%; right: 5%; rotate: 180deg; }
+      .pcard .pip {
+        position: absolute;
+        translate: -50% -50%;
+        font: calc(var(--w) * 0.17) / 1 Georgia, serif;
+      }
+      .pcard .pip.down { rotate: 180deg; }
+      .pcard .pip.ace { font-size: calc(var(--w) * 0.5); }
+      /* glued-on bits */
+      .pcard .cut {
+        position: absolute;
+        background: #fff;
+        padding: calc(var(--w) * 0.025);
+        border-radius: calc(var(--w) * 0.03);
+        box-shadow: 0 0.3vmin 0.7vmin rgba(0, 0, 0, 0.3);
+        z-index: 2;
+      }
+      .pcard .cut img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; border-radius: calc(var(--w) * 0.015); }
+      .pcard .cut.initial {
+        display: grid;
+        place-items: center;
+        background: #fff;
+      }
+      .pcard .cut.initial span {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        place-items: center;
+        border-radius: calc(var(--w) * 0.015);
+        background: var(--tint, #e9dcc8);
+        font: italic 500 calc(var(--w) * 0.3) / 1 var(--serif);
+        color: rgba(36, 31, 34, 0.55);
+      }
+      .pcard .strip {
+        position: absolute;
+        z-index: 3;
+        padding: calc(var(--w) * 0.018) calc(var(--w) * 0.035);
+        font: 700 calc(var(--w) * 0.058) / 1.05 'Jost', 'Futura', sans-serif;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        box-shadow: 0 0.2vmin 0.4vmin rgba(0, 0, 0, 0.25);
+      }
+      .pcard .strip.black { background: #141113; color: #fff; }
+      .pcard .strip.red { background: #d8262f; color: #fff; }
+      .pcard .strip.paper { background: #f1e3b4; color: #141113; font-family: 'Courier Prime', monospace; }
+      .pcard .stick {
+        position: absolute;
+        z-index: 2;
+        line-height: 1;
+        filter: drop-shadow(0 0 1.2px #fff) drop-shadow(0 0 1.2px #fff) drop-shadow(0 0 1.2px #fff) drop-shadow(0 0.3vmin 0.4vmin rgba(0, 0, 0, 0.3));
+      }
+      .pcard .ban {
+        position: absolute;
+        z-index: 3;
+        left: 50%;
+        top: 52%;
+        width: 66%;
+        aspect-ratio: 1;
+        translate: -50% -50%;
+        border-radius: 50%;
+        border: calc(var(--w) * 0.05) solid #d8262f;
+      }
+      .pcard .ban::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: -5%;
+        width: calc(var(--w) * 0.05);
+        height: 110%;
+        translate: -50% 0;
+        rotate: -45deg;
+        background: #d8262f;
+      }
+      .pcard .faces {
+        position: absolute;
+        inset: 16% 10% 14%;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 3%;
+      }
+      .pcard .faces i {
+        background: #fff;
+        padding: 6%;
+        box-shadow: 0 0.2vmin 0.4vmin rgba(0, 0, 0, 0.25);
+        rotate: var(--r);
+      }
+      .pcard .faces img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; object-position: 50% 30%; }
+      /* classic card back: red lattice */
       .pcard .back {
         transform: rotateY(180deg);
         background:
-          repeating-linear-gradient(90deg, #f2c4c9 0 calc(var(--w) * 0.05), #f8e3e2 calc(var(--w) * 0.05) calc(var(--w) * 0.1));
-        box-shadow: inset 0 0 0 calc(var(--w) * 0.04) #f8e3e2, inset 0 0 0 calc(var(--w) * 0.046) #7a3b4a, 0 0.4vmin 0.8vmin rgba(0, 0, 0, 0.25), 0 1.8vmin 4vmin rgba(0, 0, 0, 0.45);
-        display: grid;
-        place-items: center;
+          repeating-linear-gradient(45deg, transparent 0 calc(var(--w) * 0.05), rgba(255, 255, 255, 0.55) calc(var(--w) * 0.05) calc(var(--w) * 0.058)),
+          repeating-linear-gradient(-45deg, transparent 0 calc(var(--w) * 0.05), rgba(255, 255, 255, 0.55) calc(var(--w) * 0.05) calc(var(--w) * 0.058)),
+          #c8323c;
+        box-shadow: inset 0 0 0 calc(var(--w) * 0.05) #fbf9f4, 0 0.3vmin 0.6vmin rgba(0, 0, 0, 0.25), 0 1.4vmin 3vmin rgba(0, 0, 0, 0.4);
       }
-      .pcard .crest {
-        width: 52%;
-        aspect-ratio: 1;
-        border-radius: 50%;
-        background: #f8e3e2;
-        box-shadow: 0 0 0 calc(var(--w) * 0.012) #7a3b4a, 0 0 0 calc(var(--w) * 0.024) #f8e3e2, 0 0 0 calc(var(--w) * 0.03) #7a3b4a;
-        display: grid;
-        place-items: center;
-        text-align: center;
-        color: #7a3b4a;
-      }
-      .pcard .crest b { display: block; font: 500 calc(var(--w) * 0.14) / 1 var(--serif); font-style: italic; }
-      .pcard .crest small { display: block; margin-top: 6%; font: 600 calc(var(--w) * 0.028) / 1 var(--futura); letter-spacing: 0.28em; }
 
       /* ---- view-master ---- */
       .vm {
@@ -783,29 +804,51 @@
       })();
 
       // ---------- build the deck ----------
-      const CAST = [
-        { name: 'arkavs', rank: 'A', suit: '♥', photo: '/cast/kavya.jpg' },
-        { name: 'hesatwink', rank: '10', suit: '♠', photo: '/cast/friend2.jpg' },
-        { name: 'Friend Three', rank: '7', suit: '♦' },
-        { name: 'Friend Four', rank: '3', suit: '♣' },
+      // the cast, plus extra inside-joke cards. Swap captions for the real ones.
+      const ME = '/cast/kavya.jpg', HIM = '/cast/friend2.jpg';
+      const DECK = [
+        { rank: '9', suit: '♥', label: ['red', 'seen 4:12am', 'left:8%; top:20%; rotate:-3deg'], stick: ['👀', 'left:22%; top:44%; font-size:calc(var(--w) * 0.34)'] },
+        { rank: 'A', suit: '♥', name: 'arkavs', photo: ME, cut: 'left:16%; top:22%; width:68%; height:52%; rotate:-4deg', label: ['black', 'up at 3am again', 'left:10%; top:72%; rotate:2deg'] },
+        { rank: '7', suit: '♣', label: ['paper', 'no plans allowed', 'left:12%; top:14%; rotate:-2deg'], stick: ['📅', 'left:30%; top:36%; font-size:calc(var(--w) * 0.34)'], ban: true },
+        { rank: '10', suit: '♠', name: 'hesatwink', photo: HIM, cut: 'left:14%; top:24%; width:70%; height:50%; rotate:5deg', label: ['red', 'no thoughts just sunglasses', 'left:4%; top:74%; rotate:-3deg; font-size:calc(var(--w) * 0.05)'] },
+        { rank: '4', suit: '♦', faces: [ME, HIM, ME, HIM, HIM, ME, HIM, ME, ME, HIM, ME, HIM, HIM, ME, HIM, ME], label: ['black', "everyone's typing", 'left:12%; top:84%; rotate:1deg'] },
+        { rank: '7', suit: '♦', name: 'Friend Three', tint: '#f3d6c8', cut: 'left:18%; top:24%; width:64%; height:46%; rotate:-6deg', label: ['paper', 'just one drink', 'left:16%; top:12%; rotate:3deg'], stick: ['🍸', 'left:58%; top:58%; font-size:calc(var(--w) * 0.22)'] },
+        { rank: 'K', suit: '♣', label: ['black', 'the groupchat at 2am', 'left:4%; top:68%; rotate:-2deg; font-size:calc(var(--w) * 0.052)'], stick: ['🍜', 'left:18%; top:26%; font-size:calc(var(--w) * 0.45)'] },
+        { rank: '3', suit: '♣', name: 'Friend Four', tint: '#cfe0f0', cut: 'left:16%; top:28%; width:68%; height:46%; rotate:4deg', label: ['red', 'has a spreadsheet for this', 'left:2%; top:16%; rotate:-2deg; font-size:calc(var(--w) * 0.048)'], stick: ['📊', 'left:56%; top:62%; font-size:calc(var(--w) * 0.2)'] },
+        { rank: '2', suit: '♠', label: ['paper', 'ugh.', 'left:34%; top:18%; rotate:-4deg; font-size:calc(var(--w) * 0.09)'], stick: ['🥞', 'left:14%; top:36%; font-size:calc(var(--w) * 0.5)'] },
       ];
+      // classic pip layouts, as (x%, y%) — bottom-half pips get turned upside down
+      const C = [30, 50, 70], R = [20, 35, 50, 65, 80];
+      const PIPS = {
+        A: [[50, 50]],
+        2: [[50, 20], [50, 80]],
+        3: [[50, 20], [50, 50], [50, 80]],
+        4: [[30, 20], [70, 20], [30, 80], [70, 80]],
+        7: [[30, 20], [70, 20], [50, 35], [30, 50], [70, 50], [30, 80], [70, 80]],
+        9: [[30, 20], [70, 20], [30, 40], [70, 40], [50, 50], [30, 60], [70, 60], [30, 80], [70, 80]],
+        10: [[30, 20], [70, 20], [50, 30], [30, 40], [70, 40], [30, 60], [70, 60], [50, 70], [30, 80], [70, 80]],
+        K: [[50, 50]],
+      };
       const deck = document.getElementById('deck');
-      deck.innerHTML = CAST.map((f, k) => {
-        const red = f.suit === '♥' || f.suit === '♦';
-        const corner = `<b>${f.rank}</b><small>${f.suit}</small>`;
-        // a pastel per card, with a darker ink from the same family
-        const WES = [['#f2c4c9', '#7a3b4a'], ['#bfe0cd', '#2f5a4a'], ['#ecd08a', '#6b4a1f'], ['#bcd3ea', '#2f4a6e'], ['#d9c6e8', '#4f3b6e']];
-        const [bg, ink] = WES[k % WES.length];
-        const pic = f.photo ? `<img src="${f.photo}" alt="${f.name}">` : `<span>${f.name[0].toUpperCase()}</span>`;
-        return `<article class="obj pcard" style="--bg:${bg};--ink:${ink};--suit:${red ? '#b3262f' : ink}">
-          <div class="face front">
-            <span class="corner tl">${corner}</span>
-            <div class="arch">${pic}</div>
-            <span class="name">${f.name}</span>
-            <span class="cap">no. ${String(k + 1).padStart(2, '0')} · est. 2026</span>
-            <span class="corner br">${corner}</span>
+      deck.innerHTML = DECK.map((c, k) => {
+        const red = c.suit === '♥' || c.suit === '♦';
+        const corner = `<b>${c.rank}</b><small>${c.suit}</small>`;
+        const pips = (PIPS[c.rank] || [])
+          .map(([x, y]) => `<span class="pip${c.rank === 'A' ? ' ace' : ''}${y > 55 ? ' down' : ''}" style="left:${x}%;top:${y}%">${c.suit}</span>`)
+          .join('');
+        let glued = '';
+        if (c.cut) glued += c.photo
+          ? `<div class="cut" style="${c.cut}"><img src="${c.photo}" alt="${c.name}"></div>`
+          : `<div class="cut initial" style="${c.cut};--tint:${c.tint}"><span>${c.name[0]}</span></div>`;
+        if (c.faces) glued += `<div class="faces">${c.faces.map((f, n) => `<i style="--r:${((n * 37) % 11) - 5}deg"><img src="${f}" alt=""></i>`).join('')}</div>`;
+        if (c.stick) glued += `<span class="stick" style="${c.stick[1]}">${c.stick[0]}</span>`;
+        if (c.ban) glued += '<i class="ban"></i>';
+        if (c.label) glued += `<span class="strip ${c.label[0]}" style="${c.label[2]}">${c.label[1]}</span>`;
+        return `<article class="obj pcard" style="--suit:${red ? '#d8262f' : '#141113'}">
+          <div class="face front" aria-label="${c.rank}${c.suit}${c.name ? ' ' + c.name : ''}: ${c.label ? c.label[1] : ''}">
+            <span class="corner tl">${corner}</span>${pips}${glued}<span class="corner br">${corner}</span>
           </div>
-          <div class="face back"><div class="crest"><span><b>Tg</b><small>THE GROUPCHAT</small></span></div></div>
+          <div class="face back"></div>
         </article>`;
       }).join('');
       const cards = [...deck.children];
@@ -889,20 +932,20 @@ history.scrollRestoration = 'manual';
         crossed('slide', t0, 0.2, (d) => d > 0 && snd.slide());
         crossed('needle', armIn, 0.98, (d) => (d > 0 ? snd.needle() : snd.crackle(false)));
 
-        // 2 · the cast is dealt like trading cards, one flick at a time, then swept away
-        const cw = cards[0].offsetWidth;
-        const spread = Math.min(cw * 0.78, (W * 0.94 - cw) / (cards.length - 1));
+        // 2 · a hand of cards is dealt into a messy 3x3, one flick at a time, then swept away
+        const cw = cards[0].offsetWidth, ch = cw * 1.4;
+        const JIT = [[-6, 4, -7], [3, -5, 4], [-4, 6, -3], [5, 3, 6], [-2, -4, -2], [4, 5, 8], [-5, -3, -5], [2, 6, 3], [6, -2, 7]];
         cards.forEach((card, k) => {
-          const deal = ease(clamp((t1 - 0.1 - k * 0.17) / 0.3, 0, 1));
-          const off = k - (cards.length - 1) / 2;
-          // tossed onto the table, a little messy, like the reference
-          const scatter = [[-1.15, -0.05, -13], [0.05, -0.32, 8], [-0.35, 0.42, -4], [0.95, 0.28, 15]][k];
-          const fx = scatter[0] * Math.min(cw, spread * 1.25), fy = scatter[1] * cw, fr = scatter[2];
-          const sx = -W * 0.1, sy = H * 0.9, sr = -25 + k * 6; // the deck, below the table edge
-          const sweep = ease(clamp((t2 - k * 0.05) / 0.5, 0, 1));
-          const x = sx + (fx - sx) * deal + sweep * (off * W * 0.15);
+          const deal = ease(clamp((t1 - 0.05 - k * 0.075) / 0.28, 0, 1));
+          const col = (k % 3) - 1, row = Math.floor(k / 3) - 1;
+          const fx = col * cw * 1.14 + JIT[k][0] * cw * 0.01;
+          const fy = row * ch * 1.04 + JIT[k][1] * cw * 0.01 + H * 0.04;
+          const fr = JIT[k][2];
+          const sx = -W * 0.1, sy = H * 0.9, sr = -25 + k * 4; // the deck, below the table edge
+          const sweep = ease(clamp((t2 - k * 0.03) / 0.5, 0, 1));
+          const x = sx + (fx - sx) * deal + sweep * (col * W * 0.2);
           const y = sy + (fy - sy) * deal + sweep * H;
-          const r = sr + (fr - sr) * deal + sweep * off * 20;
+          const r = sr + (fr - sr) * deal + sweep * col * 20;
           // dealt face-down, flipped face-up as it lands
           const flip = (1 - clamp((deal - 0.45) / 0.55, 0, 1)) * 180;
           card.style.transform = `perspective(1400px) translate(${x}px, ${y}px) rotate(${r}deg) rotateY(${flip}deg)`;
@@ -923,7 +966,7 @@ history.scrollRestoration = 'manual';
 
         // the room changes colour with the playhead: cherry fabric → black card table → cherry
         const toTable = clamp(p - 1, 0, 1), toCherry = clamp(p - 2, 0, 1);
-        document.body.style.backgroundColor = mix('#2a2627', '#2b46a6', toCherry);
+        document.body.style.backgroundColor = mix('#1f4b5c', '#2b46a6', toCherry);
         kraft.style.opacity = 1 - toTable;
         weave.style.opacity = toCherry;
         // labels read dark on the paper, light on the table and fabric
