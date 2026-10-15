@@ -276,6 +276,29 @@
         pointer-events: none;
       }
 
+      /* the real play button */
+      .playbtn {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        padding: 0.35em 0.6em;
+        background: none;
+        border: 0;
+        cursor: pointer;
+        pointer-events: auto;
+        transition: scale 0.15s ease;
+      }
+      .playbtn:hover { scale: 1.05; }
+      .playbtn:active { scale: 0.96; }
+      .playbtn .tri {
+        width: 0;
+        height: 0;
+        border-top: 0.42em solid transparent;
+        border-bottom: 0.42em solid transparent;
+        border-left: 0.7em solid #141113;
+        filter: drop-shadow(0 0 0.09em #fff) drop-shadow(0 0 0.09em #fff) drop-shadow(0 0 0.06em #fff);
+      }
+
       /* ransom-note letters: each on its own torn scrap of paper */
       .rn {
         display: flex;
@@ -359,7 +382,7 @@
       <small>written by us · recorded mostly at 3am</small>
       <div class="rpm"><span>33⅓<small>RPM</small></span></div>
     </div>
-    <div class="word" id="w1" style="left: 50%; bottom: 9%; translate: -50% 0">press play</div>
+    <button class="word playbtn" id="w1" type="button" style="left: 50%; bottom: 9%; translate: -50% 0"><span class="tri"></span>press play</button>
 
     <!-- 2. trading cards: the cast -->
     <div id="deck"></div>
@@ -470,6 +493,11 @@
         if (p > 0.95 && p < 1.5) snd.crackle(true);
       };
       soundBtn.addEventListener('click', unlock);
+      document.getElementById('w1').addEventListener('click', () => {
+        unlock();
+        clearTimeout(idle);
+        target = Math.max(target, 1);
+      });
       addEventListener('pointerdown', unlock, { once: true });
       addEventListener('keydown', unlock, { once: true });
 
@@ -597,8 +625,11 @@
         const armIn = clamp((t0 - 0.75) / 0.25, 0, 1) * (1 - clamp(t1 * 4, 0, 1));
         el.arm.style.transform = `translateX(${out}px) rotate(${-38 + armIn * 38}deg)`;
         el.arm.style.opacity = clamp(t0 * 3 - 1.5, 0, 1) * (1 - clamp(t1 * 3, 0, 1));
-        el.w1.style.opacity = clamp((t0 - 0.6) * 3, 0, 1) * (1 - t1 * 3);
-        el.w1.style.transform = `translateY(${(1 - t0) * 20}px)`;
+        // the play button is there at the start and fades once the record is out
+        const btn = 1 - clamp(t0 * 2.5, 0, 1);
+        el.w1.style.opacity = btn;
+        el.w1.style.pointerEvents = btn > 0.2 ? 'auto' : 'none';
+        el.w1.style.transform = `translateY(${(1 - btn) * 16}px)`;
 
         crossed('slide', t0, 0.2, (d) => d > 0 && snd.slide());
         crossed('needle', armIn, 0.98, (d) => (d > 0 ? snd.needle() : snd.crackle(false)));
