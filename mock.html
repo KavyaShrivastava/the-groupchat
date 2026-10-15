@@ -140,60 +140,52 @@
         pointer-events: none;
       }
 
-      /* ---- trading cards ---- */
+      /* ---- playing cards ---- */
       .pcard {
+        --w: min(30vmin, 250px);
         left: 50%;
         top: 50%;
-        width: min(28vmin, 240px);
-        aspect-ratio: 5 / 7.4;
-        margin: calc(min(28vmin, 240px) * -0.74) 0 0 calc(min(28vmin, 240px) / -2);
-        padding: 4.5%;
-        border-radius: 5%;
-        background: var(--c);
-        box-shadow: 0 1.6vmin 4vmin rgba(0, 0, 0, 0.5);
-        display: flex;
-        flex-direction: column;
-        gap: 3%;
+        width: var(--w);
+        aspect-ratio: 5 / 7;
+        margin: calc(var(--w) * -0.7) 0 0 calc(var(--w) / -2);
+        border-radius: calc(var(--w) * 0.06);
+        background: #f8f5f0;
+        box-shadow: 0 0.4vmin 0.8vmin rgba(0, 0, 0, 0.25), 0 1.8vmin 4vmin rgba(0, 0, 0, 0.45);
         z-index: 3;
       }
-      .pcard .tagline {
-        align-self: flex-start;
-        padding: 3% 6% 2.4%;
-        border-radius: 99px;
-        background: var(--cream);
-        color: var(--ink);
-        font: 700 calc(min(28vmin, 240px) * 0.052) / 1 var(--mono);
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        rotate: -2deg;
-      }
       .pcard .ph {
-        flex: 1;
-        min-height: 0;
-        border-radius: 4%;
+        position: absolute;
+        inset: 15% 13%;
         overflow: hidden;
-        background: rgba(255, 255, 255, 0.35);
+        background: #ece6dc;
         display: grid;
         place-items: center;
       }
       .pcard .ph img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; display: block; }
-      .pcard .ph span { font: italic 500 calc(min(28vmin, 240px) * 0.3) / 1 var(--serif); color: rgba(36, 31, 34, 0.5); }
+      .pcard .ph span { font: italic 500 calc(var(--w) * 0.28) / 1 var(--serif); color: rgba(36, 31, 34, 0.35); }
+      .pcard .corner {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font: 600 calc(var(--w) * 0.1) / 0.95 var(--serif);
+        font-style: normal;
+        color: var(--suit);
+      }
+      .pcard .corner small { font-size: 0.8em; }
+      .pcard .corner.tl { top: 4%; left: 4.5%; }
+      .pcard .corner.br { bottom: 4%; right: 4.5%; rotate: 180deg; }
       .pcard .name {
-        font: italic 500 calc(min(28vmin, 240px) * 0.11) / 1 var(--serif);
-        color: var(--ink);
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 6%;
+        text-align: center;
+        font: 400 calc(var(--w) * 0.045) / 1 var(--mono);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(36, 31, 34, 0.6);
       }
-      .pcard dl {
-        margin: 0;
-        padding: 3% 5%;
-        border-radius: 4%;
-        background: rgba(255, 252, 245, 0.55);
-        color: var(--ink);
-        font: 400 calc(min(28vmin, 240px) * 0.043) / 1.45 var(--mono);
-      }
-      .pcard dl div { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(36, 31, 34, 0.2); }
-      .pcard dl div:last-child { border-bottom: 0; }
-      .pcard dt { text-transform: uppercase; letter-spacing: 0.05em; }
-      .pcard dd { margin: 0; font-weight: 700; }
 
       /* ---- view-master ---- */
       .vm {
@@ -416,18 +408,22 @@
 
       // ---------- build the deck ----------
       const CAST = [
-        { name: 'Kavya', title: 'The 3am Builder', c: 'var(--mustard)', photo: '/cast/kavya.jpg', stats: [['plans made', '12'], ['plans kept', '9'], ['bedtime', '3:04am']] },
-        { name: 'Friend Two', title: 'Voice Note Queen', c: 'var(--tomato)', stats: [['voice notes', '412'], ['avg length', '6 min'], ['ever typed', 'once']] },
-        { name: 'Friend Three', title: 'Just One Drink', c: 'var(--sage)', stats: [['drinks planned', '1'], ['drinks had', '4'], ['regrets', '0']] },
-        { name: 'Friend Four', title: 'The Spreadsheet', c: 'var(--sky)', stats: [['spreadsheets', '23'], ['trips planned', '6'], ['trips taken', '2']] },
+        { name: 'Kavya', rank: 'A', suit: '♥', photo: '/cast/kavya.jpg' },
+        { name: 'Friend Two', rank: '10', suit: '♠', photo: '/cast/friend2.jpg' },
+        { name: 'Friend Three', rank: '7', suit: '♦' },
+        { name: 'Friend Four', rank: '3', suit: '♣' },
       ];
       const deck = document.getElementById('deck');
-      deck.innerHTML = CAST.map((f) => `<article class="obj pcard" style="--c:${f.c}">
-          <span class="tagline">${f.title}</span>
+      deck.innerHTML = CAST.map((f) => {
+        const red = f.suit === '♥' || f.suit === '♦';
+        const corner = `<b>${f.rank}</b><small>${f.suit}</small>`;
+        return `<article class="obj pcard" style="--suit:${red ? '#b3262f' : '#1d191b'}">
+          <span class="corner tl">${corner}</span>
           <div class="ph">${f.photo ? `<img src="${f.photo}" alt="${f.name}">` : `<span>${f.name[0]}</span>`}</div>
           <span class="name">${f.name}</span>
-          <dl>${f.stats.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
-        </article>`).join('');
+          <span class="corner br">${corner}</span>
+        </article>`;
+      }).join('');
       const cards = [...deck.children];
 
       // ---------- build the view-master ----------
@@ -514,7 +510,9 @@
         cards.forEach((card, k) => {
           const deal = ease(clamp((t1 - 0.1 - k * 0.17) / 0.3, 0, 1));
           const off = k - (cards.length - 1) / 2;
-          const fx = off * spread, fy = Math.abs(off) * cw * 0.1 + cw * 0.12, fr = off * 7;
+          // tossed onto the table, a little messy, like the reference
+          const scatter = [[-1.15, -0.05, -13], [0.05, -0.32, 8], [-0.35, 0.42, -4], [0.95, 0.28, 15]][k];
+          const fx = scatter[0] * Math.min(cw, spread * 1.25), fy = scatter[1] * cw, fr = scatter[2];
           const sx = -W * 0.1, sy = H * 0.9, sr = -25 + k * 6; // the deck, below the table edge
           const sweep = ease(clamp((t2 - k * 0.05) / 0.5, 0, 1));
           const x = sx + (fx - sx) * deal + sweep * (off * W * 0.15);
@@ -538,7 +536,7 @@
 
         // the room changes colour with the playhead: cherry fabric → black card table → cherry
         const dark = clamp(p - 1, 0, 1) * (1 - clamp(p - 2, 0, 1));
-        document.body.style.backgroundColor = mix('#6e1d2a', '#1d191b', dark);
+        document.body.style.backgroundColor = mix('#6e1d2a', '#2a2627', dark);
         requestAnimationFrame(frame);
       }
       requestAnimationFrame(frame);
