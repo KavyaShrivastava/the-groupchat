@@ -38,8 +38,24 @@
         color: var(--cream);
         font-family: var(--mono);
       }
+      /* crumpled kraft paper, only behind the vinyl */
+      #kraft {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-color: #d6bf98;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.011' numOctaves='5' seed='4'/%3E%3CfeDiffuseLighting lighting-color='%23f1e2c4' surfaceScale='2.6'%3E%3CfeDistantLight azimuth='50' elevation='58'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+        background-size: 700px 700px;
+        background-blend-mode: multiply;
+      }
       /* woven fabric texture, like the View-Master reference */
-      body::before {
+      #weave {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0;
         content: '';
         position: fixed;
         inset: 0;
@@ -47,7 +63,6 @@
         background:
           repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.13) 0 2px, transparent 2px 4px),
           repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 2px, transparent 2px 5px);
-        z-index: 0;
       }
       .obj { position: absolute; will-change: transform; }
 
@@ -113,7 +128,7 @@
       }
       .sleeve h1 {
         margin: 0.4em 0 0;
-        font-size: calc(var(--S) * 0.1);
+        font-size: calc(var(--S) * 0.13);
       }
       .sleeve small {
         font: 400 calc(var(--S) * 0.03) / 1.4 var(--mono);
@@ -121,29 +136,27 @@
         text-transform: uppercase;
         color: rgba(110, 29, 42, 0.65);
       }
-      .sleeve .pic {
+      .sleeve .rpm {
         position: absolute;
         right: 9%;
-        bottom: 10%;
-        width: 38%;
-        aspect-ratio: 3 / 4;
-        padding: 3% 3% 9%;
-        background: #fff;
-        rotate: 6deg;
-        box-shadow: 0 0.8vmin 1.6vmin rgba(0, 0, 0, 0.15);
+        bottom: 12%;
+        width: 24%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: #fffaf2;
+        box-shadow: 0 0.5vmin 1vmin rgba(0, 0, 0, 0.15);
+        display: grid;
+        place-items: center;
+        text-align: center;
+        rotate: 12deg;
+        font: 400 calc(var(--S) * 0.032) / 1.1 'Bowlby One', sans-serif;
+        color: var(--cherry);
       }
-      .sleeve .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
-      .sleeve .pic::before {
-        content: '';
-        position: absolute;
-        top: -6%;
-        left: 50%;
-        width: 46%;
-        height: 9%;
-        translate: -50% 0;
-        rotate: -5deg;
-        background: rgba(236, 222, 190, 0.8);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      .sleeve .rpm small {
+        display: block;
+        font: 400 calc(var(--S) * 0.022) / 1 var(--mono);
+        letter-spacing: 0.1em;
+        color: rgba(110, 29, 42, 0.7);
       }
       .tonearm {
         width: calc(var(--S) * 0.62);
@@ -292,7 +305,8 @@
         font: 400 12px/1 var(--mono);
         letter-spacing: 0.18em;
         text-transform: uppercase;
-        color: var(--soft);
+        color: var(--chrome, #4a3a2c);
+        opacity: 0.8;
       }
       .tag.tl { top: 18px; left: 18px; }
       .tag.br { bottom: 18px; right: 18px; }
@@ -310,9 +324,9 @@
         font: 400 12px/1 var(--mono);
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: var(--cream);
-        background: rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(246, 234, 216, 0.35);
+        color: var(--chrome, #4a3a2c);
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid currentColor;
         border-radius: 99px;
         padding: 8px 12px 7px;
         cursor: pointer;
@@ -320,6 +334,8 @@
     </style>
   </head>
   <body>
+    <div id="kraft"></div>
+    <div id="weave"></div>
     <span class="tag tl">the groupchat · objects demo</span>
     <button id="sound" type="button">tap for sound</button>
     <span class="tag bl" id="beat">side a</span>
@@ -339,7 +355,7 @@
         <h1 class="rn" data-text="the groupchat"></h1>
       </div>
       <small>written by us · recorded mostly at 3am</small>
-      <div class="pic"><img src="/cast/kavya.jpg" alt="Kavya" /></div>
+      <div class="rpm"><span>33⅓<small>RPM</small></span></div>
     </div>
     <div class="word" id="w1" style="left: 50%; bottom: 9%; translate: -50% 0">press play</div>
 
@@ -516,6 +532,7 @@
 
       // ---------- scroll drives a playhead; objects follow it ----------
       const $ = (id) => document.getElementById(id);
+      const kraft = $('kraft'), weave = $('weave');
       const el = { record: $('record'), sleeve: $('sleeve'), arm: $('arm'), vm, w1: $('w1'), w2: $('w2'), w3: $('w3'), beat: $('beat') };
       const MAX = 3;
       let target = 0, p = 0, idle = null, spin = 0, last = performance.now();
@@ -615,8 +632,12 @@
         el.beat.textContent = p < 0.5 ? 'side a' : p < 1.5 ? 'side a · playing' : p < 2.5 ? 'the cast' : 'and you';
 
         // the room changes colour with the playhead: cherry fabric → black card table → cherry
-        const dark = clamp(p - 1, 0, 1) * (1 - clamp(p - 2, 0, 1));
-        document.body.style.backgroundColor = mix('#6e1d2a', '#2a2627', dark);
+        const toTable = clamp(p - 1, 0, 1), toCherry = clamp(p - 2, 0, 1);
+        document.body.style.backgroundColor = mix('#2a2627', '#6e1d2a', toCherry);
+        kraft.style.opacity = 1 - toTable;
+        weave.style.opacity = toCherry;
+        // labels read dark on the paper, light on the table and fabric
+        document.body.style.setProperty('--chrome', mix('#4a3a2c', '#f6ead8', clamp(toTable * 2, 0, 1)));
         requestAnimationFrame(frame);
       }
       requestAnimationFrame(frame);
