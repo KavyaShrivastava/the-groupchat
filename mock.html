@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Caveat:wght@600&family=Alfa+Slab+One&family=Bowlby+One&family=Courier+Prime&family=Fraunces:ital,opsz,wght@1,72,500&family=Rubik:wght@800&family=Ultra&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Caveat:wght@600&family=Alfa+Slab+One&family=Bowlby+One&family=Courier+Prime&family=Jost:wght@400;500;600&family=Fraunces:ital,opsz,wght@1,72,500&family=Rubik:wght@800&family=Ultra&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -340,9 +340,10 @@
       }
       .sleeve .rpm small { display: block; font-size: calc(var(--P) * 0.014); }
 
-      /* ---- playing cards, Warhol style ---- */
+      /* ---- playing cards, Wes Anderson style: pastel, symmetrical, centred ---- */
       .pcard {
         --w: min(30vmin, 250px);
+        --futura: 'Jost', 'Futura', 'Century Gothic', sans-serif;
         left: 50%;
         top: 50%;
         width: var(--w);
@@ -354,94 +355,99 @@
       .pcard .face {
         position: absolute;
         inset: 0;
-        border-radius: calc(var(--w) * 0.06);
+        border-radius: calc(var(--w) * 0.05);
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
         box-shadow: 0 0.4vmin 0.8vmin rgba(0, 0, 0, 0.25), 0 1.8vmin 4vmin rgba(0, 0, 0, 0.45);
       }
-      .pcard .front { background: #f8f5f0; }
-      /* pop-art back: halftone dots, the show's name */
-      .pcard .back {
-        transform: rotateY(180deg);
-        background:
-          radial-gradient(circle, #ffe04a 30%, transparent 33%) 0 0 / calc(var(--w) * 0.07) calc(var(--w) * 0.07),
-          #ff4fa0;
-        box-shadow: inset 0 0 0 calc(var(--w) * 0.045) #f8f5f0, 0 0.4vmin 0.8vmin rgba(0, 0, 0, 0.25), 0 1.8vmin 4vmin rgba(0, 0, 0, 0.45);
-        display: grid;
-        place-items: center;
+      .pcard .front {
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12% 10% 0;
       }
-      .pcard .back b {
-        font: 400 calc(var(--w) * 0.11) / 0.95 'Bowlby One', sans-serif;
-        text-align: center;
-        color: #fff;
-        -webkit-text-stroke: calc(var(--w) * 0.03) #141113;
-        paint-order: stroke fill;
-        rotate: -8deg;
-      }
-      /* the Warhol grid: the same picture four times in flat silkscreen colours */
-      .pop {
-        position: absolute;
-        inset: 15% 11% 17%;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
-        gap: calc(var(--w) * 0.02);
-        padding: calc(var(--w) * 0.02);
-        background: #141113;
-      }
-      .pop i {
-        position: relative;
-        overflow: hidden;
-        background: var(--a);
-        display: grid;
-        place-items: center;
-      }
-      .pop i::before { /* the off-register colour block, like a misaligned screen print */
+      .pcard .front::before { /* the double ornate border */
         content: '';
         position: absolute;
-        left: 22%;
-        top: 14%;
-        width: 52%;
-        height: 50%;
-        border-radius: 45% 45% 40% 40%;
-        background: var(--b);
-        transform: translate(8%, 6%);
+        inset: 4.5%;
+        border: calc(var(--w) * 0.006) solid var(--ink);
+        outline: calc(var(--w) * 0.004) solid var(--ink);
+        outline-offset: calc(var(--w) * -0.022);
+        border-radius: calc(var(--w) * 0.03);
+        pointer-events: none;
       }
-      .pop img {
+      .pcard .arch {
         position: relative;
+        width: 68%;
+        aspect-ratio: 3 / 4;
+        border-radius: 50% 50% calc(var(--w) * 0.012) calc(var(--w) * 0.012) / 38% 38% calc(var(--w) * 0.012) calc(var(--w) * 0.012);
+        overflow: hidden;
+        background: #f6efe2;
+        box-shadow: 0 0 0 calc(var(--w) * 0.012) #f6efe2, 0 0 0 calc(var(--w) * 0.018) var(--ink);
+        display: grid;
+        place-items: center;
+      }
+      .pcard .arch img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        object-position: 50% 28%;
-        filter: grayscale(1) contrast(2.6) brightness(1.2);
-        mix-blend-mode: multiply;
+        object-position: 50% 30%;
+        filter: saturate(0.92) sepia(0.12) brightness(1.03);
       }
-      .pop span {
-        position: relative;
-        font: 400 calc(var(--w) * 0.16) / 1 'Bowlby One', sans-serif;
-        color: #141113;
+      .pcard .arch span {
+        font: 500 calc(var(--w) * 0.2) / 1 var(--futura);
+        color: var(--ink);
+        opacity: 0.55;
+      }
+      .pcard .name {
+        margin-top: 8%;
+        font: 600 calc(var(--w) * 0.058) / 1 var(--futura);
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+      .pcard .cap {
+        margin-top: 4%;
+        font: 500 calc(var(--w) * 0.032) / 1 var(--futura);
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--ink);
+        opacity: 0.75;
       }
       .pcard .corner {
         position: absolute;
         display: flex;
         flex-direction: column;
         align-items: center;
-        font: 400 calc(var(--w) * 0.1) / 0.95 'Bowlby One', sans-serif;
-        color: var(--suit);
+        font: 500 calc(var(--w) * 0.075) / 0.95 var(--futura);
+        color: var(--ink);
       }
-      .pcard .corner small { font-size: 0.75em; }
-      .pcard .corner.tl { top: 3.5%; left: 4.5%; }
-      .pcard .corner.br { bottom: 3.5%; right: 4.5%; rotate: 180deg; }
-      .pcard .name {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 6%;
+      .pcard .corner small { font-size: 0.8em; color: var(--suit); }
+      .pcard .corner.tl { top: 8%; left: 9%; }
+      .pcard .corner.br { bottom: 8%; right: 9%; rotate: 180deg; }
+      /* the back: a pink pastry box with candy stripes and a crest */
+      .pcard .back {
+        transform: rotateY(180deg);
+        background:
+          repeating-linear-gradient(90deg, #f2c4c9 0 calc(var(--w) * 0.05), #f8e3e2 calc(var(--w) * 0.05) calc(var(--w) * 0.1));
+        box-shadow: inset 0 0 0 calc(var(--w) * 0.04) #f8e3e2, inset 0 0 0 calc(var(--w) * 0.046) #7a3b4a, 0 0.4vmin 0.8vmin rgba(0, 0, 0, 0.25), 0 1.8vmin 4vmin rgba(0, 0, 0, 0.45);
+        display: grid;
+        place-items: center;
+      }
+      .pcard .crest {
+        width: 52%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: #f8e3e2;
+        box-shadow: 0 0 0 calc(var(--w) * 0.012) #7a3b4a, 0 0 0 calc(var(--w) * 0.024) #f8e3e2, 0 0 0 calc(var(--w) * 0.03) #7a3b4a;
+        display: grid;
+        place-items: center;
         text-align: center;
-        font: 400 calc(var(--w) * 0.06) / 1 'Bowlby One', sans-serif;
-        letter-spacing: 0.03em;
-        color: #141113;
+        color: #7a3b4a;
       }
+      .pcard .crest b { display: block; font: 500 calc(var(--w) * 0.14) / 1 var(--serif); font-style: italic; }
+      .pcard .crest small { display: block; margin-top: 6%; font: 600 calc(var(--w) * 0.028) / 1 var(--futura); letter-spacing: 0.28em; }
 
       /* ---- view-master ---- */
       .vm {
@@ -785,21 +791,19 @@
       deck.innerHTML = CAST.map((f, k) => {
         const red = f.suit === '♥' || f.suit === '♦';
         const corner = `<b>${f.rank}</b><small>${f.suit}</small>`;
-        // four silkscreen colourways per card, shifted so no two cards match
-        const POP = [['#ff4fa0', '#ffe04a'], ['#ffe04a', '#2ec4c4'], ['#2ec4c4', '#ff8a2a'], ['#ff8a2a', '#a46bff'], ['#a6e22e', '#ff4fa0']];
-        const tiles = [0, 1, 2, 3].map((t) => {
-          const [a, b] = POP[(t + k) % POP.length];
-          const inner = f.photo ? `<img src="${f.photo}" alt="">` : `<span>${f.name[0].toUpperCase()}</span>`;
-          return `<i style="--a:${a};--b:${b}">${inner}</i>`;
-        }).join('');
-        return `<article class="obj pcard" style="--suit:${red ? '#e0245e' : '#141113'}">
+        // a pastel per card, with a darker ink from the same family
+        const WES = [['#f2c4c9', '#7a3b4a'], ['#bfe0cd', '#2f5a4a'], ['#ecd08a', '#6b4a1f'], ['#bcd3ea', '#2f4a6e'], ['#d9c6e8', '#4f3b6e']];
+        const [bg, ink] = WES[k % WES.length];
+        const pic = f.photo ? `<img src="${f.photo}" alt="${f.name}">` : `<span>${f.name[0].toUpperCase()}</span>`;
+        return `<article class="obj pcard" style="--bg:${bg};--ink:${ink};--suit:${red ? '#b3262f' : ink}">
           <div class="face front">
             <span class="corner tl">${corner}</span>
-            <div class="pop" role="img" aria-label="${f.name}">${tiles}</div>
+            <div class="arch">${pic}</div>
             <span class="name">${f.name}</span>
+            <span class="cap">no. ${String(k + 1).padStart(2, '0')} · est. 2026</span>
             <span class="corner br">${corner}</span>
           </div>
-          <div class="face back"><b>the<br />group<br />chat</b></div>
+          <div class="face back"><div class="crest"><span><b>Tg</b><small>THE GROUPCHAT</small></span></div></div>
         </article>`;
       }).join('');
       const cards = [...deck.children];
